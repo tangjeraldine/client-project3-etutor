@@ -11,11 +11,13 @@ import MyClassesTutee from './Pages/Tutee/MyClassesTutee'
 import MyTutees from './Pages/Tutor/MyTutees'
 import MyTutors from './Pages/Tutee/MyTutors'
 import Search from './Pages/Tutee/Search'
+import AskAnythingTutee from "./Pages/Tutee/AskAnythingTutee";
+import AskAnythingTutor from "./Pages/Tutor/AskAnythingTutor";
 
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter >
       <Routes>
         <Route path="/" element={<SignIn />} />
         <Route path="/signup" element={<SignUpUser />} />
@@ -25,16 +27,16 @@ function App() {
         <Route path="/tutor" element={<LayoutTutor />}>
           <Route index element={<MyClassesTutor />} />
           <Route path="/tutor/mytutees" element={<MyTutees />} />
-          {/* <Route path="/tutor/askanything" element={<AskAnything />} /> */}
-          {/* <Route path="/tutor/editprofile" element={<EditProfile />} /> */}
+          <Route path="/tutor/askanything" element={<AskAnythingTutor />} />
+          {/* <Route path="/tutor/editprofile" element={<EditProfileTutee />} /> */}
         </Route>
 
         <Route path="/tutee" element={<LayoutTutee />}>
           <Route index element={<MyClassesTutee />} />
           <Route path="/tutee/mytutors" element={<MyTutors />} />
           <Route path="/tutee/search" element={<Search />} />
-          {/* <Route path="/tutee/askanything" element={<AskAnything />} /> */}
-          {/* <Route path="/tutee/editprofile" element={<EditProfile />} /> */}
+          <Route path="/tutee/askanything" element={<AskAnythingTutee />} />
+          {/* <Route path="/tutee/editprofile" element={<EditProfileTutor />} /> */}
         </Route>
       </Routes>
     </BrowserRouter>
