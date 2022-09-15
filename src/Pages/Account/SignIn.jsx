@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import urlcat from "urlcat";
-import axios from "axios";
-import { data } from "autoprefixer";
+import urlcat from 'urlcat'
+import { Field, Formik, Form } from "formik";
+import * as Yup from 'yup'
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -28,25 +28,18 @@ const SignIn = () => {
     return JSON.parse(jsonPayload);
   };
 
-  const handleSignIn = (event) => {
-    event.preventDefault();
-    const elements = event.target.elements;
-    const user = {
-      username: elements.username.value,
-      password: elements.password.value,
-    };
+  const handleSignIn = (values) => {
 
     const url = urlcat(SERVER, "/user/signin");
-
-    axios
-      .post(url, user, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-      })
-      .then(({ data }) => {
-        console.log(data);
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => response.json())
+      .then((data) => {
         if (data.error === "No user" || data.error === "Validation failed") {
           alert("Sign in failed!");
         } else {
@@ -58,21 +51,13 @@ const SignIn = () => {
           }
         }
       });
-  };
+  }
 
-  //   fetch(url, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(user),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log(data);
 
-  // });
-  // };
+  const UserSchema = Yup.object({
+    username: Yup.string().required("Required"),
+    password: Yup.string().required("Required")
+  });
 
   return (
     <>
@@ -84,26 +69,56 @@ const SignIn = () => {
       <br />
       <h1>sign in</h1>
 
-      <form onSubmit={handleSignIn}>
-        <input name="username" placeholder="username" />
-        <br />
-        <input name="password" placeholder="password" />
-        <button style={{ backgroundColor: "lime" }}>sign in</button>
-      </form>
+      {/* using formik */}
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+        }}
+        validationSchema={UserSchema}
+        onSubmit={(values) => handleSignIn(values)}
+      >
+        {({ handleChange, handleBlur, values, errors, touched }) => (
+          <Form>
+            <Field
+                id="username"
+              name="username"
+                type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.username}
+              placeholder="username"
+            />
+            {errors.username && touched.username ? (
+              <div>{errors.username}</div>
+            ) : null}
+
+            <Field
+              id="password"
+              name="password"
+              type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password}
+              placeholder="password"
+            />
+            {errors.password && touched.password ? (
+              <div>{errors.password}</div>
+            ) : null}
+
+            <br />
+            <button type="submit" style={{ backgroundColor: "lime" }}>
+              sign in
+            </button>
+          </Form>
+        )}
+      </Formik>
 
       <br />
-      {/* <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/tutee')}}>sign in as tutee</button> */}
       <br />
       <br />
-      <br />
-      <button
-        style={{ backgroundColor: "lime" }}
-        onClick={() => {
-          navigate("/signup");
-        }}
-      >
-        sign up
-      </button>
+
+      <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/signup')}}>sign up</button>
     </>
   );
 };
