@@ -6,26 +6,6 @@ import axios from "axios";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const handleSignUp = (values) => {
-  const url = urlcat(SERVER, "/user/signup");
-  axios.post(url, values).then(({ data }) => {
-    if (userType === "tutor") {
-      navigate("/signup/tutor");
-    } else {
-      navigate("/signup/tutee");
-    }
-  });
-};
-
-// axios.post(url, values).then(({data}) => {
-//   const userType = parseJwt(data.token).userTYPE;
-//   if (userType === "tutor") {
-//     navigate("/tutor");
-//   } else {
-//     navigate("/tutee");
-//   }
-// })
-
 const SignUpUser = () => {
   const navigate = useNavigate();
 
