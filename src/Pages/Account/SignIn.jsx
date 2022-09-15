@@ -1,20 +1,23 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import urlcat from 'urlcat'
+import urlcat from "urlcat";
+import { Field, Formik, Form } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignIn = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   //to decode token and find out usertype
   const parseJwt = (token) => {
     if (token === "") {
       return {};
     }
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    var jsonPayload = decodeURIComponent(
+    let base64Url = token.split(".")[1];
+    let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    let jsonPayload = decodeURIComponent(
       window
         .atob(base64)
         .split("")
@@ -26,40 +29,32 @@ const SignIn = () => {
     return JSON.parse(jsonPayload);
   };
 
-  const handleSignIn = (event) => {
-    event.preventDefault();
-    const elements = event.target.elements;
-    const user = {
-      "username": elements.username.value,
-      "password": elements.password.value,
-    };
-
+  const handleSignIn = (values) => {
     const url = urlcat(SERVER, "/user/signin");
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
+    axios.post(url, values).then(({data}) => {
+      const userType = parseJwt(data.token).userTYPE;
+      if (userType === "tutor") {
+        navigate("/tutor");
+      } else {
+        navigate("/tutee");
+      }
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error === "No user" || data.error === "Validation failed") {
-          alert("Sign in failed!");
-        } else {
-          const userType = parseJwt(data.token).userTYPE
-          if (userType === 'tutor') {
-            navigate('/tutor')
-          } else {
-            navigate('/tutee')
-          }
-        }
-      });
-  }
+    .catch((error) => {
+      // console.log(error.response.data.error)
+      if (error.response.data.error === "No user" || error.response.data.error === "Validation failed") {
+        alert("Sign in failed!")
+      }
+    })
+  };
+
+  const UserSchema = Yup.object({
+    username: Yup.string().required("Required"),
+    password: Yup.string().required("Required"),
+  });
 
   return (
     <>
-      <h1 style={{fontSize: "50px"}}>eTutor</h1>
+      <h1 style={{ fontSize: "50px" }}>eTutor</h1>
       <p>eTutor connects tutors and tutees</p>
       <p>find a tutor by subject and level and register your interest.</p>
       <p>once accepted, start booking available classes!</p>
@@ -67,21 +62,65 @@ const SignIn = () => {
       <br />
       <h1>sign in</h1>
 
-      <form onSubmit={handleSignIn}>
-      <input name='username' placeholder="username" />
-      <br />
-      <input name='password' placeholder="password" />
-      <button style={{backgroundColor: "lime"}}>sign in</button>
-      </form>
+      {/* using formik */}
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+        }}
+        validationSchema={UserSchema}
+        onSubmit={(values) => handleSignIn(values)}
+      >
+        {({ handleChange, handleBlur, values, errors, touched }) => (
+          <Form>
+            <Field
+              id="username"
+              name="username"
+              type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.username}
+              placeholder="username"
+            />
+            {errors.username && touched.username ? (
+              <div>{errors.username}</div>
+            ) : null}
+
+            <Field
+              id="password"
+              name="password"
+              type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password}
+              placeholder="password"
+            />
+            {errors.password && touched.password ? (
+              <div>{errors.password}</div>
+            ) : null}
+
+            <br />
+            <button type="submit" style={{ backgroundColor: "lime" }}>
+              sign in
+            </button>
+          </Form>
+        )}
+      </Formik>
 
       <br />
-      {/* <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/tutee')}}>sign in as tutee</button> */}
       <br />
       <br />
-      <br />
-      <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/signup')}}>sign up</button>
+
+      <button
+        style={{ backgroundColor: "lime" }}
+        onClick={() => {
+          navigate("/signup");
+        }}
+      >
+        sign up
+      </button>
     </>
   );
-}; 
+};
 
-export default SignIn
+export default SignIn;

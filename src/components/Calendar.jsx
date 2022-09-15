@@ -8,60 +8,44 @@ import urlcat from "urlcat";
 
 import Calendar from "@toast-ui/react-calendar";
 import "@toast-ui/calendar/dist/toastui-calendar.min.css"; // Stylesheet for calendar
+import { useRef } from "react";
 
 function Calendars() {
-  const container = document.getElementById("calendar");
-  const calendar = new Calendar(container, options);
-
-  const options = {
-    defaultView: "week",
-    timezone: {
-      zones: [
-        {
-          timezoneName: "Asia/Seoul",
-          displayLabel: "Seoul",
-        },
-        {
-          timezoneName: "Europe/London",
-          displayLabel: "London",
-        },
-      ],
-    },
-    calendars: [
-      {
-        id: "cal1",
-        name: "Personal",
-        backgroundColor: "#03bd9e",
-      },
-      {
-        id: "cal2",
-        name: "Work",
-        backgroundColor: "#00a9ff",
-      },
-    ],
-  };
-
   const calendars = [{ id: "cal1", name: "Personal" }];
-  //   const initialEvents = [
-  //     {
-  //       id: "1",
-  //       calendarId: "cal1",
-  //       title: "Lunch",
-  //       category: "time",
-  //       start: "2022-09-14T12:00:00",
-  //       end: "2022-09-14T13:30:00",
-  //     },
-  //     {
-  //       id: "2",
-  //       calendarId: "cal1",
-  //       title: "Coffee Break",
-  //       category: "time",
-  //       start: "2022-09-15T15:00:00",
-  //       end: "2022-09-15T15:30:00",
-  //     },
-  //   ];
+  const initialEvents = [
+    {
+      id: "1",
+      calendarId: "cal1",
+      title: "Lunch",
+      category: "time",
+      start: "2022-09-14T12:00:00",
+      end: "2022-09-14T13:30:00",
+    },
+    {
+      id: "2",
+      calendarId: "cal1",
+      title: "Coffee Break",
+      category: "time",
+      start: "2022-09-15T15:00:00",
+      end: "2022-09-15T15:30:00",
+    },
+  ];
   const onAfterRenderEvent = (event) => {
     console.log(event.title);
+  };
+
+  const calendarRef = useRef();
+
+  const handleClickNextButton = () => {
+    const calendarInstance = calendarRef.current.getInstance();
+
+    calendarInstance.next();
+  };
+
+  const handleClickPrevButton = () => {
+    const calendarInstance = calendarRef.current.getInstance();
+
+    calendarInstance.prev();
   };
 
   //   const [modalOpen, setModalOpen] = useState(false);
@@ -107,7 +91,10 @@ function Calendars() {
 
   return (
     <div>
+      <button onClick={handleClickNextButton}>Next</button>
+      <button onClick={handleClickPrevButton}>Prev</button>
       <Calendar
+        ref={calendarRef}
         height="900px"
         view="month"
         month={{
