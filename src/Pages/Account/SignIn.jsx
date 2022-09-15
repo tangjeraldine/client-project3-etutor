@@ -1,20 +1,22 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import urlcat from 'urlcat'
+import urlcat from "urlcat";
+import axios from "axios";
+import { data } from "autoprefixer";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignIn = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   //to decode token and find out usertype
   const parseJwt = (token) => {
     if (token === "") {
       return {};
     }
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    var jsonPayload = decodeURIComponent(
+    let base64Url = token.split(".")[1];
+    let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    let jsonPayload = decodeURIComponent(
       window
         .atob(base64)
         .split("")
@@ -30,36 +32,51 @@ const SignIn = () => {
     event.preventDefault();
     const elements = event.target.elements;
     const user = {
-      "username": elements.username.value,
-      "password": elements.password.value,
+      username: elements.username.value,
+      password: elements.password.value,
     };
 
     const url = urlcat(SERVER, "/user/signin");
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((response) => response.json())
-      .then((data) => {
+
+    axios
+      .post(url, user, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+      })
+      .then(({ data }) => {
+        console.log(data);
         if (data.error === "No user" || data.error === "Validation failed") {
           alert("Sign in failed!");
         } else {
-          const userType = parseJwt(data.token).userTYPE
-          if (userType === 'tutor') {
-            navigate('/tutor')
+          const userType = parseJwt(data.token).userTYPE;
+          if (userType === "tutor") {
+            navigate("/tutor");
           } else {
-            navigate('/tutee')
+            navigate("/tutee");
           }
         }
       });
-  }
+  };
+
+  //   fetch(url, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(user),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log(data);
+
+  // });
+  // };
 
   return (
     <>
-      <h1 style={{fontSize: "50px"}}>eTutor</h1>
+      <h1 style={{ fontSize: "50px" }}>eTutor</h1>
       <p>eTutor connects tutors and tutees</p>
       <p>find a tutor by subject and level and register your interest.</p>
       <p>once accepted, start booking available classes!</p>
@@ -68,10 +85,10 @@ const SignIn = () => {
       <h1>sign in</h1>
 
       <form onSubmit={handleSignIn}>
-      <input name='username' placeholder="username" />
-      <br />
-      <input name='password' placeholder="password" />
-      <button style={{backgroundColor: "lime"}}>sign in</button>
+        <input name="username" placeholder="username" />
+        <br />
+        <input name="password" placeholder="password" />
+        <button style={{ backgroundColor: "lime" }}>sign in</button>
       </form>
 
       <br />
@@ -79,9 +96,16 @@ const SignIn = () => {
       <br />
       <br />
       <br />
-      <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/signup')}}>sign up</button>
+      <button
+        style={{ backgroundColor: "lime" }}
+        onClick={() => {
+          navigate("/signup");
+        }}
+      >
+        sign up
+      </button>
     </>
   );
-}; 
+};
 
-export default SignIn
+export default SignIn;
