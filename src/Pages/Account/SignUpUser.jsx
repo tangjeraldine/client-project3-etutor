@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
-import * as Yup from "yup";
 import axios from "axios";
 import signUpValidation from '../../Validations/signUpValidation'
 
@@ -41,7 +40,7 @@ const SignUpUser = () => {
           password: "",
           userType: "select",
         }}
-        validationSchema={UserSchema}
+        validationSchema={signUpValidation}
         onSubmit={(values) => handleSignUp(values)}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (
