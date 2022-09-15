@@ -2,12 +2,33 @@ import { useNavigate } from "react-router-dom";
 import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 import signUpValidation from '../../Validations/signUpValidation'
 
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpUser = () => {
   const navigate = useNavigate();
+
+  const handleSignUp = (values) => {
+    const url = urlcat(SERVER, "/user/signup");
+    console.log(values);
+    axios
+      .post(url, values)
+      .then(({ data }) => {
+        if (userType === "tutor") {
+          navigate("/signup/tutor");
+        } else {
+          navigate("/signup/tutee");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.data.error === "This username has been taken.") {
+          alert(" Username taken");
+        }
+      });
+  };
 
   return (
     <>
@@ -20,14 +41,8 @@ const SignUpUser = () => {
           password: "",
           userType: "select",
         }}
-        validationSchema={signUpValidation}
-        onSubmit={(values) => {
-          if (values.userType === 'tutor') {
-            navigate('/signup/tutor')
-          } else {
-            navigate('/signup/tutee')
-          }
-        }}
+        validationSchema={UserSchema}
+        onSubmit={(values) => handleSignUp(values)}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (
           <Form>
@@ -59,9 +74,7 @@ const SignUpUser = () => {
               values={values.userType}
               onChange={handleChange}
             >
-              <option disabled>
-                select
-              </option>
+              <option disabled>select</option>
               <option value="tutor">Tutor</option>
               <option value="tutee">Tutee</option>
             </Field>
