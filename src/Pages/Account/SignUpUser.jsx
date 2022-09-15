@@ -2,11 +2,52 @@ import { useNavigate } from "react-router-dom";
 import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
+const handleSignUp = (values) => {
+  const url = urlcat(SERVER, "/user/signup");
+  axios.post(url, values).then(({ data }) => {
+    if (userType === "tutor") {
+      navigate("/signup/tutor");
+    } else {
+      navigate("/signup/tutee");
+    }
+  });
+};
+
+// axios.post(url, values).then(({data}) => {
+//   const userType = parseJwt(data.token).userTYPE;
+//   if (userType === "tutor") {
+//     navigate("/tutor");
+//   } else {
+//     navigate("/tutee");
+//   }
+// })
+
 const SignUpUser = () => {
   const navigate = useNavigate();
+
+  const handleSignUp = (values) => {
+    const url = urlcat(SERVER, "/user/signup");
+    console.log(values);
+    axios
+      .post(url, values)
+      .then(({ data }) => {
+        if (userType === "tutor") {
+          navigate("/signup/tutor");
+        } else {
+          navigate("/signup/tutee");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.data.error === "This username has been taken.") {
+          alert(" Username taken");
+        }
+      });
+  };
 
   const UserSchema = Yup.object({
     username: Yup.string()
@@ -41,13 +82,7 @@ const SignUpUser = () => {
           userType: "select",
         }}
         validationSchema={UserSchema}
-        onSubmit={(values) => {
-          if (values.userType === 'tutor') {
-            navigate('/tutor')
-          } else {
-            navigate('/tutee')
-          }
-        }}
+        onSubmit={(values) => handleSignUp(values)}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (
           <Form>
@@ -84,9 +119,7 @@ const SignUpUser = () => {
               values={values.userType}
               onChange={handleChange}
             >
-              <option disabled>
-                select
-              </option>
+              <option disabled>select</option>
               <option value="tutor">Tutor</option>
               <option value="tutee">Tutee</option>
             </Field>
