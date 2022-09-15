@@ -1,29 +1,115 @@
 import { useNavigate } from "react-router-dom";
+import urlcat from "urlcat";
+import { Field, Formik, Form } from "formik";
+import * as Yup from "yup";
+
+const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpUser = () => {
-    const navigate = useNavigate()
-    return (
-        <>
-        <h1 style={{fontSize: "50px"}}>sign up</h1>
-        <br />
-        <br />
-        <input placeholder="username" />
-        <br />
-        <input placeholder="password" />
-        <br />
-        <select>
-            <option>tutor</option>
-            <option>tutee</option>
-        </select>
-        <br />
-        <button style={{backgroundColor: "lime"}} onClick={() => navigate('/signup/tutor')}>next to tutor</button>
-        <button style={{backgroundColor: "lime"}} onClick={() => navigate('/signup/tutee')}>next to tutee</button>
-        <br />
-        <br />
-        <br />
-        <button style={{backgroundColor: "lime"}} onClick={() => navigate('/')}>back to sign in</button>
-      </> 
-      );
-}
+  const navigate = useNavigate();
 
-export default SignUpUser
+  const UserSchema = Yup.object({
+    username: Yup.string()
+      .required("Required")
+      .matches(/^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$/, {
+        message:
+          "Username can consist of alphanumeric characters, dot, underscore and hyphen (special characters must not be the first or last char and cannot appear consecutively), must be 5-20 characters long.",
+        excludeEmptyString: true,
+      }),
+    password: Yup.string()
+      .required("Required")
+      .matches(
+        /^(?!.*\s)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).{10,16}$/,
+        {
+          message:
+            "Password must not contain any whitespaces, must have at least one uppercase letter, one lowercase character, one digit, one special character, and must be 10-16 characters long.",
+          excludeEmptyString: true,
+        }
+      ),
+    userType: Yup.string().required("Required"),
+  });
+
+  return (
+    <>
+      <h1 style={{ fontSize: "50px" }}>sign up</h1>
+
+      {/* using formik */}
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+          userType: "select",
+        }}
+        validationSchema={UserSchema}
+        onSubmit={(values) => {
+          if (values.userType === 'tutor') {
+            navigate('/tutor')
+          } else {
+            navigate('/tutee')
+          }
+        }}
+      >
+        {({ handleChange, handleBlur, values, errors, touched }) => (
+          <Form>
+            <Field
+              //   id="username"
+              name="username"
+              //   type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.username}
+              placeholder="username"
+            />
+            {errors.username && touched.username ? (
+              <div>{errors.username}</div>
+            ) : null}
+
+            <Field
+              id="password"
+              name="password"
+              type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password}
+              placeholder="password"
+            />
+            {errors.password && touched.password ? (
+              <div>{errors.password}</div>
+            ) : null}
+
+            <Field
+              as="select"
+              id="userType"
+              name="userType"
+              values={values.userType}
+              onChange={handleChange}
+            >
+              <option disabled>
+                select
+              </option>
+              <option value="tutor">Tutor</option>
+              <option value="tutee">Tutee</option>
+            </Field>
+            {errors.userType && touched.userType ? (
+              <div>{errors.password}</div>
+            ) : null}
+
+            <br />
+            <button type="submit" style={{ backgroundColor: "lime" }}>
+              sign up
+            </button>
+          </Form>
+        )}
+      </Formik>
+
+      <br />
+      <br />
+      <br />
+      <button style={{ backgroundColor: "lime" }} onClick={() => navigate("/")}>
+        back to sign in
+      </button>
+    </>
+  );
+};
+
+export default SignUpUser;

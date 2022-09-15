@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import urlcat from 'urlcat'
+import { Field, Formik, Form } from "formik";
+import * as Yup from 'yup'
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -26,13 +28,7 @@ const SignIn = () => {
     return JSON.parse(jsonPayload);
   };
 
-  const handleSignIn = (event) => {
-    event.preventDefault();
-    const elements = event.target.elements;
-    const user = {
-      "username": elements.username.value,
-      "password": elements.password.value,
-    };
+  const handleSignIn = (values) => {
 
     const url = urlcat(SERVER, "/user/signin");
     fetch(url, {
@@ -40,7 +36,7 @@ const SignIn = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user),
+      body: JSON.stringify(values),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -57,6 +53,12 @@ const SignIn = () => {
       });
   }
 
+
+  const UserSchema = Yup.object({
+    username: Yup.string().required("Required"),
+    password: Yup.string().required("Required")
+  });
+
   return (
     <>
       <h1 style={{fontSize: "50px"}}>eTutor</h1>
@@ -67,18 +69,55 @@ const SignIn = () => {
       <br />
       <h1>sign in</h1>
 
-      <form onSubmit={handleSignIn}>
-      <input name='username' placeholder="username" />
-      <br />
-      <input name='password' placeholder="password" />
-      <button style={{backgroundColor: "lime"}}>sign in</button>
-      </form>
+      {/* using formik */}
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+        }}
+        validationSchema={UserSchema}
+        onSubmit={(values) => handleSignIn(values)}
+      >
+        {({ handleChange, handleBlur, values, errors, touched }) => (
+          <Form>
+            <Field
+                id="username"
+              name="username"
+                type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.username}
+              placeholder="username"
+            />
+            {errors.username && touched.username ? (
+              <div>{errors.username}</div>
+            ) : null}
+
+            <Field
+              id="password"
+              name="password"
+              type="text"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password}
+              placeholder="password"
+            />
+            {errors.password && touched.password ? (
+              <div>{errors.password}</div>
+            ) : null}
+
+            <br />
+            <button type="submit" style={{ backgroundColor: "lime" }}>
+              sign in
+            </button>
+          </Form>
+        )}
+      </Formik>
 
       <br />
-      {/* <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/tutee')}}>sign in as tutee</button> */}
       <br />
       <br />
-      <br />
+
       <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/signup')}}>sign up</button>
     </>
   );
