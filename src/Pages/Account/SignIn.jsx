@@ -4,6 +4,7 @@ import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import signInValidation from "../../Validations/signInValidation";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -47,10 +48,10 @@ const SignIn = () => {
     })
   };
 
-  const UserSchema = Yup.object({
-    username: Yup.string().required("Required"),
-    password: Yup.string().required("Required"),
-  });
+  // const UserSchema = Yup.object({
+  //   username: Yup.string().required("Required"),
+  //   password: Yup.string().required("Required"),
+  // });
 
   return (
     <>
@@ -68,7 +69,7 @@ const SignIn = () => {
           username: "",
           password: "",
         }}
-        validationSchema={UserSchema}
+        validationSchema={signInValidation}
         onSubmit={(values) => handleSignIn(values)}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (

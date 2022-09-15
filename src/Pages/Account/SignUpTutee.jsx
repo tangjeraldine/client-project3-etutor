@@ -5,7 +5,7 @@ const SignUpTutee= () => {
   return (
     <>
       <h1 style={{fontSize: "50px"}}>sign up as tutor</h1>
-      <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/tutee')}}>sign up</button>
+      <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/')}}>sign up</button>
     </>
   );
 }; 
