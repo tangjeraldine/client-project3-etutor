@@ -31,18 +31,20 @@ const SignIn = () => {
 
   const handleSignIn = (values) => {
     const url = urlcat(SERVER, "/user/signin");
-    axios.post(url, values).then(({ data }) => {
-      if (data.error === "No user" || data.error === "Validation failed") {
-        alert("Sign in failed!");
+    axios.post(url, values).then(({data}) => {
+      const userType = parseJwt(data.token).userTYPE;
+      if (userType === "tutor") {
+        navigate("/tutor");
       } else {
-        const userType = parseJwt(data.token).userTYPE;
-        if (userType === "tutor") {
-          navigate("/tutor");
-        } else {
-          navigate("/tutee");
-        }
+        navigate("/tutee");
       }
-    });
+    })
+    .catch((error) => {
+      // console.log(error.response.data.error)
+      if (error.response.data.error === "No user" || error.response.data.error === "Validation failed") {
+        alert("Sign in failed!")
+      }
+    })
   };
 
   const UserSchema = Yup.object({
