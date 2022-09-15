@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import urlcat from 'urlcat'
+import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
-import * as Yup from 'yup'
+import * as Yup from "yup";
+import axios from "axios";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -29,34 +30,24 @@ const SignIn = () => {
   };
 
   const handleSignIn = (values) => {
-
     const url = urlcat(SERVER, "/user/signin");
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error === "No user" || data.error === "Validation failed") {
-          alert("Sign in failed!");
+    axios.post(url, values).then(({ data }) => {
+      if (data.error === "No user" || data.error === "Validation failed") {
+        alert("Sign in failed!");
+      } else {
+        const userType = parseJwt(data.token).userTYPE;
+        if (userType === "tutor") {
+          navigate("/tutor");
         } else {
-          const userType = parseJwt(data.token).userTYPE;
-          if (userType === "tutor") {
-            navigate("/tutor");
-          } else {
-            navigate("/tutee");
-          }
+          navigate("/tutee");
         }
-      });
-  }
-
+      }
+    });
+  };
 
   const UserSchema = Yup.object({
     username: Yup.string().required("Required"),
-    password: Yup.string().required("Required")
+    password: Yup.string().required("Required"),
   });
 
   return (
@@ -81,9 +72,9 @@ const SignIn = () => {
         {({ handleChange, handleBlur, values, errors, touched }) => (
           <Form>
             <Field
-                id="username"
+              id="username"
               name="username"
-                type="text"
+              type="text"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.username}
@@ -118,7 +109,14 @@ const SignIn = () => {
       <br />
       <br />
 
-      <button style={{backgroundColor: "lime"}} onClick={() => {navigate('/signup')}}>sign up</button>
+      <button
+        style={{ backgroundColor: "lime" }}
+        onClick={() => {
+          navigate("/signup");
+        }}
+      >
+        sign up
+      </button>
     </>
   );
 };
