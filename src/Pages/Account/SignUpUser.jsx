@@ -14,7 +14,7 @@ const SignUpUser = () => {
     axios
       .post(url, values)
       .then(({ data }) => {
-        if (data.userType === "tutor") {
+        if (data.userType === "Tutor") {
           navigate("/signup/tutor");
         } else {
           navigate("/signup/tutee");
@@ -72,11 +72,11 @@ const SignUpUser = () => {
               onChange={handleChange}
             >
               <option disabled>select</option>
-              <option value="tutor">Tutor</option>
-              <option value="tutee">Tutee</option>
+              <option value="Tutor">Tutor</option>
+              <option value="Tutee">Tutee</option>
             </Field>
             {errors.userType && touched.userType ? (
-              <div>{errors.password}</div>
+              <div>{errors.userType}</div>
             ) : null}
 
             <br />
