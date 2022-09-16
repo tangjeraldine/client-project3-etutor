@@ -31,21 +31,25 @@ const SignIn = () => {
 
   const handleSignIn = (values) => {
     const url = urlcat(SERVER, "/user/signin");
-    axios.post(url, values).then(({data}) => {
-      const userType = parseJwt(data.token).userTYPE;
-      if (userType === "tutor") {
-        navigate("/tutor");
-      } else {
-        navigate("/tutee");
-      }
-    })
-    .catch((error) => {
-      if (error.response.data.error === "No user" || error.response.data.error === "Validation failed") {
-        alert("Sign in failed!")
-      }
-    })
+    axios
+      .post(url, values)
+      .then(({ data }) => {
+        const userType = parseJwt(data.token).user.userType;
+        if (userType === "tutor") {
+          navigate("/tutor");
+        } else {
+          navigate("/tutee");
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response.data.error === "No user" ||
+          error.response.data.error === "Validation failed"
+        ) {
+          alert("Sign in failed!");
+        }
+      });
   };
-
 
   return (
     <>

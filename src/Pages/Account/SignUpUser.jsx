@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import axios from "axios";
-import signUpValidation from '../../Validations/signUpValidation'
+import signUpValidation from "../../Validations/signUpValidation";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -11,18 +11,16 @@ const SignUpUser = () => {
 
   const handleSignUp = (values) => {
     const url = urlcat(SERVER, "/user/signup");
-    console.log(values);
     axios
       .post(url, values)
       .then(({ data }) => {
-        if (userType === "tutor") {
+        if (data.userType === "tutor") {
           navigate("/signup/tutor");
         } else {
           navigate("/signup/tutee");
         }
       })
       .catch((error) => {
-        console.log(error);
         if (error.response.data.error === "This username has been taken.") {
           alert(" Username taken");
         }
