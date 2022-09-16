@@ -1,16 +1,27 @@
 import { Field, Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import urlcat from "urlcat";
 
 const SERVER = import.meta.env.VITE_SERVER;
 const Search = () => {
+  const [tutor, setTutor] = useState([]);
   const url = urlcat(SERVER, "/tutor");
 
   useEffect(() => {
-    axios.get(url).then((data) => console.log(data));
+    axios.get(url).then((data) => {
+      setTutor(data.data);
+    });
   }, []);
+
+  const handleFilter = (values) => {
+    const filterURL = urlcat(
+      url,
+      `/search?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}`
+    );
+    axios.get(filterURL).then((data) => setTutor(data.data));
+  };
 
   return (
     <>
@@ -20,10 +31,10 @@ const Search = () => {
       <Formik
         initialValues={{
           subjects: "select subject",
-          level: "select level",
-          class: "select class setting",
+          classLevel: "select level",
+          classType: "select class setting",
         }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => handleFilter(values)}
       >
         {({ handleChange, handleBlur, values }) => (
           <div>
@@ -51,8 +62,8 @@ const Search = () => {
               <label>select level: </label>
               <Field
                 as="select"
-                name="level"
-                values={values.level}
+                name="classLevel"
+                values={values.classLevel}
                 onChange={handleChange}
                 onBlur={handleBlur}
               >
@@ -75,8 +86,8 @@ const Search = () => {
               <label>select class setting: </label>
               <Field
                 as="select"
-                name="class"
-                values={values.classSetting}
+                name="classType"
+                values={values.classType}
                 onChange={handleChange}
                 onBlur={handleBlur}
               >
@@ -99,6 +110,22 @@ const Search = () => {
       </Formik>
       <div>
         <h1 style={{ fontSize: "50px" }}>All tutors</h1>
+        {tutor.length === 0 ? (
+          <div>No Tutor Found</div>
+        ) : (
+          <div>
+            {tutor.map((e) => (
+              <div key={e._id} value={e._id}>
+                <p>Tutor Name:{e.fullName}</p>
+                <p>Class setting: {e.classType}</p>
+                <p>Location:{e.region}</p>
+                <p> Subjects: {e.subjects}</p>
+                <p>Levels:{e.classLevel}</p>
+                <p>Ratings: {e.rating}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
