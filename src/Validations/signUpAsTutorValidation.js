@@ -3,9 +3,9 @@ import * as yup from "yup";
 const signUpAsTutorValidation = yup.object({
   fullName: yup
     .string()
-    .matches(/^[a-zA-Z\s]{4,}$/, {
+    .matches(/^[a-zA-Z\s]{4,30}$/, {
       message:
-        "Name should have at least 4 characters, and contain only alphabets.",
+        "Name should have 4-30 characters, and contain only alphabets.",
       excludeEmptyString: true,
     })
     .required("A username is required."),
@@ -15,8 +15,8 @@ const signUpAsTutorValidation = yup.object({
     .required("An email address is required."),
   phone: yup
     .string()
-    .matches(/^[0-9]{8}$/, {
-      message: "Phone number should be 8 digits long (SG).",
+    .matches(/^[0-9]{8,20}$/, {
+      message: "Phone number should be between 8-20 digits long.",
       excludeEmptyString: true,
     })
     .required("A phone number is required."),
@@ -28,7 +28,8 @@ const signUpAsTutorValidation = yup.object({
     .number()
     .typeError('Rates must be a number')
     .required("A rate per lesson is required.")
-    .min(0, { message: "Rate cannot be less than 0." }),
+    .min(0, "Rate cannot be less than 0." )
+    .max(1000, "Rates cannot be higher than 1000." ),
   classType: yup
     .string()
     .required("Please indicate the mode that the classes are held in.")
@@ -55,10 +56,14 @@ const signUpAsTutorValidation = yup.object({
   // }),
   educationBackground: yup
     .string()
-    .required("Information on education background must be given."),
+    .min(50, "A minimum length of 50 char is required.")
+    .max(450, "A maximum length of 450 char is allowed.")
+    .required("Information on education background must be provided."),
   teachingExperience: yup
     .string()
-    .required("Information on teaching experience must be given."),
+    .min(50, "A minimum length of 50 char is required.")
+    .max(450, "A maximum length of 450 char is allowed.")
+    .required("Information on teaching experience must be provided."),
 });
 
 export default signUpAsTutorValidation;

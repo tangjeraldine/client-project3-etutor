@@ -1,11 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import signUpAsTutorValidation from "../../Validations/signUpAsTutorValidation";
-import { Field, Formik, Form } from "formik";
+import { Field, Formik, Form, useFormikContext } from "formik";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import urlcat from "urlcat";
+
+const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpTutor = () => {
+  const [isEmailUnique, setIsEmailUnique] = useState(true)
+  const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true)
+  const [matchingLevelSub, setMatchingLevelSub] = useState(true)
+
   const navigate = useNavigate();
 
-  const priSubjects = ["English", "Mathematics", "Science"];
+  const priSubjects = ["Mathematics", "Science"];
 
   const secSubjects = [
     "Additional Mathematics",
@@ -32,6 +41,78 @@ const SignUpTutor = () => {
     "Secondary 5",
   ];
 
+  const CheckClassLevelAndSubject = () => {
+    const { values } = useFormikContext();//a way to excess form values globally
+    useEffect(() => {
+      setMatchingLevelSub(true)
+      let anyPriLevel = false;
+      let anySecLevel = false;
+      let anyPriSub = false;
+      let anySecSub = false;
+      let anyLowerPri = false;
+      let anyUpperPri = false;
+      values.classLevel.map((level) => {
+        if (level.split(" ")[0] === "Primary") {
+          anyPriLevel = true;
+          if (level.split(" ")[1] !== "1" && level.split(" ")[1] !== "2") {
+            anyUpperPri = true; //if tkde lower level
+          } else {
+            anyLowerPri = true
+          }
+        } else if (level.split(" ")[0] === "Secondary") {
+          anySecLevel = true;
+        }
+      });
+
+      values.subjects.map((subject) => {
+        if (subject === "English") {
+          if (anyPriLevel === true) {
+            anyPriSub = true;
+          }
+          if (anySecLevel === true) {
+            anySecSub = true;
+          }
+        } else if (priSubjects.indexOf(subject) !== -1) {
+          anyPriSub = true;
+        } else if (secSubjects.indexOf(subject) !== -1) {
+          anySecSub = true;
+        }
+        if (subject === "Science") {
+          if (anyUpperPri === false || (values.subjects.indexOf('Mathematics') === -1 && values.subjects.indexOf('English') === -1 && anyLowerPri === true)) {
+            anyPriSub = false;
+          }
+        }
+      });
+
+      if (
+        (anyPriLevel === true && anyPriSub === false) ||
+        (anyPriLevel === false && anyPriSub === true) ||
+        (anySecLevel === true && anySecSub === false) ||
+        (anySecLevel === false && anySecSub === true)
+      ) {
+        console.log("please select matching class levels and subjects");
+        setMatchingLevelSub(false)
+      }
+
+    }, [values.classLevel, values.subjects]);
+  };
+
+  const handleSignUpAsTutor = (values) => {
+    const url = urlcat(SERVER, "/tutor/profile-signup");
+    axios
+    .post(url, values)
+    .then(({ data }) => {
+        navigate("/tutor");
+    })
+    .catch((error) => {
+      if (error.response.data.error === "Tutor profile unable to be set up.") {
+        setIsTutorProfileSetUp(false)
+      } else {
+        setIsEmailUnique(false)//only email is unique, if wan phone to be unique need add another condition/alert
+      }
+    });
+  }
+
   return (
     <>
       <h1 style={{ fontSize: "50px" }}>sign up as tutor</h1>
@@ -45,13 +126,16 @@ const SignUpTutor = () => {
           region: "select",
           rates: "",
           classType: "select",
-          classLevel: "",
-          subjects: "",
+          classLevel: [],
+          subjects: [],
           educationBackground: "",
           teachingExperience: "",
         }}
         validationSchema={signUpAsTutorValidation}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => {
+          console.log(values)
+          handleSignUpAsTutor(values)
+        }}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (
           <Form>
@@ -66,23 +150,23 @@ const SignUpTutor = () => {
               <div>{errors.fullName}</div>
             ) : null}
             <br />
-            
+
             <p>Email</p>
             <Field
               name="email"
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.password}
+              value={values.email}
             />
             {errors.email && touched.email ? <div>{errors.email}</div> : null}
             <br />
-            
+
             <p>Phone</p>
             <Field
               name="phone"
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.password}
+              value={values.phone}
             />
             {errors.phone && touched.phone ? <div>{errors.phone}</div> : null}
             <br />
@@ -183,10 +267,16 @@ const SignUpTutor = () => {
                   </div>
                 );
               })}
+              <br />
+              Primary/Secondary
+              <br />
+              <Field type="checkbox" name="subjects" value="English" />
+              English
             </div>
             {errors.subjects && touched.subjects ? (
               <div>{errors.subjects}</div>
             ) : null}
+            {!matchingLevelSub && <p>Please select matching class levels and subjects.</p>}
             <br />
             <br />
 
@@ -211,9 +301,12 @@ const SignUpTutor = () => {
               <div>{errors.teachingExperience}</div>
             ) : null}
             <br />
-            <button type="submit" style={{ backgroundColor: "lime" }}>
+            {(isEmailUnique && isTutorProfileSetUp && matchingLevelSub) && <button type="submit" style={{ backgroundColor: "lime" }}>
               sign up
-            </button>
+            </button>}
+            {!isEmailUnique && <p>Email already in use!</p>}
+            {!isTutorProfileSetUp && <p>Tutor profile unable to be set up.</p>}
+            <CheckClassLevelAndSubject />
           </Form>
         )}
       </Formik>
