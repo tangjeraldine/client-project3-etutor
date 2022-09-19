@@ -116,9 +116,17 @@ const EditTutorProfile = () => {
       });
   };
 
+  const handleEdit = () => {
+    setWantToEdit(true);
+  };
+
   return (
     <>
+      {wantToEdit}
       <p>Full Name: </p>
+      <button style={{ backgroundColor: "lime" }} onClick={handleEdit}>
+        Edit Profile
+      </button>
       <br />
 
       <h1 style={{ fontSize: "50px" }}>View Tutor Profile</h1>
