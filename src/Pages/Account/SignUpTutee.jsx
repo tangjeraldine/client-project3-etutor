@@ -8,9 +8,9 @@ import urlcat from "urlcat";
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpTutee = () => {
-  const [isEmailUnique, setIsEmailUnique] = useState(true)
-  const [isTuteeProfileSetUp, setIsTuteeProfileSetUp] = useState(true)
-  const [matchingLevelSub, setMatchingLevelSub] = useState(true)
+  const [isEmailUnique, setIsEmailUnique] = useState(true);
+  const [isTuteeProfileSetUp, setIsTuteeProfileSetUp] = useState(true);
+  const [matchingLevelSub, setMatchingLevelSub] = useState(true);
   const navigate = useNavigate();
 
   const priSubjects = ["Mathematics", "Science"];
@@ -41,10 +41,10 @@ const SignUpTutee = () => {
   ];
 
   const CheckClassLevelAndSubject = () => {
-    const { values } = useFormikContext();//a way to excess form values globally
+    const { values } = useFormikContext(); //a way to excess form values globally
     useEffect(() => {
-      setMatchingLevelSub(true)
-      const currentLevel = values.currentLevel.split(" ")
+      setMatchingLevelSub(true);
+      const currentLevel = values.currentLevel.split(" ");
       let anyPriSub = false;
       let anySecSub = false;
       values.subjects.map((subject) => {
@@ -62,9 +62,9 @@ const SignUpTutee = () => {
         if (subject === "Science") {
           if (currentLevel[0] === "Primary") {
             if (currentLevel[1] !== "1" && currentLevel[1] !== "2") {
-              anyPriSub = true
+              anyPriSub = true;
             } else {
-              anyPriSub = false
+              anyPriSub = false;
             }
           }
         }
@@ -77,28 +77,31 @@ const SignUpTutee = () => {
         (currentLevel[0] === "Secondary" && anyPriSub === true)
       ) {
         console.log("please select matching class levels and subjects");
-        setMatchingLevelSub(false)
+        setMatchingLevelSub(false);
       }
-
     }, [values.currentLevel, values.subjects]);
   };
 
   const handleSignUpAsTutee = (values) => {
-    const url = urlcat(SERVER, "/tutee/profile-signup");//need to check that server url is the same
+    setIsTuteeProfileSetUp(true);
+    setIsEmailUnique(true);
+    const url = urlcat(SERVER, "/tutee/profile-signup"); //need to check that server url is the same
     axios
-    .post(url, values)
-    .then(({ data }) => {
+      .post(url, values)
+      .then(({ data }) => {
         navigate("/tutee");
-    })
-    .catch((error) => {
-      console.log(error)
-      if (error.response.data.error === "Tutee profile unable to be set up.") {
-        setIsTuteeProfileSetUp(false)
-      } else {
-        setIsEmailUnique(false)//only email is unique, if wan phone to be unique need add another condition/alert
-      }
-    });
-  }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (
+          error.response.data.error === "Tutee profile unable to be set up."
+        ) {
+          setIsTuteeProfileSetUp(false);
+        } else {
+          setIsEmailUnique(false); //only email is unique, if wan phone to be unique need add another condition/alert
+        }
+      });
+  };
 
   return (
     <>
@@ -118,7 +121,7 @@ const SignUpTutee = () => {
         validationSchema={signUpAsTuteeValidation}
         onSubmit={(values) => handleSignUpAsTutee(values)}
       >
-        {({ handleChange, handleBlur, values, errors, touched }) => (
+        {({ handleChange, handleBlur, values, errors, touched, initialValues }) => (
           <Form>
             <p>Full Name</p>
             <Field
@@ -198,12 +201,16 @@ const SignUpTutee = () => {
               onChange={handleChange}
             >
               <option disabled>select</option>
-              {priClassLevel.map((level) => 
-                (<option key={level} value={level}>{level}</option>)
-              )}
-              {secClassLevel.map((level) => 
-                <option key={level} value={level}>{level}</option>
-              )}
+              {priClassLevel.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+              {secClassLevel.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
             </Field>
             {errors.currentLevel && touched.currentLevel ? (
               <div>{errors.currentLevel}</div>
@@ -242,15 +249,27 @@ const SignUpTutee = () => {
             {errors.subjects && touched.subjects ? (
               <div>{errors.subjects}</div>
             ) : null}
-            {!matchingLevelSub && <p>Please select matching class levels and subjects.</p>}
+            {!matchingLevelSub && (
+              <p>Please select matching class levels and subjects.</p>
+            )}
             <br />
             <br />
 
             <br />
-            {(isEmailUnique && isTuteeProfileSetUp && matchingLevelSub) && <button type="submit" style={{ backgroundColor: "lime" }}>
+            <button
+              type="submit"
+              disabled={
+                !(
+                  Object.keys(errors).length === 0 &&
+                  Object.keys(touched).length ===
+                    Object.keys(initialValues).length
+                )
+              }
+              style={{ backgroundColor: "lime" }}
+            >
               sign up
-            </button>}
-            {!isEmailUnique && <p>Email already in use!</p>}
+            </button>
+            {/* {!isEmailUnique && <p>Email already in use!</p>} */}
             {!isTuteeProfileSetUp && <p>Tutee profile unable to be set up.</p>}
             <CheckClassLevelAndSubject />
           </Form>

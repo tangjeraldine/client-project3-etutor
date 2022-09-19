@@ -26,19 +26,11 @@ function AboutUs() {
                   ABC.
                 </p>
                 <br />
-                <h2 class='text-1xl font-bold text-red-700 md:text-2xl'>
-                  I want to get started as a:
-                </h2>
                 <div class='mt-4 md:mt-8 grid-cols-2'>
                   <button
                     class='inline-flex px-12 py-3 mx-4 text-sm font-medium text-red-500 transition bg-white border border-white rounded hover:bg-red hover:text-black focus:outline-none focus:ring focus:ring-red-400'
-                    onClick={() => navigate("/signup/tutor")}>
-                    Tutor
-                  </button>
-                  <button
-                    class='inline-flex px-12 py-3 mx-4 text-sm font-medium text-red-500 transition bg-white border border-white rounded hover:bg-red hover:text-black focus:outline-none focus:ring focus:ring-red-400'
-                    onClick={() => navigate("/signup/tutee")}>
-                    Tutee
+                    onClick={() => navigate("/signup")}>
+                    Get Started
                   </button>
                 </div>
               </div>
@@ -60,6 +52,67 @@ function AboutUs() {
           </div>
         </div>
       </aside>
+      <div class='space-y-4'>
+        <details class='group' open>
+          <summary class='flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50'>
+            <h5 class='font-medium text-gray-900'>
+              What if I encounter technical issues during sign up?
+            </h5>
+
+            <svg
+              class='flex-shrink-0 ml-1.5 w-5 h-5 transition duration-300 group-open:-rotate-180'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'>
+              <path
+                stroke-linecap='round'
+                stroke-linejoin='round'
+                stroke-width='2'
+                d='M19 9l-7 7-7-7'
+              />
+            </svg>
+          </summary>
+
+          <p class='px-4 mt-4 leading-relaxed text-gray-700'>
+            You can contact our administrative team on WhatsApp at +65 0000
+            1111, or email us at MaryDwJer@email.com. Please allow us 3 working
+            days to get back to you.
+          </p>
+        </details>
+
+        <details class='group'>
+          <summary class='flex items-center justify-between p-4 rounded-lg cursor-pointer bg-gray-50'>
+            <h5 class='font-medium text-gray-900'>
+              Is there a physical space provided by ETutor for tutors and tutees
+              to meet and conduct tuition sessions?
+            </h5>
+
+            <svg
+              class='flex-shrink-0 ml-1.5 w-5 h-5 transition duration-300 group-open:-rotate-180'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'>
+              <path
+                stroke-linecap='round'
+                stroke-linejoin='round'
+                stroke-width='2'
+                d='M19 9l-7 7-7-7'
+              />
+            </svg>
+          </summary>
+
+          <p class='px-4 mt-4 leading-relaxed text-gray-700'>
+            No, ETutor is only an e-platform for freelance tutors to list their
+            tuition services and for tutees to select tutors of their interest.
+            ETutor does not provide physical classrooms or areas for tuition to
+            be conducted. Arrangements will need to be made privately between
+            each tutor and prospective tutee on how their tuition sessions will
+            be conducted.
+          </p>
+        </details>
+      </div>
     </div>
   );
 }
