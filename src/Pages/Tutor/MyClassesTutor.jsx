@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import urlcat from "urlcat";
-import axios from 'axios'
+import axios from "axios";
 import { useState } from "react";
 import { Field, Formik, Form, useFormikContext } from "formik";
-import classesValidation from '../../Validations/classesValidation'
+import classesValidation from "../../Validations/classesValidation";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -14,20 +14,19 @@ const SERVER = import.meta.env.VITE_SERVER;
 //does that mean need to keep in local storage? n then empty the local storage when we logout..............????
 
 const MyClassesTutor = ({ user }) => {
-
-  const [classes, setClasses] = useState([])
-  const [loadClassesSuccessful, setLoadClassesSuccessful] = useState(true)
+  const [classes, setClasses] = useState([]);
+  const [loadClassesSuccessful, setLoadClassesSuccessful] = useState(true);
 
   useEffect(() => {
     const url = urlcat(SERVER, "/class/get-classes");
     axios
       .get(url, user)
       .then(({ data }) => {
-        console.log(data)
+        console.log(data);
         if (data.length === 0) {
-          console.log('no classes created yet')
+          console.log("no classes created yet");
         } else {
-          setClasses(data)
+          setClasses(data);
         }
       })
       .catch((error) => {
@@ -52,17 +51,23 @@ const MyClassesTutor = ({ user }) => {
           classType: "select",
           // classLevel: 'select',
         }}
-        validationSchema={signUpAsTutorValidation}
+        validationSchema={classesValidation}
         onSubmit={(values) => {
           console.log(values);
           handleSignUpAsTutor(values);
-        }}
-      >
-        {({ handleChange, handleBlur, values, errors, touched, initialValues }) => (
+        }}>
+        {({
+          handleChange,
+          handleBlur,
+          values,
+          errors,
+          touched,
+          initialValues,
+        }) => (
           <Form>
             <p>Class Title</p>
             <Field
-              name="fullName"
+              name='fullName'
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.fullName}
@@ -78,7 +83,7 @@ const MyClassesTutor = ({ user }) => {
               {priSubjects.map((subject) => {
                 return (
                   <div key={subject}>
-                    <Field type="checkbox" name="subjects" value={subject} />
+                    <Field type='checkbox' name='subjects' value={subject} />
                     {subject}
                   </div>
                 );
@@ -88,7 +93,7 @@ const MyClassesTutor = ({ user }) => {
               {secSubjects.map((subject) => {
                 return (
                   <div key={subject}>
-                    <Field type="checkbox" name="subjects" value={subject} />
+                    <Field type='checkbox' name='subjects' value={subject} />
                     {subject}
                   </div>
                 );
@@ -96,38 +101,36 @@ const MyClassesTutor = ({ user }) => {
               <br />
               Primary/Secondary
               <br />
-              <Field type="checkbox" name="subjects" value="English" />
+              <Field type='checkbox' name='subjects' value='English' />
               English
             </div>
             {errors.subjects && touched.subjects ? (
               <div>{errors.subjects}</div>
-              ) : null}
+            ) : null}
             {!matchingLevelSub && (
               <p>Please select matching class levels and subjects.</p>
-              )}
+            )}
             <br />
             <br />
 
             <p></p>
             <Field
-              as="select"
-              name="region"
+              as='select'
+              name='region'
               values={values.region}
-              onChange={handleChange}
-            >
+              onChange={handleChange}>
               <option disabled>select</option>
-              <option value="North">North</option>
-              <option value="South">South</option>
-              <option value="East">East</option>
-              <option value="West">West</option>
-              <option value="Central">Central</option>
+              <option value='North'>North</option>
+              <option value='South'>South</option>
+              <option value='East'>East</option>
+              <option value='West'>West</option>
+              <option value='Central'>Central</option>
             </Field>
             {errors.region && touched.region ? (
               <div>{errors.region}</div>
             ) : null}
             <br />
             <br />
-
 
             {/* <p>Class Level</p>
             <div>
@@ -156,21 +159,21 @@ const MyClassesTutor = ({ user }) => {
                   ) : null}
                 <br /> */}
 
-
-
-              <p>Group Size</p>
-              <Field
-                name="groupSize"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.groupSize}
-              />
-              {errors.groupSize && touched.groupSize ? <div>{errors.groupSize}</div> : null}
-              <br />
+            <p>Group Size</p>
+            <Field
+              name='groupSize'
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.groupSize}
+            />
+            {errors.groupSize && touched.groupSize ? (
+              <div>{errors.groupSize}</div>
+            ) : null}
+            <br />
 
             <br />
             <button
-              type="submit"
+              type='submit'
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
@@ -178,8 +181,7 @@ const MyClassesTutor = ({ user }) => {
                     Object.keys(initialValues).length
                 )
               }
-              style={{ backgroundColor: "lime" }}
-            >
+              style={{ backgroundColor: "lime" }}>
               sign up
             </button>
             {/* {!isEmailUnique && <p>Email already in use!</p>} */}
@@ -191,7 +193,7 @@ const MyClassesTutor = ({ user }) => {
 
       {/* list of classes of this tutor */}
       <div>
-        {classes.map(eachClass, index => {
+        {classes.map(eachClass, (index) => {
           return (
             <div key={index}>
               <p>Class Title: {eachClass.classTitle}</p>
@@ -199,10 +201,10 @@ const MyClassesTutor = ({ user }) => {
               <p>Date, Time: {eachClass.timeDay}</p>
               <p>Tutor: {eachClass.tutor}</p>
               {/* not sure if tutor is necessary since its their own account xD */}
-              <p>Tutees: {eachClass.bookedBy.join(', ')}</p>
+              <p>Tutees: {eachClass.bookedBy.join(", ")}</p>
               <p>Size: {eachClass.groupSize}</p>
             </div>
-          )
+          );
         })}
         {!loadClassesSuccessful && <p>Unable to load classes.</p>}
       </div>
