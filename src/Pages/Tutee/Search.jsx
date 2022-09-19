@@ -11,9 +11,15 @@ const Search = () => {
   const [tutor, setTutor] = useState([]);
   const [page, setPage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [whatToOpen, setWhatToOpen] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const url = urlcat(SERVER, `/tutor`);
   const sortOptions = ["rating", "region"];
+
+  const handleModal = (index) => {
+    setIsOpen(true);
+    setWhatToOpen(index);
+  };
 
   const handleSort = (values) => {
     try {
@@ -21,7 +27,6 @@ const Search = () => {
       const sortURL = urlcat(url, sort);
 
       axios.get(sortURL, sort).then((data) => {
-        console.log(data.data);
         setTutor(data.data);
       });
     } catch (error) {
@@ -178,7 +183,7 @@ const Search = () => {
       <div>
         <Formik
           initialValues={{
-            sort: "",
+            sort: "Sort",
           }}
         >
           {({ handleChange, handleBlur, values, errors, touched }) => (
@@ -189,10 +194,13 @@ const Search = () => {
                   as="select"
                   name="sort"
                   value={values.sort}
-                  onChange={(handleChange, handleSort)}
+                  onChange={(e) => {
+                    handleChange;
+                    handleSort(e);
+                  }}
                   onBlur={handleBlur}
                 >
-                  <option value="">Sort</option>
+                  <option disabled>Sort</option>
                   {sortOptions.map((e) => (
                     <option key={e} value={e}>
                       {e}
@@ -211,21 +219,22 @@ const Search = () => {
           <div>No tutors matched your requirements!</div>
         ) : (
           <div>
-            {tutor.map((e, index) => (
-              <div onClick={() => setIsOpen(true)} key={index} value={index}>
-                <p>Tutor Name: {e.fullName}</p>
-                <p>Class setting: {e.classType}</p>
-                <p>Location: {e.region}</p>
-                <p> Subjects: {e.subjects.join(", ")}</p>
-                <p>Levels: {e.classLevel.join(", ")}</p>
-                <p>Ratings: {e.rating}</p>
-                <TutorModal
-                  open={isOpen}
-                  onClose={() => setIsOpen(false)}
-                  tutor={e}
-                />
+            {tutor.map((tutor, index) => (
+              <div onClick={() => handleModal(index)} key={index} value={index}>
+                <p>Tutor Name: {tutor.fullName}</p>
+                <p>Class setting: {tutor.classType}</p>
+                <p>Location: {tutor.region}</p>
+                <p> Subjects: {tutor.subjects.join(", ")}</p>
+                <p>Levels: {tutor.classLevel.join(", ")}</p>
+                <p>Ratings: {tutor.rating}</p>
               </div>
             ))}
+
+            <TutorModal
+              open={isOpen}
+              onClose={() => setIsOpen(false)}
+              tutor={tutor[whatToOpen]}
+            />
 
             <button
               disabled={page === 0}

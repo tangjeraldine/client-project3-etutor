@@ -22,24 +22,24 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<SignIn setUser={setUser} />} />
-        <Route path='/signup' element={<SignUpUser />} />
-        <Route path='/signup/tutor' element={<SignUpTutor />} />
-        <Route path='/signup/tutee' element={<SignUpTutee />} />
-        <Route path='/aboutus' element={<AboutUs />} />
+        <Route path="/" element={<SignIn setUser={setUser} />} />
+        <Route path="/signup" element={<SignUpUser />} />
+        <Route path="/signup/tutor" element={<SignUpTutor />} />
+        <Route path="/signup/tutee" element={<SignUpTutee />} />
+        <Route path="/aboutus" element={<AboutUs />} />
 
-        <Route path='/tutor' element={<LayoutTutor />}>
+        <Route path="/tutor" element={<LayoutTutor />}>
           <Route index element={<MyClassesTutor user={user} />} />
-          <Route path='/tutor/mytutees' element={<MyTutees />} />
-          <Route path='/tutor/askanything' element={<AskAnythingTutor />} />
+          <Route path="/tutor/mytutees" element={<MyTutees user={user} />} />
+          <Route path="/tutor/askanything" element={<AskAnythingTutor />} />
           {/* <Route path="/tutor/editprofile" element={<EditProfileTutee />} /> */}
         </Route>
 
-        <Route path='/tutee' element={<LayoutTutee />}>
+        <Route path="/tutee" element={<LayoutTutee />}>
           <Route index element={<MyClassesTutee />} />
-          <Route path='/tutee/mytutors' element={<MyTutors />} />
-          <Route path='/tutee/search' element={<Search />} />
-          <Route path='/tutee/askanything' element={<AskAnythingTutee />} />
+          <Route path="/tutee/mytutors" element={<MyTutors user={user} />} />
+          <Route path="/tutee/search" element={<Search />} />
+          <Route path="/tutee/askanything" element={<AskAnythingTutee />} />
           {/* <Route path="/tutee/editprofile" element={<EditProfileTutor />} /> */}
         </Route>
       </Routes>
