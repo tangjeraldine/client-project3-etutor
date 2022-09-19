@@ -1,4 +1,4 @@
-import { useNavigate, useEffect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import signUpAsTutorValidation from "../../Validations/signUpAsTutorValidation";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import { useEffect, useState } from "react";
@@ -130,7 +130,7 @@ const EditTutorProfile = () => {
           phone: "",
           region: "select",
           rates: "",
-          classType: "select",
+          classType: [],
           classLevel: [],
           subjects: [],
           educationBackground: "",
@@ -140,7 +140,8 @@ const EditTutorProfile = () => {
         onSubmit={(values) => {
           console.log(values);
           handleSignUpAsTutor(values);
-        }}>
+        }}
+      >
         {({
           handleChange,
           handleBlur,
@@ -152,7 +153,7 @@ const EditTutorProfile = () => {
           <Form>
             <p>Full Name</p>
             <Field
-              name='fullName'
+              name="fullName"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.fullName}
@@ -161,70 +162,61 @@ const EditTutorProfile = () => {
               <div>{errors.fullName}</div>
             ) : null}
             <br />
-
             <p>Phone</p>
             <Field
-              name='phone'
+              name="phone"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.phone}
             />
             {errors.phone && touched.phone ? <div>{errors.phone}</div> : null}
             <br />
-
             <p>Region</p>
             <Field
-              as='select'
-              name='region'
+              as="select"
+              name="region"
               values={values.region}
-              onChange={handleChange}>
+              onChange={handleChange}
+            >
               <option disabled>select</option>
-              <option value='North'>North</option>
-              <option value='South'>South</option>
-              <option value='East'>East</option>
-              <option value='West'>West</option>
-              <option value='Central'>Central</option>
+              <option value="North">North</option>
+              <option value="South">South</option>
+              <option value="East">East</option>
+              <option value="West">West</option>
+              <option value="Central">Central</option>
             </Field>
             {errors.region && touched.region ? (
               <div>{errors.region}</div>
             ) : null}
             <br />
             <br />
-
             <p>Rates per lesson</p>
             <Field
-              name='rates'
+              name="rates"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.rates}
             />
             {errors.rates && touched.rates ? <div>{errors.rates}</div> : null}
             <br />
-
             <p>Class Type</p>
-            <Field
-              as='select'
-              name='classType'
-              values={values.classType}
-              onChange={handleChange}>
-              <option disabled>select</option>
-              <option value='In-Person'>In-Person</option>
-              <option value='Remote'>Remote</option>
-              <option value='Both In-Person and Remote'>Both</option>
-            </Field>
+            <Field type="checkbox" name="classType" value="In-Person" />
+            In-Person
+            <Field type="checkbox" name="classType" value="Remote" />
+            Remote
+            <br />
             {errors.classType && touched.classType ? (
               <div>{errors.classType}</div>
             ) : null}
             <br />
             <br />
-
             <p>Class Level</p>
             <div>
               Primary
               {priClassLevel.map((level) => {
                 return (
                   <div key={level}>
-                    <Field type='checkbox' name='classLevel' value={level} />
+                    <Field type="checkbox" name="classLevel" value={level} />
                     {level}
                   </div>
                 );
@@ -234,7 +226,7 @@ const EditTutorProfile = () => {
               {secClassLevel.map((level) => {
                 return (
                   <div key={level}>
-                    <Field type='checkbox' name='classLevel' value={level} />
+                    <Field type="checkbox" name="classLevel" value={level} />
                     {level}
                   </div>
                 );
@@ -244,14 +236,13 @@ const EditTutorProfile = () => {
               <div>{errors.classLevel}</div>
             ) : null}
             <br />
-
             <p>Subjects</p>
             <div>
               Primary
               {priSubjects.map((subject) => {
                 return (
                   <div key={subject}>
-                    <Field type='checkbox' name='subjects' value={subject} />
+                    <Field type="checkbox" name="subjects" value={subject} />
                     {subject}
                   </div>
                 );
@@ -261,7 +252,7 @@ const EditTutorProfile = () => {
               {secSubjects.map((subject) => {
                 return (
                   <div key={subject}>
-                    <Field type='checkbox' name='subjects' value={subject} />
+                    <Field type="checkbox" name="subjects" value={subject} />
                     {subject}
                   </div>
                 );
@@ -269,7 +260,7 @@ const EditTutorProfile = () => {
               <br />
               Primary/Secondary
               <br />
-              <Field type='checkbox' name='subjects' value='English' />
+              <Field type="checkbox" name="subjects" value="English" />
               English
             </div>
             {errors.subjects && touched.subjects ? (
@@ -280,10 +271,9 @@ const EditTutorProfile = () => {
             )}
             <br />
             <br />
-
             <p>Education Background</p>
             <Field
-              name='educationBackground'
+              name="educationBackground"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.educationBackground}
@@ -293,7 +283,7 @@ const EditTutorProfile = () => {
             ) : null}
             <p>Teaching Experience</p>
             <Field
-              name='teachingExperience'
+              name="teachingExperience"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.teachingExperience}
@@ -303,7 +293,7 @@ const EditTutorProfile = () => {
             ) : null}
             <br />
             <button
-              type='submit'
+              type="submit"
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
@@ -311,7 +301,8 @@ const EditTutorProfile = () => {
                     Object.keys(initialValues).length
                 )
               }
-              style={{ backgroundColor: "lime" }}>
+              style={{ backgroundColor: "lime" }}
+            >
               sign up
             </button>
             {/* {!isEmailUnique && <p>Email already in use!</p>} */}

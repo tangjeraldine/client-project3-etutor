@@ -4,8 +4,7 @@ const signUpAsTutorValidation = yup.object({
   fullName: yup
     .string()
     .matches(/^[a-zA-Z\s]{4,30}$/, {
-      message:
-        "Name should have 4-30 characters, and contain only alphabets.",
+      message: "Name should have 4-30 characters, and contain only alphabets.",
       excludeEmptyString: true,
     })
     .required("A username is required."),
@@ -20,22 +19,27 @@ const signUpAsTutorValidation = yup.object({
       excludeEmptyString: true,
     })
     .required("A phone number is required."),
-  region: yup.string().required("A region is required.")
-  .matches(/^(North|South|East|West|Central)$/, {
-    message: "A region is required.", excludeEmptyString: true
-  }), //north south east west central
+  region: yup
+    .string()
+    .required("A region is required.")
+    .matches(/^(North|South|East|West|Central)$/, {
+      message: "A region is required.",
+      excludeEmptyString: true,
+    }), //north south east west central
   rates: yup
     .number()
-    .typeError('Rates must be a number')
+    .typeError("Rates must be a number")
     .required("A rate per lesson is required.")
-    .min(0, "Rate cannot be less than 0." )
-    .max(1000, "Rates cannot be higher than 1000." ),
+    .min(0, "Rate cannot be less than 0.")
+    .max(1000, "Rates cannot be higher than 1000."),
   classType: yup
-    .string()
-    .required("Please indicate the mode that the classes are held in.")
-    .matches(/^(In-Person|Remote|Both In-Person and Remote)$/, {
-      message: "A class type is required.", excludeEmptyString: true
-    }),
+    .array()
+    .min(1, "At least one class level is required.")
+    .of(yup.string())
+    .required("Please indicate the mode that the classes are held in."),
+  // .matches(/^(In-Person|Remote|Both In-Person and Remote)$/, {
+  //   message: "A class type is required.", excludeEmptyString: true
+  // }),
   classLevel: yup
     .array()
     .min(1, "At least one class level is required.")
