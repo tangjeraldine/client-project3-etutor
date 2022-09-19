@@ -1,8 +1,5 @@
 const AskAnythingTutor = () => {
+  return <h1>ask anything tutor side</h1>;
+};
 
-    return (
-        <h1>ask anything tutor side</h1>
-    )
-}
-
-export default AskAnythingTutor
+export default AskAnythingTutor;
