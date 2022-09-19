@@ -8,7 +8,6 @@ import urlcat from "urlcat";
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpTutee = () => {
-  const [isEmailUnique, setIsEmailUnique] = useState(true);
   const [isTuteeProfileSetUp, setIsTuteeProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
   const navigate = useNavigate();
@@ -84,7 +83,6 @@ const SignUpTutee = () => {
 
   const handleSignUpAsTutee = (values) => {
     setIsTuteeProfileSetUp(true);
-    setIsEmailUnique(true);
     const url = urlcat(SERVER, "/tutee/profile-signup"); //need to check that server url is the same
     axios
       .post(url, values)
@@ -111,7 +109,6 @@ const SignUpTutee = () => {
       <Formik
         initialValues={{
           fullName: "",
-          email: "",
           phone: "",
           region: "select",
           preferredContactMode: "select",
@@ -121,7 +118,14 @@ const SignUpTutee = () => {
         validationSchema={signUpAsTuteeValidation}
         onSubmit={(values) => handleSignUpAsTutee(values)}
       >
-        {({ handleChange, handleBlur, values, errors, touched, initialValues }) => (
+        {({
+          handleChange,
+          handleBlur,
+          values,
+          errors,
+          touched,
+          initialValues,
+        }) => (
           <Form>
             <p>Full Name</p>
             <Field
@@ -133,16 +137,6 @@ const SignUpTutee = () => {
             {errors.fullName && touched.fullName ? (
               <div>{errors.fullName}</div>
             ) : null}
-            <br />
-
-            <p>Email</p>
-            <Field
-              name="email"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.email}
-            />
-            {errors.email && touched.email ? <div>{errors.email}</div> : null}
             <br />
 
             <p>Phone</p>
@@ -261,15 +255,13 @@ const SignUpTutee = () => {
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
-                  Object.keys(touched).length ===
-                    Object.keys(initialValues).length
+                  Object.keys(touched).length !== 0
                 )
               }
               style={{ backgroundColor: "lime" }}
             >
               sign up
             </button>
-            {/* {!isEmailUnique && <p>Email already in use!</p>} */}
             {!isTuteeProfileSetUp && <p>Tutee profile unable to be set up.</p>}
             <CheckClassLevelAndSubject />
           </Form>
