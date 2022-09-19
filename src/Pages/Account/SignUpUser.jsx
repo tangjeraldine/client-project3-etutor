@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import axios from "axios";
@@ -7,22 +8,36 @@ import signUpValidation from "../../Validations/signUpValidation";
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpUser = () => {
+  const [isUserProfileSetUp, setIsUserProfileSetUp] = useState(true);
+  const [isEmailUnique, setIsEmailUnique] = useState(true);
+  const [isUsernameUnique, setIsUsernameUnique] = useState(true);
   const navigate = useNavigate();
 
   const handleSignUp = (values) => {
+    setIsUserProfileSetUp(true);
+    setIsEmailUnique(true);
+    setIsUsernameUnique(true);
     const url = urlcat(SERVER, "/user/signup");
     axios
       .post(url, values)
       .then(({ data }) => {
         if (data.userType === "Tutor") {
           navigate("/signup/tutor");
-        } else {
+        } else if (data.userType === "Tutee") {
           navigate("/signup/tutee");
         }
       })
       .catch((error) => {
-        if (error.response.data.error === "This username has been taken.") {
-          alert(" Username taken");
+        if (error.response.data.error === "User unable to be created.") {
+          setIsUserProfileSetUp(false);
+        } else if (
+          error.response.data.error === "This username has been taken."
+        ) {
+          setIsUsernameUnique(false);
+        } else if (
+          error.response.data.error === "This email address is already in use."
+        ) {
+          setIsEmailUnique(false);
         }
       });
   };
@@ -35,13 +50,21 @@ const SignUpUser = () => {
       <Formik
         initialValues={{
           username: "",
+          email: "",
           password: "",
           userType: "select",
         }}
         validationSchema={signUpValidation}
         onSubmit={(values) => handleSignUp(values)}
       >
-        {({ handleChange, handleBlur, values, errors, touched }) => (
+        {({
+          handleChange,
+          handleBlur,
+          values,
+          errors,
+          touched,
+          initialValues,
+        }) => (
           <Form>
             <Field
               name="username"
@@ -53,6 +76,15 @@ const SignUpUser = () => {
             {errors.username && touched.username ? (
               <div>{errors.username}</div>
             ) : null}
+
+            <Field
+              name="email"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.email}
+              placeholder="email"
+            />
+            {errors.email && touched.email ? <div>{errors.email}</div> : null}
 
             <Field
               name="password"
@@ -80,9 +112,23 @@ const SignUpUser = () => {
             ) : null}
 
             <br />
-            <button type="submit" style={{ backgroundColor: "lime" }}>
+            <button
+              type="submit"
+              disabled={
+                !(
+                  Object.keys(errors).length === 0 &&
+                  Object.keys(touched).length ===
+                    Object.keys(initialValues).length
+                )
+              }
+              style={{ backgroundColor: "lime" }}
+            >
+              {/* trying to use disabled={!Formik.isValid} but it doesnt detect even when isValid is true*/}
               sign up
             </button>
+            {!isEmailUnique && <p>Email already in use!</p>}
+            {!isUsernameUnique && <p>Username has been taken.</p>}
+            {!isUserProfileSetUp && <p>User account unable to be created.</p>}
           </Form>
         )}
       </Formik>
