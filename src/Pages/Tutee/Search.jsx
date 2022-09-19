@@ -4,37 +4,25 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import urlcat from "urlcat";
 import * as Yup from "yup";
+import TutorModal from "../../components/TutorModal";
 
 const SERVER = import.meta.env.VITE_SERVER;
 const Search = () => {
-  const [classes, setClasses] = useState([]);
   const [tutor, setTutor] = useState([]);
   const [page, setPage] = useState(0);
-  const [sortValue, setSortValue] = useState("");
-  const [sort, setSort] = useState("");
-
+  const [isOpen, setIsOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const url = urlcat(SERVER, `/tutor`);
-
-  // rating region classtype subjects classlevel
-
-  const sortOptions = [
-    "subjects",
-    "classLevel",
-    "classType",
-    "rating",
-    "region",
-  ];
+  const sortOptions = ["rating", "region"];
 
   const handleSort = (values) => {
     try {
       let sort = values.target.value;
+      const sortURL = urlcat(url, sort);
 
-      const sortURL = urlcat(url);
-
-      axios.get(sortURL).then((data) => {
-        console.log(data);
-        setTutor(data.data.allTutor);
+      axios.get(sortURL, sort).then((data) => {
+        console.log(data.data);
+        setTutor(data.data);
       });
     } catch (error) {
       console.log(error);
@@ -86,7 +74,7 @@ const Search = () => {
     classType: Yup.string().required("Required"),
   });
 
-  const handleFilter = (values, event) => {
+  const handleFilter = (values) => {
     const filterURL = urlcat(
       url,
       `/search?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}`
@@ -114,20 +102,6 @@ const Search = () => {
           <div>
             <Form>
               <label>Select subject: </label>
-              {/* <Field
-                as="select"
-                name="subjects"
-                value={values.subjects}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value="">Select subject</option>
-                {allSubjects.map((e) => (
-                  <option key={e} value={e}>
-                    {e}
-                  </option>
-                ))}
-              </Field> */}
 
               {allSubjects.map((subject) => {
                 return (
@@ -137,7 +111,6 @@ const Search = () => {
                   </div>
                 );
               })}
-
               {errors.subjects && touched.subjects ? (
                 <div>{errors.subjects}</div>
               ) : null}
@@ -160,14 +133,7 @@ const Search = () => {
                   </option>
                 ))}
               </Field>
-              {/* {allClass.map((subject) => {
-                return (
-                  <div key={subject}>
-                    <Field type="checkbox" name="classLevel" value={subject} />
-                    {subject}
-                  </div>
-                );
-              })} */}
+
               {errors.classLevel && touched.classLevel ? (
                 <div>{errors.classLevel}</div>
               ) : null}
@@ -210,17 +176,6 @@ const Search = () => {
 
       <h1 style={{ fontSize: "50px" }}>Sort</h1>
       <div>
-        <label> Sort By: </label>
-        <option>Select a class</option>
-        <select onChange={handleSort} value={sortValue}>
-          <option>Please Select Value</option>
-          {sortOptions.map((e) => (
-            <option key={e} value={e}>
-              {e}
-            </option>
-          ))}
-        </select>
-
         <Formik
           initialValues={{
             sort: "",
@@ -256,14 +211,19 @@ const Search = () => {
           <div>No tutors matched your requirements!</div>
         ) : (
           <div>
-            {tutor.map((e) => (
-              <div key={e._id} value={e._id}>
-                <p>Tutor Name:{e.fullName}</p>
+            {tutor.map((e, index) => (
+              <div onClick={() => setIsOpen(true)} key={index} value={index}>
+                <p>Tutor Name: {e.fullName}</p>
                 <p>Class setting: {e.classType}</p>
-                <p>Location:{e.region}</p>
-                <p> Subjects: {e.subjects}</p>
-                <p>Levels:{e.classLevel}</p>
+                <p>Location: {e.region}</p>
+                <p> Subjects: {e.subjects.join(", ")}</p>
+                <p>Levels: {e.classLevel.join(", ")}</p>
                 <p>Ratings: {e.rating}</p>
+                <TutorModal
+                  open={isOpen}
+                  onClose={() => setIsOpen(false)}
+                  tutor={e}
+                />
               </div>
             ))}
 
@@ -282,7 +242,6 @@ const Search = () => {
             </button>
           </div>
         )}
-        <div></div>
       </div>
     </>
   );
