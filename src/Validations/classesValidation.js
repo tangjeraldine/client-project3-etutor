@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 const classesValidation = yup.object({
-    classTitle: yup
+  classTitle: yup
     .string()
     .matches(/^[a-zA-Z0-9~!@#$%^&*()_+-=:<>,./|\s]{4,30}$/, {
       message:
@@ -9,7 +9,7 @@ const classesValidation = yup.object({
       excludeEmptyString: true,
     })
     .required("Class title is required."),
-    subjects: yup
+  subjects: yup
     .string()
     .required("Exactly one subject is required.")
     .matches(
@@ -19,11 +19,16 @@ const classesValidation = yup.object({
         excludeEmptyString: true,
       }
     ),
-    timeDay: yup
+  timeDay: yup
     .date()
     .default(() => new Date()) //! How to make the date not before today
     .required("Date and time is required."),
-    groupSize: yup.number().positive().integer().required('Group size is required.').min(1, 'Group size must be at least 1.'),
+  groupSize: yup
+    .number()
+    .positive()
+    .integer()
+    .required("Group size is required.")
+    .min(1, "Group size must be at least 1."),
 });
 
-export default signUpAsTuteeValidation;
+export default classesValidation;
