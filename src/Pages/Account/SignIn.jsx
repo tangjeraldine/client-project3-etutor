@@ -4,13 +4,17 @@ import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import axios from "axios";
 import signInValidation from "../../Validations/signInValidation";
+import { useState } from "react";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const SignIn = () => {
+const SignIn = ({setUser}) => {
   const navigate = useNavigate();
 
-  //to decode token and find out usertype
+  // const [user, setUser] = useState({});
+  const [signInSuccessful, setSignInSuccessful] = useState(true);
+
+  //to decode token and find out usertype and save to state
   const parseJwt = (token) => {
     if (token === "") {
       return {};
@@ -30,14 +34,18 @@ const SignIn = () => {
   };
 
   const handleSignIn = (values) => {
+    setSignInSuccessful(true)
     const url = urlcat(SERVER, "/user/signin");
     axios
       .post(url, values)
       .then(({ data }) => {
-        const userType = parseJwt(data.token).user.userType;
-        if (userType === "tutor") {
+        const user = parseJwt(data.token).user;
+        setUser(user);
+        // const userType = parseJwt(data.token).user.userType;
+        const userType = user.userType;
+        if (userType === "Tutor") {
           navigate("/tutor");
-        } else {
+        } else if (userType === "Tutee") {
           navigate("/tutee");
         }
       })
@@ -46,7 +54,7 @@ const SignIn = () => {
           error.response.data.error === "No user" ||
           error.response.data.error === "Validation failed"
         ) {
-          alert("Sign in failed!");
+          setSignInSuccessful(false);
         }
       });
   };
@@ -70,7 +78,7 @@ const SignIn = () => {
         validationSchema={signInValidation}
         onSubmit={(values) => handleSignIn(values)}
       >
-        {({ handleChange, handleBlur, values, errors, touched }) => (
+        {({ handleChange, handleBlur, values, errors, touched, initialValues }) => (
           <Form>
             <Field
               id="username"
@@ -99,9 +107,20 @@ const SignIn = () => {
             ) : null}
 
             <br />
-            <button type="submit" style={{ backgroundColor: "lime" }}>
+            <button
+              type="submit"
+              disabled={
+                !(
+                  Object.keys(errors).length === 0 &&
+                  Object.keys(touched).length ===
+                    Object.keys(initialValues).length
+                )
+              }
+              style={{ backgroundColor: "lime" }}
+            >
               sign in
             </button>
+            {!signInSuccessful && <p>Sign in failed!</p>}
           </Form>
         )}
       </Formik>

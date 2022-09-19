@@ -8,9 +8,9 @@ import urlcat from "urlcat";
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpTutor = () => {
-  const [isEmailUnique, setIsEmailUnique] = useState(true)
-  const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true)
-  const [matchingLevelSub, setMatchingLevelSub] = useState(true)
+  // const [isEmailUnique, setIsEmailUnique] = useState(true)
+  const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true);
+  const [matchingLevelSub, setMatchingLevelSub] = useState(true);
 
   const navigate = useNavigate();
 
@@ -42,9 +42,9 @@ const SignUpTutor = () => {
   ];
 
   const CheckClassLevelAndSubject = () => {
-    const { values } = useFormikContext();//a way to excess form values globally
+    const { values } = useFormikContext(); //a way to excess form values globally
     useEffect(() => {
-      setMatchingLevelSub(true)
+      setMatchingLevelSub(true);
       let anyPriLevel = false;
       let anySecLevel = false;
       let anyPriSub = false;
@@ -57,7 +57,7 @@ const SignUpTutor = () => {
           if (level.split(" ")[1] !== "1" && level.split(" ")[1] !== "2") {
             anyUpperPri = true; //if tkde lower level
           } else {
-            anyLowerPri = true
+            anyLowerPri = true;
           }
         } else if (level.split(" ")[0] === "Secondary") {
           anySecLevel = true;
@@ -78,7 +78,12 @@ const SignUpTutor = () => {
           anySecSub = true;
         }
         if (subject === "Science") {
-          if (anyUpperPri === false || (values.subjects.indexOf('Mathematics') === -1 && values.subjects.indexOf('English') === -1 && anyLowerPri === true)) {
+          if (
+            anyUpperPri === false ||
+            (values.subjects.indexOf("Mathematics") === -1 &&
+              values.subjects.indexOf("English") === -1 &&
+              anyLowerPri === true)
+          ) {
             anyPriSub = false;
           }
         }
@@ -91,27 +96,27 @@ const SignUpTutor = () => {
         (anySecLevel === false && anySecSub === true)
       ) {
         console.log("please select matching class levels and subjects");
-        setMatchingLevelSub(false)
+        setMatchingLevelSub(false);
       }
-
     }, [values.classLevel, values.subjects]);
   };
 
   const handleSignUpAsTutor = (values) => {
+    setIsTutorProfileSetUp(true);
     const url = urlcat(SERVER, "/tutor/profile-signup");
     axios
-    .post(url, values)
-    .then(({ data }) => {
+      .post(url, values)
+      .then(({ data }) => {
         navigate("/tutor");
-    })
-    .catch((error) => {
-      if (error.response.data.error === "Tutor profile unable to be set up.") {
-        setIsTutorProfileSetUp(false)
-      } else {
-        setIsEmailUnique(false)//only email is unique, if wan phone to be unique need add another condition/alert
-      }
-    });
-  }
+      })
+      .catch((error) => {
+        if (
+          error.response.data.error === "Tutor profile unable to be set up."
+        ) {
+          setIsTutorProfileSetUp(false);
+        }
+      });
+  };
 
   return (
     <>
@@ -121,7 +126,7 @@ const SignUpTutor = () => {
       <Formik
         initialValues={{
           fullName: "",
-          email: "",
+          // email: "",
           phone: "",
           region: "select",
           rates: "",
@@ -133,11 +138,11 @@ const SignUpTutor = () => {
         }}
         validationSchema={signUpAsTutorValidation}
         onSubmit={(values) => {
-          console.log(values)
-          handleSignUpAsTutor(values)
+          console.log(values);
+          handleSignUpAsTutor(values);
         }}
       >
-        {({ handleChange, handleBlur, values, errors, touched }) => (
+        {({ handleChange, handleBlur, values, errors, touched, initialValues }) => (
           <Form>
             <p>Full Name</p>
             <Field
@@ -151,7 +156,7 @@ const SignUpTutor = () => {
             ) : null}
             <br />
 
-            <p>Email</p>
+            {/* <p>Email</p>
             <Field
               name="email"
               onChange={handleChange}
@@ -159,7 +164,7 @@ const SignUpTutor = () => {
               value={values.email}
             />
             {errors.email && touched.email ? <div>{errors.email}</div> : null}
-            <br />
+            <br /> */}
 
             <p>Phone</p>
             <Field
@@ -276,7 +281,9 @@ const SignUpTutor = () => {
             {errors.subjects && touched.subjects ? (
               <div>{errors.subjects}</div>
             ) : null}
-            {!matchingLevelSub && <p>Please select matching class levels and subjects.</p>}
+            {!matchingLevelSub && (
+              <p>Please select matching class levels and subjects.</p>
+            )}
             <br />
             <br />
 
@@ -301,10 +308,20 @@ const SignUpTutor = () => {
               <div>{errors.teachingExperience}</div>
             ) : null}
             <br />
-            {(isEmailUnique && isTutorProfileSetUp && matchingLevelSub) && <button type="submit" style={{ backgroundColor: "lime" }}>
+            <button
+              type="submit"
+              disabled={
+                !(
+                  Object.keys(errors).length === 0 &&
+                  Object.keys(touched).length ===
+                    Object.keys(initialValues).length
+                )
+              }
+              style={{ backgroundColor: "lime" }}
+            >
               sign up
-            </button>}
-            {!isEmailUnique && <p>Email already in use!</p>}
+            </button>
+            {/* {!isEmailUnique && <p>Email already in use!</p>} */}
             {!isTutorProfileSetUp && <p>Tutor profile unable to be set up.</p>}
             <CheckClassLevelAndSubject />
           </Form>
