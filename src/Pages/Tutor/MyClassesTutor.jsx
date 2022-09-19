@@ -13,6 +13,7 @@ const SERVER = import.meta.env.VITE_SERVER;
 //rn user state contains allll the info including pw and mongoid, thats fine right to keep in state?
 //does that mean need to keep in local storage? n then empty the local storage when we logout..............????
 
+//!!!!! tutor can only pick class level and subjects that they teach.
 const MyClassesTutor = () => {
   // const [classes, setClasses] = useState([]);
   // const [loadClassesSuccessful, setLoadClassesSuccessful] = useState(true);

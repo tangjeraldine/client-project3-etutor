@@ -130,7 +130,7 @@ const SignUpTutor = () => {
           phone: "",
           region: "select",
           rates: "",
-          classType: "select",
+          classType: [],
           classLevel: [],
           subjects: [],
           educationBackground: "",
@@ -162,7 +162,6 @@ const SignUpTutor = () => {
               <div>{errors.fullName}</div>
             ) : null}
             <br />
-
             <p>Phone</p>
             <Field
               name="phone"
@@ -172,7 +171,6 @@ const SignUpTutor = () => {
             />
             {errors.phone && touched.phone ? <div>{errors.phone}</div> : null}
             <br />
-
             <p>Region</p>
             <Field
               as="select"
@@ -192,7 +190,6 @@ const SignUpTutor = () => {
             ) : null}
             <br />
             <br />
-
             <p>Rates per lesson</p>
             <Field
               name="rates"
@@ -204,23 +201,18 @@ const SignUpTutor = () => {
             <br />
 
             <p>Class Type</p>
-            <Field
-              as="select"
-              name="classType"
-              values={values.classType}
-              onChange={handleChange}
-            >
-              <option disabled>select</option>
-              <option value="In-Person">In-Person</option>
-              <option value="Remote">Remote</option>
-              <option value="Both In-Person and Remote">Both</option>
-            </Field>
+            <Field type="checkbox" name="classType" value="In-Person" />
+            In-Person
+            <Field type="checkbox" name="classType" value="Remote" />
+            Remote
+            <br />
             {errors.classType && touched.classType ? (
               <div>{errors.classType}</div>
             ) : null}
             <br />
             <br />
 
+            <br />
             <p>Class Level</p>
             <div>
               Primary
@@ -247,7 +239,6 @@ const SignUpTutor = () => {
               <div>{errors.classLevel}</div>
             ) : null}
             <br />
-
             <p>Subjects</p>
             <div>
               Primary
@@ -283,7 +274,6 @@ const SignUpTutor = () => {
             )}
             <br />
             <br />
-
             <p>Education Background</p>
             <Field
               name="educationBackground"
