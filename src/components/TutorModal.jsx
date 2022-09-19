@@ -34,7 +34,9 @@ const TutorModal = ({ open, tutor, onClose }) => {
         <p>Education Background: {tutor.educationBackground}</p>
         <p> Teaching Experience: {tutor.teachingExperience}</p>
 
-        <button onClick={onClose}>close Modal</button>
+        <button style={{ backgroundColor: "lime" }} onClick={onClose}>
+          close Modal
+        </button>
       </div>
     </>
   );
