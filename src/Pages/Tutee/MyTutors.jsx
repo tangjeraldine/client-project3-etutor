@@ -1,6 +1,4 @@
-const MyTutors = (user) => {
-  console.log(user);
-
+const MyTutors = () => {
   return (
     <>
       <div>

@@ -15,6 +15,8 @@ import Search from "./Pages/Tutee/Search";
 import AskAnythingTutee from "./Pages/Tutee/AskAnythingTutee";
 import AskAnythingTutor from "./Pages/Tutor/AskAnythingTutor";
 import AboutUs from "./Pages/General Pages/AboutUs";
+import EditProfileTutee from "./Pages/Tutee/EditProfileTutee";
+import EditProfileTutor from "./Pages/Tutor/EditProfileTutor";
 
 function App() {
   const [user, setUser] = useState({});
@@ -28,19 +30,31 @@ function App() {
         <Route path="/signup/tutee" element={<SignUpTutee />} />
         <Route path="/aboutus" element={<AboutUs />} />
 
-        <Route path="/tutor" element={<LayoutTutor />}>
+        <Route path="/tutor" element={<LayoutTutor user={user} />}>
           <Route index element={<MyClassesTutor user={user} />} />
           <Route path="/tutor/mytutees" element={<MyTutees user={user} />} />
-          <Route path="/tutor/askanything" element={<AskAnythingTutor />} />
-          {/* <Route path="/tutor/editprofile" element={<EditProfileTutee />} /> */}
+          <Route
+            path="/tutor/askanything"
+            element={<AskAnythingTutor user={user} />}
+          />
+          <Route
+            path="/tutor/editprofile"
+            element={<EditProfileTutee user={user} />}
+          />
         </Route>
 
-        <Route path="/tutee" element={<LayoutTutee />}>
-          <Route index element={<MyClassesTutee />} />
+        <Route path="/tutee" element={<LayoutTutee user={user} />}>
+          <Route index element={<MyClassesTutee user={user} />} />
           <Route path="/tutee/mytutors" element={<MyTutors user={user} />} />
-          <Route path="/tutee/search" element={<Search />} />
-          <Route path="/tutee/askanything" element={<AskAnythingTutee />} />
-          {/* <Route path="/tutee/editprofile" element={<EditProfileTutor />} /> */}
+          <Route path="/tutee/search" element={<Search user={user} />} />
+          <Route
+            path="/tutee/askanything"
+            element={<AskAnythingTutee user={user} />}
+          />
+          <Route
+            path="/tutee/editprofile"
+            element={<EditProfileTutor user={user} />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

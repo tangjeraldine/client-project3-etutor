@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const SignIn = ({setUser}) => {
+const SignIn = ({ setUser }) => {
   const navigate = useNavigate();
 
   // const [user, setUser] = useState({});
@@ -34,7 +34,7 @@ const SignIn = ({setUser}) => {
   };
 
   const handleSignIn = (values) => {
-    setSignInSuccessful(true)
+    setSignInSuccessful(true);
     const url = urlcat(SERVER, "/user/signin");
     axios
       .post(url, values)
@@ -51,9 +51,10 @@ const SignIn = ({setUser}) => {
       })
       .catch((error) => {
         if (
-          error.response.data.error === "No user" ||
-          error.response.data.error === "Validation failed"
+          error.response.data.error === "No user." ||
+          error.response.data.error === "Validation failed."
         ) {
+          console.log(error);
           setSignInSuccessful(false);
         }
       });
@@ -78,7 +79,14 @@ const SignIn = ({setUser}) => {
         validationSchema={signInValidation}
         onSubmit={(values) => handleSignIn(values)}
       >
-        {({ handleChange, handleBlur, values, errors, touched, initialValues }) => (
+        {({
+          handleChange,
+          handleBlur,
+          values,
+          errors,
+          touched,
+          initialValues,
+        }) => (
           <Form>
             <Field
               id="username"
@@ -112,8 +120,7 @@ const SignIn = ({setUser}) => {
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
-                  Object.keys(touched).length ===
-                    Object.keys(initialValues).length
+                  Object.keys(touched).length !== 0
                 )
               }
               style={{ backgroundColor: "lime" }}

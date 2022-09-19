@@ -117,8 +117,7 @@ const SignUpUser = () => {
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
-                  Object.keys(touched).length ===
-                    Object.keys(initialValues).length
+                  Object.keys(touched).length !== 0
                 )
               }
               style={{ backgroundColor: "lime" }}

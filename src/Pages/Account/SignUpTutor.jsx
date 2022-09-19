@@ -8,7 +8,6 @@ import urlcat from "urlcat";
 const SERVER = import.meta.env.VITE_SERVER;
 
 const SignUpTutor = () => {
-  // const [isEmailUnique, setIsEmailUnique] = useState(true)
   const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
 
@@ -126,7 +125,6 @@ const SignUpTutor = () => {
       <Formik
         initialValues={{
           fullName: "",
-          // email: "",
           phone: "",
           region: "select",
           rates: "",
@@ -142,7 +140,14 @@ const SignUpTutor = () => {
           handleSignUpAsTutor(values);
         }}
       >
-        {({ handleChange, handleBlur, values, errors, touched, initialValues }) => (
+        {({
+          handleChange,
+          handleBlur,
+          values,
+          errors,
+          touched,
+          initialValues,
+        }) => (
           <Form>
             <p>Full Name</p>
             <Field
@@ -155,16 +160,6 @@ const SignUpTutor = () => {
               <div>{errors.fullName}</div>
             ) : null}
             <br />
-
-            {/* <p>Email</p>
-            <Field
-              name="email"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.email}
-            />
-            {errors.email && touched.email ? <div>{errors.email}</div> : null}
-            <br /> */}
 
             <p>Phone</p>
             <Field
@@ -313,15 +308,13 @@ const SignUpTutor = () => {
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
-                  Object.keys(touched).length ===
-                    Object.keys(initialValues).length
+                  Object.keys(touched).length !== 0
                 )
               }
               style={{ backgroundColor: "lime" }}
             >
               sign up
             </button>
-            {/* {!isEmailUnique && <p>Email already in use!</p>} */}
             {!isTutorProfileSetUp && <p>Tutor profile unable to be set up.</p>}
             <CheckClassLevelAndSubject />
           </Form>
