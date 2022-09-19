@@ -23,7 +23,7 @@ const Search = () => {
 
   const handleSort = (values) => {
     try {
-      let sort = values.target.value;
+      let sort = values;
       const sortURL = urlcat(url, sort);
 
       axios.get(sortURL, sort).then((data) => {
@@ -48,6 +48,7 @@ const Search = () => {
     });
   };
 
+  const classTypes = ["Remote", "In-person"];
   const allClass = [
     "Primary 1",
     "Primary 2",
@@ -73,16 +74,18 @@ const Search = () => {
     "Chemistry",
   ];
 
+  const regions = ["North", "South", "East", "West", "Central"];
+
   const validationSchema = Yup.object({
-    subjects: Yup.array().required("Required"),
-    classLevel: Yup.string().required("Required"),
-    classType: Yup.string().required("Required"),
+    subjects: Yup.array(),
+    classLevel: Yup.string(),
+    classType: Yup.string(),
   });
 
   const handleFilter = (values) => {
     const filterURL = urlcat(
       url,
-      `/search?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}`
+      `/search?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}&region=${values.region}`
     );
     console.log(values);
     console.log(filterURL);
@@ -97,6 +100,7 @@ const Search = () => {
       <Formik
         initialValues={{
           subjects: [],
+          region: "",
           classLevel: "",
           classType: "",
         }}
@@ -107,7 +111,6 @@ const Search = () => {
           <div>
             <Form>
               <label>Select subject: </label>
-
               {allSubjects.map((subject) => {
                 return (
                   <div key={subject}>
@@ -120,8 +123,16 @@ const Search = () => {
                 <div>{errors.subjects}</div>
               ) : null}
               <br />
-
               <br />
+              <label>Select Region: </label>
+              {regions.map((region) => {
+                return (
+                  <div key={region}>
+                    <Field type="checkbox" name="region" value={region} />
+                    {region}
+                  </div>
+                );
+              })}
 
               <label>Select level: </label>
               <Field
@@ -138,36 +149,37 @@ const Search = () => {
                   </option>
                 ))}
               </Field>
-
               {errors.classLevel && touched.classLevel ? (
                 <div>{errors.classLevel}</div>
               ) : null}
-
               <br />
-
               <label>Select class setting: </label>
-              <Field
+              {/* <Field
                 as="select"
                 name="classType"
                 value={values.classType}
                 onChange={handleChange}
                 onBlur={handleBlur}
-              >
-                <option value="" label="Select a class">
-                  Select a class
-                </option>
-                <option value="Remote">Remote</option>
+              > */}
+              <option value="" label="Select a class">
+                Select a class
+              </option>
+              {classTypes.map((classType) => {
+                return (
+                  <div key={classType}>
+                    <Field type="checkbox" name="classType" value={classType} />
+                    {classType}
+                  </div>
+                );
+              })}
+
+              {/* <option value="Remote">Remote</option>
                 <option value="In-Person">In-Person </option>
-                <option value="Both Remote and In-Person">
-                  Both Remote and In-Person
-                </option>
-              </Field>
+              </Field> */}
               {errors.classType && touched.classType ? (
                 <div>{errors.classType}</div>
               ) : null}
-
               <br />
-
               <button type="submit" style={{ backgroundColor: "lime" }}>
                 search
               </button>
@@ -185,6 +197,7 @@ const Search = () => {
           initialValues={{
             sort: "Sort",
           }}
+          onChange={() => console.log("change")}
         >
           {({ handleChange, handleBlur, values, errors, touched }) => (
             <div>
@@ -195,15 +208,15 @@ const Search = () => {
                   name="sort"
                   value={values.sort}
                   onChange={(e) => {
-                    handleChange;
-                    handleSort(e);
+                    handleChange(e);
+                    handleSort(e.target.value);
                   }}
                   onBlur={handleBlur}
                 >
                   <option disabled>Sort</option>
-                  {sortOptions.map((e) => (
-                    <option key={e} value={e}>
-                      {e}
+                  {sortOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
                     </option>
                   ))}
                 </Field>

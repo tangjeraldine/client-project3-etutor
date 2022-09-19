@@ -13,6 +13,8 @@ const SignUpTutor = () => {
 
   const navigate = useNavigate();
 
+  const regions = ["North", "South", "East", "West", "Central"];
+
   const priSubjects = ["Mathematics", "Science"];
 
   const secSubjects = [
@@ -179,11 +181,11 @@ const SignUpTutor = () => {
               onChange={handleChange}
             >
               <option disabled>select</option>
-              <option value="North">North</option>
-              <option value="South">South</option>
-              <option value="East">East</option>
-              <option value="West">West</option>
-              <option value="Central">Central</option>
+              {regions.map((region) => (
+                <option key={region} value={region}>
+                  {region}
+                </option>
+              ))}
             </Field>
             {errors.region && touched.region ? (
               <div>{errors.region}</div>
