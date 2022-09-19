@@ -1,6 +1,11 @@
 import { Outlet, useNavigate } from "react-router-dom";
+import ErrorPage from "../Error Page/ErrorPage";
 
-const LayoutTutor = () => {
+const LayoutTutor = ({ user }) => {
+  if (user.userType !== "Tutor") {
+    return <ErrorPage />;
+  }
+
   const navigate = useNavigate();
   return (
     <>
