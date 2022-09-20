@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import classesValidation from "../Validations/classesValidation";
+import urlcat from "urlcat";
+import axios from "axios";
+
+const SERVER = import.meta.env.VITE_SERVER;
 
 const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
   if (!open) return null;
 
   const [editClassSuccessful, setEditClassSuccessful] = useState(true);
   const [showEditableClass, setShowEditableClass] = useState(false);
+  const [tuteeDetails, setTuteeDetails] = useState([]);
 
   const MODAL_STYLES = {
     position: "fixed",
@@ -30,6 +35,23 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
 
   const tutees = [];
   eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
+
+  useEffect(() => {
+    //access tutees database and find all tutees of this tutor
+    const urlTuteeDetails = urlcat(
+      SERVER,
+      `/tutee/myTutees/${tutorDetails._id}`
+    );
+    axios
+      .get(urlTuteeDetails)
+      .then(({ data }) => {
+        console.log(data);
+        setTuteeDetails(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleEditClass = (values) => {
     const editedClass = { ...values };
@@ -98,8 +120,8 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
                 classType: `${eachClass.classType}`,
                 subject: `${eachClass.subject}`,
                 classLevel: `${eachClass.classLevel}`,
+                bookedBy: `${""}`,
                 groupSize: `${eachClass.groupSize}`,
-                bookedBy: `${tutees}`,
               }}
               validationSchema={classesValidation}
               onSubmit={(values) => {
@@ -182,6 +204,29 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
                   ) : null}
                   <br />
                   <br />
+
+                  <p>Tutees</p>
+                  <div>
+                    {tutees.map((tutee) => {
+                      return (
+                        <div key={tutee}>
+                          <Field
+                            type="checkbox"
+                            name="bookedBy"
+                            value={tutee}
+                          />
+                          {tutee}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <br />
+                  {errors.bookedBy && touched.bookedBy ? (
+                    <div>{errors.bookedBy}</div>
+                  ) : null}
+                  {/* {!matchingLevelSub && (
+              <p>Please select matching class levels and subjects.</p>
+            )} */}
 
                   <p>Group Size</p>
                   <Field
