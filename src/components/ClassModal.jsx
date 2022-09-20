@@ -33,8 +33,12 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
     zIndex: 1000,
   };
 
-  const tutees = [];
-  eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
+  const bookedByFullName = [];
+  const bookedById = [];
+  eachClass.bookedBy.map((tutee) => {
+    bookedByFullName.push(tutee.fullName);
+    bookedById.push(tutee._id);
+  });
 
   useEffect(() => {
     //access tutees database and find all tutees of this tutor
@@ -54,13 +58,13 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
   }, []);
 
   const handleEditClass = (values) => {
-    const editedClass = { ...values };
+    // const editedClass = { ...values };
     const urlEditClass = urlcat(
       SERVER,
       `/class/edit-class/${eachClass._id}/${tutorDetails._id}`
     );
     axios
-      .put(urlEditClass, editedClass)
+      .put(urlEditClass, values)
       .then(({ data }) => {
         console.log(data);
         if (data.length === 0) {
@@ -91,7 +95,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
             <p>Class Type: {eachClass.classType}</p>
             <p>Subject: {eachClass.subject}</p>
             <p>Class Level: {eachClass.classLevel}</p>
-            <p>Tutees: {tutees.join(", ") || "none"}</p>
+            <p>Tutees: {bookedByFullName.join(", ") || "none"}</p>
             <p>Group Size: {eachClass.groupSize}</p>
 
             <button
@@ -120,7 +124,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
                 classType: `${eachClass.classType}`,
                 subject: `${eachClass.subject}`,
                 classLevel: `${eachClass.classLevel}`,
-                bookedBy: `${""}`,
+                bookedBy: `${bookedById}`,
                 groupSize: `${eachClass.groupSize}`,
               }}
               validationSchema={classesValidation}
@@ -207,18 +211,16 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
 
                   <p>Tutees</p>
                   <div>
-                    {tutees.map((tutee) => {
-                      return (
-                        <div key={tutee}>
-                          <Field
-                            type="checkbox"
-                            name="bookedBy"
-                            value={tutee}
-                          />
-                          {tutee}
-                        </div>
-                      );
-                    })}
+                    {tuteeDetails.map((tutee) => (
+                      <div key={tutee._id}>
+                        <Field
+                          type="checkbox"
+                          name="bookedBy"
+                          value={tutee._id}
+                        />
+                        {tutee.fullName}
+                      </div>
+                    ))}
                   </div>
                   <br />
                   {errors.bookedBy && touched.bookedBy ? (
@@ -242,12 +244,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
                   <br />
                   <button
                     type="submit"
-                    disabled={
-                      !(
-                        Object.keys(errors).length === 0 &&
-                        Object.keys(touched).length !== 0
-                      )
-                    }
+                    disabled={!(Object.keys(errors).length === 0)}
                     style={{ backgroundColor: "lime" }}
                   >
                     submit edit
