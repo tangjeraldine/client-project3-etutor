@@ -207,7 +207,6 @@ const EditTutorProfile = ({ user }) => {
           }) => (
             <Form>
               <p>Full Name: </p>
-              <p>{tutorData.fullName}</p>
               <Field
                 name='fullName'
                 placeholder={tutorData.fullName}
@@ -220,7 +219,6 @@ const EditTutorProfile = ({ user }) => {
               ) : null}
               <br />
               <p>Phone: </p>
-              <p>{tutorData.phone}</p>
               <Field
                 name='phone'
                 placeholder={tutorData.phone}
@@ -231,10 +229,10 @@ const EditTutorProfile = ({ user }) => {
               {errors.phone && touched.phone ? <div>{errors.phone}</div> : null}
               <br />
               <p>Region: </p>
-              <p>{tutorData.region}</p>
               <Field
                 as='select'
                 name='region'
+                placeholder={tutorData.region}
                 values={values.region}
                 onChange={handleChange}>
                 <option disabled>select</option>
