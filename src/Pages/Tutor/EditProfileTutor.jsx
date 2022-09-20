@@ -11,7 +11,6 @@ const EditTutorProfile = ({ user }) => {
   const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
   const [tutorData, setTutorData] = useState({});
-  // const [newTutorData, setNewTutorData] = useState({});
   const [wantToEdit, setWantToEdit] = useState(false);
 
   const navigate = useNavigate();
@@ -143,10 +142,6 @@ const EditTutorProfile = ({ user }) => {
   const handleEdit = () => {
     setWantToEdit(true);
   };
-
-  // const handleCompleteEditing = (values) => {
-
-  // };
 
   if (!wantToEdit) {
     return (
