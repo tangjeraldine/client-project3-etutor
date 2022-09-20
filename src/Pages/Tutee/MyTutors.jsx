@@ -1,4 +1,4 @@
-const MyTutors = () => {
+const MyTutors = ({ user, myFavTutors, setMyFavTutors }) => {
   return (
     <>
       <div>
@@ -14,8 +14,10 @@ const MyTutors = () => {
       </div>
       <br />
       <div>
-        <h1 style={{ fontSize: "30px" }}>fav list</h1>
-        <p>tutor #5</p>
+        <h1 style={{ fontSize: "30px" }}>Fav Tutor</h1>
+        {myFavTutors.map((tutor) => (
+          <p key={tutor._id}>{tutor.fullName}</p>
+        ))}
         <p>tutor #6</p>
       </div>
     </>

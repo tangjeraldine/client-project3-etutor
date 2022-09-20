@@ -7,48 +7,38 @@ import * as Yup from "yup";
 import TutorModal from "../../components/TutorModal";
 
 const SERVER = import.meta.env.VITE_SERVER;
-const Search = () => {
+const Search = ({ user, myFavTutors, setMyFavTutors }) => {
+  console.log(user);
   const [tutor, setTutor] = useState([]);
+
   const [page, setPage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
   const [totalPages, setTotalPages] = useState(0);
-  const url = urlcat(SERVER, `/tutor`);
-  const sortOptions = ["rating", "region"];
-
+  const url = urlcat(SERVER);
+  const [sortState, setSortState] = useState("");
+  const sortOptions = ["rating", "region", "subjects", "classType", "rates"];
+  const tutorurl = urlcat(url, `/tutor/alltutor`);
   const handleModal = (index) => {
     setIsOpen(true);
     setWhatToOpen(index);
   };
 
-  const handleSort = (values) => {
-    try {
-      let sort = values;
-      const sortURL = urlcat(url, sort);
-
-      axios.get(sortURL, sort).then((data) => {
-        setTutor(data.data);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    axios.get(url).then((data) => {
+    axios.get(tutorurl).then((data) => {
       setTutor(data.data.allTutor);
       setTotalPages(data.data.totalPages);
     });
   }, [page]);
 
   const handleReset = () => {
-    axios.get(url).then((data) => {
+    axios.get(tutorurl).then((data) => {
       setTutor(data.data.allTutor);
       setTotalPages(data.data.totalPages);
     });
   };
 
-  const classTypes = ["Remote", "In-person"];
+  const classTypes = ["Remote", "In-Person"];
   const allClass = [
     "Primary 1",
     "Primary 2",
@@ -79,33 +69,49 @@ const Search = () => {
   const validationSchema = Yup.object({
     subjects: Yup.array(),
     classLevel: Yup.string(),
-    classType: Yup.string(),
+    classType: Yup.array(),
   });
+
+  const startingValue = {
+    subjects: [],
+    region: [],
+    classLevel: "select level",
+    classType: [],
+  };
 
   const handleFilter = (values) => {
     const filterURL = urlcat(
-      url,
-      `/search?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}&region=${values.region}`
+      tutorurl,
+      `/search/?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}&region=${values.region}`
     );
     console.log(values);
     console.log(filterURL);
-    axios.get(filterURL).then((data) => setTutor(data.data));
+    axios.get(filterURL).then((data) => {
+      setTutor(data.data.filteredTutor);
+      setTotalPages(data.data.totalPages);
+    });
   };
 
+  // const favUrl = urlcat(url, `tutee/updateFavList/${tutor.id}}`);
+  // axios.put(favUrl, { tutor }).then((response) => {
+  //   console.log(response.data);
+  // });
+
+  const addmyTutor = (tutor) => {
+    const newTutorList = [...myFavTutors, tutor];
+    setMyFavTutors(newTutorList);
+  };
   return (
     <>
       <h1 style={{ fontSize: "50px" }}>Search</h1>
 
       {/* using formik */}
       <Formik
-        initialValues={{
-          subjects: [],
-          region: "",
-          classLevel: "",
-          classType: "",
-        }}
-        onSubmit={(values) => handleFilter(values)}
+        initialValues={startingValue}
         validationSchema={validationSchema}
+        onSubmit={(values) => {
+          handleFilter(values);
+        }}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (
           <div>
@@ -142,7 +148,7 @@ const Search = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
               >
-                <option value="">select level</option>
+                <option disabled>select level</option>
                 {allClass.map((e) => (
                   <option key={e} value={e}>
                     {e}
@@ -153,17 +159,8 @@ const Search = () => {
                 <div>{errors.classLevel}</div>
               ) : null}
               <br />
-              <label>Select class setting: </label>
-              {/* <Field
-                as="select"
-                name="classType"
-                value={values.classType}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              > */}
-              <option value="" label="Select a class">
-                Select a class
-              </option>
+
+              <p>Class Type: </p>
               {classTypes.map((classType) => {
                 return (
                   <div key={classType}>
@@ -173,9 +170,6 @@ const Search = () => {
                 );
               })}
 
-              {/* <option value="Remote">Remote</option>
-                <option value="In-Person">In-Person </option>
-              </Field> */}
               {errors.classType && touched.classType ? (
                 <div>{errors.classType}</div>
               ) : null}
@@ -209,7 +203,8 @@ const Search = () => {
                   value={values.sort}
                   onChange={(e) => {
                     handleChange(e);
-                    handleSort(e.target.value);
+
+                    setSortState(e.target.value);
                   }}
                   onBlur={handleBlur}
                 >
@@ -233,14 +228,25 @@ const Search = () => {
         ) : (
           <div>
             {tutor.map((tutor, index) => (
-              <div onClick={() => handleModal(index)} key={index} value={index}>
-                <p>Tutor Name: {tutor.fullName}</p>
-                <p>Class setting: {tutor.classType}</p>
-                <p>Location: {tutor.region}</p>
-                <p> Subjects: {tutor.subjects.join(", ")}</p>
-                <p>Levels: {tutor.classLevel.join(", ")}</p>
-                <p>Ratings: {tutor.rating}</p>
-              </div>
+              <>
+                <div
+                  onClick={() => handleModal(index)}
+                  key={index}
+                  value={index}
+                >
+                  <p>Tutor Name: {tutor.fullName}</p>
+                  <p>Class setting: {tutor.classType.join(", ")}</p>
+                  <p>Location: {tutor.region}</p>
+                  <p> Subjects: {tutor.subjects.join(", ")}</p>
+                  <p>Levels: {tutor.classLevel.join(", ")}</p>
+                  <p>Ratings: {tutor.rating}</p>
+                  <p>Rates: {tutor.rates}</p>
+                </div>
+
+                <button onClick={() => addmyTutor(tutor)}>
+                  Add to my tutor
+                </button>
+              </>
             ))}
 
             <TutorModal

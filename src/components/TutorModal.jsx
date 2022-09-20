@@ -28,9 +28,9 @@ const TutorModal = ({ open, tutor, onClose }) => {
         <p>Name: {tutor.fullName}</p>
         <p> Class Level: {tutor.classLevel.join(", ")}</p>
         <p>Region: {tutor.region}</p>
-        <p>Class Type: {tutor.classType}</p>
+        <p>Class Type: {tutor.classType.join(", ")}</p>
         <p>Rates: {tutor.rates}</p>
-        <p>Subjects: {tutor.subjects}</p>
+        <p>Subjects: {tutor.subjects.join(", ")}</p>
         <p>Education Background: {tutor.educationBackground}</p>
         <p> Teaching Experience: {tutor.teachingExperience}</p>
 

@@ -20,6 +20,7 @@ import EditProfileTutor from "./Pages/Tutor/EditProfileTutor";
 
 function App() {
   const [user, setUser] = useState({});
+  const [myFavTutors, setMyFavTutors] = useState([]);
 
   return (
     <BrowserRouter>
@@ -45,8 +46,26 @@ function App() {
 
         <Route path="/tutee" element={<LayoutTutee user={user} />}>
           <Route index element={<MyClassesTutee user={user} />} />
-          <Route path="/tutee/mytutors" element={<MyTutors user={user} />} />
-          <Route path="/tutee/search" element={<Search user={user} />} />
+          <Route
+            path="/tutee/mytutors"
+            element={
+              <MyTutors
+                user={user}
+                myFavTutors={myFavTutors}
+                setMyFavTutors={setMyFavTutors}
+              />
+            }
+          />
+          <Route
+            path="/tutee/search"
+            element={
+              <Search
+                user={user}
+                myFavTutors={myFavTutors}
+                setMyFavTutors={setMyFavTutors}
+              />
+            }
+          />
           <Route
             path="/tutee/askanything"
             element={<AskAnythingTutee user={user} />}
