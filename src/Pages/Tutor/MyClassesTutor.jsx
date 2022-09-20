@@ -6,6 +6,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import classesValidation from "../../Validations/classesValidation";
+import ClassModal from "../../components/ClassModal";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -17,25 +18,10 @@ const MyClassesTutor = ({ user }) => {
   const [createClassSuccessful, setCreateClassSuccessful] = useState(true);
   const [deleteClassSuccessful, setDeleteClassSuccessful] = useState(true);
   const [tutorDetails, setTutorDetails] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [whatToOpen, setWhatToOpen] = useState("");
 
   useEffect(() => {
-    const urlGetClasses = urlcat(SERVER, `/class/get-classes/${user._id}`);
-    axios
-      .get(urlGetClasses)
-      .then(({ data }) => {
-        console.log(data);
-        if (data.length === 0) {
-          console.log("no classes created yet");
-        } else {
-          setClasses(data);
-        }
-      })
-      .catch((error) => {
-        if (error.response.data.error === "Unable to load classes.") {
-          setLoadClassesSuccessful(false);
-        }
-      });
-
     //get tutor details to see their subjects, class levels, and class types of specific tutor
     const urlTutorDetails = urlcat(SERVER, `/tutor/${user._id}`);
     axios
@@ -49,26 +35,53 @@ const MyClassesTutor = ({ user }) => {
           console.log(error);
         }
       });
-  }, [renderClasses]);
+  }, []);
+
+  useEffect(() => {
+    if (tutorDetails._id !== undefined) {
+      const urlGetClasses = urlcat(
+        SERVER,
+        `/class/get-classes/${tutorDetails._id}`
+      );
+      axios
+        .get(urlGetClasses)
+        .then(({ data }) => {
+          console.log(data);
+          if (data.length === 0) {
+            console.log("no classes created yet");
+          } else {
+            setClasses(data);
+          }
+        })
+        .catch((error) => {
+          if (error.response.data.error === "Unable to load classes.") {
+            setLoadClassesSuccessful(false);
+          }
+        });
+    }
+  }, [renderClasses, tutorDetails]);
 
   const handleCreateClass = (values) => {
     const urlCreateClasses = urlcat(SERVER, "/class/create-class");
     const newClass = { ...values };
-    newClass.tutor = user._id;
+    newClass.tutor = tutorDetails._id;
     axios
       .post(urlCreateClasses, newClass)
       .then(({ data }) => {
         setCreateClassSuccessful(true);
       })
       .catch((error) => {
-        if (error.response.data.error === "Class unable to be created.") {
+        if (error.response.data.error === "Unable to create class.") {
           setCreateClassSuccessful(false);
         }
       });
   };
 
   const handleRemoveClass = (id) => {
-    const urlRemoveClass = urlcat(SERVER, `/class/remove-class/${user._id}`);
+    const urlRemoveClass = urlcat(
+      SERVER,
+      `/class/remove-class/${id}/${tutorDetails._id}`
+    );
     axios
       .delete(urlRemoveClass)
       .then(({ data }) => {
@@ -89,6 +102,37 @@ const MyClassesTutor = ({ user }) => {
       });
   };
 
+  // const handleEditClass = (id, values) => {
+  //   const editedClass = { ...values };
+  //   const urlEditClass = urlcat(
+  //     SERVER,
+  //     `/class/edit-class/${id}/${tutorDetails._id}`
+  //   );
+  //   axios
+  //     .put(urlEditClass, editedClass)
+  //     .then(({ data }) => {
+  //       console.log(data);
+  //       if (data.length === 0) {
+  //         console.log("no classes created yet");
+  //       } else {
+  //         setClasses(data);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       if (
+  //         error.response.data.error === "Unable to edit class." ||
+  //         error.response.data.error === "Class not found."
+  //       ) {
+  //         setEditClassSuccessful(false);
+  //       }
+  //     });
+  // };
+
+  const handleModal = (index) => {
+    setIsOpen(true);
+    setWhatToOpen(index);
+  };
+
   return (
     <>
       <h1 style={{ fontSize: "50px" }}>my classes</h1>
@@ -98,25 +142,19 @@ const MyClassesTutor = ({ user }) => {
       <Formik
         initialValues={{
           classTitle: "",
+          classType: "select",
           subject: "select",
           classLevel: "select",
-          classType: "select",
           groupSize: "",
         }}
         validationSchema={classesValidation}
-        onSubmit={(values) => {
+        onSubmit={(values, { resetForm }) => {
           setRenderClasses(!renderClasses);
           handleCreateClass(values);
+          resetForm();
         }}
       >
-        {({
-          handleChange,
-          handleBlur,
-          values,
-          errors,
-          touched,
-          initialValues,
-        }) => (
+        {({ handleChange, handleBlur, values, errors, touched }) => (
           <Form>
             <p>Class Title</p>
             <Field
@@ -129,6 +167,27 @@ const MyClassesTutor = ({ user }) => {
               <div>{errors.classTitle}</div>
             ) : null}
             <br />
+
+            <p>Class Type</p>
+            <Field
+              as="select"
+              name="classType"
+              values={values.classType}
+              onChange={handleChange}
+            >
+              <option disabled>select</option>
+              {tutorDetails.classType?.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </Field>
+            {errors.classType && touched.classType ? (
+              <div>{errors.classType}</div>
+            ) : null}
+            <br />
+            <br />
+
             <p>Subject</p>
             <Field
               as="select"
@@ -172,26 +231,6 @@ const MyClassesTutor = ({ user }) => {
             <br />
             <br />
 
-            <p>Class Type</p>
-            <Field
-              as="select"
-              name="classType"
-              values={values.classType}
-              onChange={handleChange}
-            >
-              <option disabled>select</option>
-              {tutorDetails.classType?.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </Field>
-            {errors.classType && touched.classType ? (
-              <div>{errors.classType}</div>
-            ) : null}
-            <br />
-            <br />
-
             <p>Group Size</p>
             <Field
               name="groupSize"
@@ -224,20 +263,36 @@ const MyClassesTutor = ({ user }) => {
       {/* list of classes of this tutor */}
       <div>
         {classes.map((eachClass, index) => {
+          const tutees = [];
+          eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
           return (
             <div key={index}>
               <p>Class Title: {eachClass.classTitle}</p>
-              <p>Subject: {eachClass.subject}</p>
               <p>Date, Time: {eachClass.timeDay}</p>
-              <p>Tutor: {eachClass.tutor}</p>
-              {/* not sure if tutor is necessary since its their own account xD */}
-              <p>Tutees: {eachClass.bookedBy.join(", ") || "none"}</p>
+              <p>Class Type: {eachClass.classType}</p>
+              <p>Subject: {eachClass.subject}</p>
+              <p>Class Level: {eachClass.classLevel}</p>
+              {/* <p>Tutor: {eachClass.tutor.fullName}</p>
+              not sure if tutor is necessary since its their own account xD */}
+              <p>Tutees: {tutees.join(", ") || "none"}</p>
               <p>Group Size: {eachClass.groupSize}</p>
               <button
                 style={{ backgroundColor: "lime" }}
                 onClick={() => handleRemoveClass(eachClass._id)}
               >
                 remove class
+              </button>
+              {/* <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleEditClass(eachClass._id)}
+              >
+                edit class
+              </button> */}
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleModal(index)}
+              >
+                details
               </button>
             </div>
           );
@@ -247,6 +302,13 @@ const MyClassesTutor = ({ user }) => {
         {/* {!editClassSuccessful && <p>Unable to edit class.</p>} */}
         {!loadClassesSuccessful && <p>Unable to load classes.</p>}
       </div>
+
+      <ClassModal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        eachClass={classes[whatToOpen]}
+        tutorDetails={tutorDetails}
+      />
     </>
   );
 };
