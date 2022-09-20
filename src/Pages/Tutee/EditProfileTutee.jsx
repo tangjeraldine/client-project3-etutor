@@ -7,10 +7,11 @@ import urlcat from "urlcat";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const EditTuteeProfile = ({ user }) => {
-  const [isTuteeProfileSetUp, setIsTuteeProfileSetUp] = useState(true);
+const EditTutorProfile = ({ user }) => {
+  const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
-  const [tuteeData, setTuteeData] = useState({});
+  const [tutorData, setTutorData] = useState({});
+  // const [newTutorData, setNewTutorData] = useState({});
   const [wantToEdit, setWantToEdit] = useState(false);
 
   const navigate = useNavigate();
@@ -18,32 +19,35 @@ const EditTuteeProfile = ({ user }) => {
 
   //* First fetch on load
   useEffect(() => {
-    const url = urlcat(SERVER, `/tutee/editprofile/${user._id}`);
+    const url = urlcat(SERVER, `/tutor/editprofile/${user._id}`);
     axios
       .get(url)
       .then(({ data }) => {
-        setTuteeData(data);
+        setTutorData(data);
         // console.log(data);
       })
       .catch((error) => {
-        if (error.response.data.error === "Tutee not found.") {
-          console.log("Tutee not found.");
+        if (error.response.data.error === "Tutor not found.") {
+          console.log("Tutor not found.");
           // error page
         }
       });
   }, []);
 
   //* Update fetch on clicking "Update Profile"
-  const handleUpdateTuteeProfile = (values) => {
-    const url = urlcat(SERVER, `/tutee/editprofile/${user._id}`);
+  const handleUpdateTutorProfile = (values) => {
+    setWantToEdit(false);
+    setTutorData(values);
+    const url = urlcat(SERVER, `/tutor/editprofile/${user._id}`);
     axios
       .put(url, values)
       .then(({ data }) => {
         console.log(data);
+        navigate("/tutor/editprofile");
       })
       .catch((error) => {
-        if (error.response.data.error === "Tutee profile was not updated.") {
-          console.log("Tutee profile was not updated.");
+        if (error.response.data.error === "Tutor profile was not updated.") {
+          console.log("Tutor profile was not updated.");
           // error page
         }
       });
@@ -140,33 +144,33 @@ const EditTuteeProfile = ({ user }) => {
     setWantToEdit(true);
   };
 
-  const handleCompleteEditing = () => {
-    setWantToEdit(false);
-  };
+  // const handleCompleteEditing = (values) => {
+
+  // };
 
   if (!wantToEdit) {
     return (
       <div>
-        <h1 style={{ fontSize: "30px" }}>Edit Tutee Profile</h1>
+        <h1 style={{ fontSize: "30px" }}>Edit Tutor Profile</h1>
         <br />
         <p>Full Name: </p>
-        <p> {tuteeData.fullName}</p>
+        <p> {tutorData?.fullName}</p>
         <p>Phone: </p>
-        <p>{tuteeData.phone} </p>
+        <p>{tutorData?.phone} </p>
         <p>Region: </p>
-        <p>{tuteeData.region} </p>
+        <p>{tutorData?.region} </p>
         <p>Rates Per Lesson: </p>
-        <p>${tuteeData.rates} </p>
+        <p>${tutorData?.rates} </p>
         <p>Class Type: </p>
-        <p>{tuteeData.classType.join(", ")} </p>
+        <p>{tutorData?.classType?.join(", ")} </p>
         <p>Class Level: </p>
-        <p>{tuteeData.classLevel.join(", ")} </p>
+        <p>{tutorData?.classLevel?.join(", ")} </p>
         <p>Subjects: </p>
-        <p>{tuteeData.subjects.join(", ")} </p>
+        <p>{tutorData?.subjects?.join(", ")} </p>
         <p>Education Background: </p>
-        <p>{tuteeData.educationBackground}</p>
+        <p>{tutorData?.educationBackground}</p>
         <p>Teaching Experience: </p>
-        <p>{tuteeData.teachingExperience} </p>
+        <p>{tutorData?.teachingExperience} </p>
         <button style={{ backgroundColor: "lime" }} onClick={handleEdit}>
           Edit Profile
         </button>
@@ -181,20 +185,20 @@ const EditTuteeProfile = ({ user }) => {
         {/* using formik */}
         <Formik
           initialValues={{
-            fullName: "",
-            phone: "",
-            region: "select",
-            rates: "",
+            fullName: `${tutorData?.fullName}`,
+            phone: `${tutorData?.phone}`,
+            region: `${tutorData?.region}`,
+            rates: `${tutorData?.rates}`,
             classType: [],
             classLevel: [],
             subjects: [],
-            educationBackground: "",
-            teachingExperience: "",
+            educationBackground: `${tutorData?.educationBackground}`,
+            teachingExperience: `${tutorData?.teachingExperience}`,
           }}
-          validationSchema={signUpAsTuteeValidation}
+          validationSchema={signUpAsTutorValidation}
           onSubmit={(values) => {
             console.log(values);
-            handleUpdateTuteeProfile(values);
+            handleUpdateTutorProfile(values);
           }}>
           {({
             handleChange,
@@ -206,7 +210,6 @@ const EditTuteeProfile = ({ user }) => {
           }) => (
             <Form>
               <p>Full Name: </p>
-              <p>{tuteeData.fullName}</p>
               <Field
                 name='fullName'
                 onChange={handleChange}
@@ -218,7 +221,6 @@ const EditTuteeProfile = ({ user }) => {
               ) : null}
               <br />
               <p>Phone: </p>
-              <p>{tuteeData.phone}</p>
               <Field
                 name='phone'
                 onChange={handleChange}
@@ -228,7 +230,6 @@ const EditTuteeProfile = ({ user }) => {
               {errors.phone && touched.phone ? <div>{errors.phone}</div> : null}
               <br />
               <p>Region: </p>
-              <p>{tuteeData.region}</p>
               <Field
                 as='select'
                 name='region'
@@ -247,7 +248,6 @@ const EditTuteeProfile = ({ user }) => {
               <br />
               <br />
               <p>Rates per lesson: </p>
-              <p>{tuteeData.rates}</p>
               <Field
                 name='rates'
                 onChange={handleChange}
@@ -256,8 +256,8 @@ const EditTuteeProfile = ({ user }) => {
               />
               {errors.rates && touched.rates ? <div>{errors.rates}</div> : null}
               <br />
-              <p>Class Type: </p>
-              <p>{tuteeData.classType}</p>
+              <p>Current Class Type(s): {tutorData?.classType?.join(", ")} </p>
+              <p>New Class Type(s): </p>
               <Field type='checkbox' name='classType' value='In-Person' />
               In-Person
               <Field type='checkbox' name='classType' value='Remote' />
@@ -268,14 +268,21 @@ const EditTuteeProfile = ({ user }) => {
               ) : null}
               <br />
               <br />
-              <p>Class Level: </p>
-              <p>{tuteeData.classLevel}</p>
+              <p>
+                Current Class Level(s): {tutorData?.classLevel?.join(", ")}{" "}
+              </p>
+              <p>New Class Level(s): </p>
               <div>
                 Primary
                 {priClassLevel.map((level) => {
                   return (
                     <div key={level}>
-                      <Field type='checkbox' name='classLevel' value={level} />
+                      <Field
+                        type='checkbox'
+                        name='classLevel'
+                        value={level}
+                        // onClick={(event) => console.log(event.target.value)}
+                      />
                       {level}
                     </div>
                   );
@@ -295,8 +302,8 @@ const EditTuteeProfile = ({ user }) => {
                 <div>{errors.classLevel}</div>
               ) : null}
               <br />
-              <p>Subjects: </p>
-              <p>{tuteeData.subjects}</p>
+              <p>Current Subject(s): {tutorData?.subjects?.join(", ")} </p>
+              <p>New Subject(s): </p>
               <div>
                 Primary
                 {priSubjects.map((subject) => {
@@ -332,7 +339,6 @@ const EditTuteeProfile = ({ user }) => {
               <br />
               <br />
               <p>Education Background: </p>
-              <p>{tuteeData.educationBackground}</p>
               <Field
                 name='educationBackground'
                 onChange={handleChange}
@@ -343,7 +349,6 @@ const EditTuteeProfile = ({ user }) => {
                 <div>{errors.educationBackground}</div>
               ) : null}
               <p>Teaching Experience: </p>
-              <p>{tuteeData.teachingExperience}</p>
               <Field
                 name='teachingExperience'
                 onChange={handleChange}
@@ -356,19 +361,16 @@ const EditTuteeProfile = ({ user }) => {
               <br />
               <button
                 type='submit'
-                // disabled={
-                //   !(
-                //     Object.keys(errors).length === 0 &&
-                //     Object.keys(touched).length ===
-                //       Object.keys(initialValues).length
-                //   )
-                // }
-                style={{ backgroundColor: "lime" }}
-                onClick={handleCompleteEditing}>
+                disabled={
+                  !(
+                    Object.keys(errors).length === 0 &&
+                    Object.keys(touched).length !== 0
+                  )
+                }
+                style={{ backgroundColor: "lime" }}>
                 Complete Editing
               </button>
-              {/* {!isEmailUnique && <p>Email already in use!</p>} */}
-              {!isTuteeProfileSetUp && (
+              {!isTutorProfileSetUp && (
                 <p>Tutor profile unable to be set up.</p>
               )}
               <CheckClassLevelAndSubject />
@@ -380,4 +382,4 @@ const EditTuteeProfile = ({ user }) => {
   }
 };
 
-export default EditTuteeProfile;
+export default EditTutorProfile;

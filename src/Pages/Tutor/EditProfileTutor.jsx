@@ -11,6 +11,7 @@ const EditTutorProfile = ({ user }) => {
   const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
   const [tutorData, setTutorData] = useState({});
+  // const [newTutorData, setNewTutorData] = useState({});
   const [wantToEdit, setWantToEdit] = useState(false);
 
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ const EditTutorProfile = ({ user }) => {
 
   //* Update fetch on clicking "Update Profile"
   const handleUpdateTutorProfile = (values) => {
+    setWantToEdit(false);
+    setTutorData(values);
     const url = urlcat(SERVER, `/tutor/editprofile/${user._id}`);
     axios
       .put(url, values)
@@ -141,9 +144,9 @@ const EditTutorProfile = ({ user }) => {
     setWantToEdit(true);
   };
 
-  const handleCompleteEditing = () => {
-    setWantToEdit(false);
-  };
+  // const handleCompleteEditing = (values) => {
+
+  // };
 
   if (!wantToEdit) {
     return (
@@ -151,23 +154,23 @@ const EditTutorProfile = ({ user }) => {
         <h1 style={{ fontSize: "30px" }}>Edit Tutor Profile</h1>
         <br />
         <p>Full Name: </p>
-        <p> {tutorData.fullName}</p>
+        <p> {tutorData?.fullName}</p>
         <p>Phone: </p>
-        <p>{tutorData.phone} </p>
+        <p>{tutorData?.phone} </p>
         <p>Region: </p>
-        <p>{tutorData.region} </p>
+        <p>{tutorData?.region} </p>
         <p>Rates Per Lesson: </p>
-        <p>${tutorData.rates} </p>
+        <p>${tutorData?.rates} </p>
         <p>Class Type: </p>
-        <p>{tutorData.classType.join(", ")} </p>
+        <p>{tutorData?.classType?.join(", ")} </p>
         <p>Class Level: </p>
-        <p>{tutorData.classLevel.join(", ")} </p>
+        <p>{tutorData?.classLevel?.join(", ")} </p>
         <p>Subjects: </p>
-        <p>{tutorData.subjects.join(", ")} </p>
+        <p>{tutorData?.subjects?.join(", ")} </p>
         <p>Education Background: </p>
-        <p>{tutorData.educationBackground}</p>
+        <p>{tutorData?.educationBackground}</p>
         <p>Teaching Experience: </p>
-        <p>{tutorData.teachingExperience} </p>
+        <p>{tutorData?.teachingExperience} </p>
         <button style={{ backgroundColor: "lime" }} onClick={handleEdit}>
           Edit Profile
         </button>
@@ -182,20 +185,20 @@ const EditTutorProfile = ({ user }) => {
         {/* using formik */}
         <Formik
           initialValues={{
-            fullName: "",
-            phone: "",
-            region: "select",
-            rates: "",
+            fullName: `${tutorData?.fullName}`,
+            phone: `${tutorData?.phone}`,
+            region: `${tutorData?.region}`,
+            rates: `${tutorData?.rates}`,
             classType: [],
             classLevel: [],
             subjects: [],
-            educationBackground: "",
-            teachingExperience: "",
+            educationBackground: `${tutorData?.educationBackground}`,
+            teachingExperience: `${tutorData?.teachingExperience}`,
           }}
           validationSchema={signUpAsTutorValidation}
           onSubmit={(values) => {
             console.log(values);
-            handleSignUpAsTutor(values);
+            handleUpdateTutorProfile(values);
           }}>
           {({
             handleChange,
@@ -209,7 +212,6 @@ const EditTutorProfile = ({ user }) => {
               <p>Full Name: </p>
               <Field
                 name='fullName'
-                placeholder={tutorData.fullName}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.fullName}
@@ -221,7 +223,6 @@ const EditTutorProfile = ({ user }) => {
               <p>Phone: </p>
               <Field
                 name='phone'
-                placeholder={tutorData.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.phone}
@@ -232,7 +233,6 @@ const EditTutorProfile = ({ user }) => {
               <Field
                 as='select'
                 name='region'
-                placeholder={tutorData.region}
                 values={values.region}
                 onChange={handleChange}>
                 <option disabled>select</option>
@@ -248,7 +248,6 @@ const EditTutorProfile = ({ user }) => {
               <br />
               <br />
               <p>Rates per lesson: </p>
-              <p>{tutorData.rates}</p>
               <Field
                 name='rates'
                 onChange={handleChange}
@@ -257,8 +256,8 @@ const EditTutorProfile = ({ user }) => {
               />
               {errors.rates && touched.rates ? <div>{errors.rates}</div> : null}
               <br />
-              <p>Class Type: </p>
-              <p>{tutorData.classType}</p>
+              <p>Current Class Type(s): {tutorData?.classType?.join(", ")} </p>
+              <p>New Class Type(s): </p>
               <Field type='checkbox' name='classType' value='In-Person' />
               In-Person
               <Field type='checkbox' name='classType' value='Remote' />
@@ -269,14 +268,21 @@ const EditTutorProfile = ({ user }) => {
               ) : null}
               <br />
               <br />
-              <p>Class Level: </p>
-              <p>{tutorData.classLevel}</p>
+              <p>
+                Current Class Level(s): {tutorData?.classLevel?.join(", ")}{" "}
+              </p>
+              <p>New Class Level(s): </p>
               <div>
                 Primary
                 {priClassLevel.map((level) => {
                   return (
                     <div key={level}>
-                      <Field type='checkbox' name='classLevel' value={level} />
+                      <Field
+                        type='checkbox'
+                        name='classLevel'
+                        value={level}
+                        // onClick={(event) => console.log(event.target.value)}
+                      />
                       {level}
                     </div>
                   );
@@ -296,8 +302,8 @@ const EditTutorProfile = ({ user }) => {
                 <div>{errors.classLevel}</div>
               ) : null}
               <br />
-              <p>Subjects: </p>
-              <p>{tutorData.subjects}</p>
+              <p>Current Subject(s): {tutorData?.subjects?.join(", ")} </p>
+              <p>New Subject(s): </p>
               <div>
                 Primary
                 {priSubjects.map((subject) => {
@@ -333,7 +339,6 @@ const EditTutorProfile = ({ user }) => {
               <br />
               <br />
               <p>Education Background: </p>
-              <p>{tutorData.educationBackground}</p>
               <Field
                 name='educationBackground'
                 onChange={handleChange}
@@ -344,7 +349,6 @@ const EditTutorProfile = ({ user }) => {
                 <div>{errors.educationBackground}</div>
               ) : null}
               <p>Teaching Experience: </p>
-              <p>{tutorData.teachingExperience}</p>
               <Field
                 name='teachingExperience'
                 onChange={handleChange}
@@ -357,18 +361,15 @@ const EditTutorProfile = ({ user }) => {
               <br />
               <button
                 type='submit'
-                // disabled={
-                //   !(
-                //     Object.keys(errors).length === 0 &&
-                //     Object.keys(touched).length ===
-                //       Object.keys(initialValues).length
-                //   )
-                // }
-                style={{ backgroundColor: "lime" }}
-                onClick={handleCompleteEditing}>
+                disabled={
+                  !(
+                    Object.keys(errors).length === 0 &&
+                    Object.keys(touched).length !== 0
+                  )
+                }
+                style={{ backgroundColor: "lime" }}>
                 Complete Editing
               </button>
-              {/* {!isEmailUnique && <p>Email already in use!</p>} */}
               {!isTutorProfileSetUp && (
                 <p>Tutor profile unable to be set up.</p>
               )}
