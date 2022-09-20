@@ -26,21 +26,21 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<SignIn setUser={setUser} />} />
-        <Route path='/signup' element={<SignUpUser />} />
-        <Route path='/signup/tutor' element={<SignUpTutor />} />
-        <Route path='/signup/tutee' element={<SignUpTutee />} />
-        <Route path='/aboutus' element={<AboutUs />} />
+        <Route path="/" element={<SignIn setUser={setUser} />} />
+        <Route path="/signup" element={<SignUpUser />} />
+        <Route path="/signup/tutor" element={<SignUpTutor />} />
+        <Route path="/signup/tutee" element={<SignUpTutee />} />
+        <Route path="/aboutus" element={<AboutUs />} />
 
-        <Route path='/tutor' element={<LayoutTutor user={user} />}>
+        <Route path="/tutor" element={<LayoutTutor user={user} />}>
           <Route index element={<MyClassesTutor user={user} />} />
-          <Route path='/tutor/mytutees' element={<MyTutees user={user} />} />
+          <Route path="/tutor/mytutees" element={<MyTutees user={user} />} />
           <Route
-            path='/tutor/askanything'
+            path="/tutor/askanything"
             element={<AskAnythingTutor user={user} />}
           />
           <Route
-            path='/tutor/editprofile'
+            path="/tutor/editprofile"
             element={<EditProfileTutor user={user} />}
           />
           <Route
@@ -49,20 +49,11 @@ function App() {
           />
         </Route>
 
-        <Route path='/tutee' element={<LayoutTutee user={user} />}>
+        <Route path="/tutee" element={<LayoutTutee user={user} />}>
           <Route index element={<MyClassesTutee user={user} />} />
+          <Route path="/tutee/mytutors" element={<MyTutors user={user} />} />
           <Route
-            path='/tutee/mytutors'
-            element={
-              <MyTutors
-                user={user}
-                myFavTutors={myFavTutors}
-                setMyFavTutors={setMyFavTutors}
-              />
-            }
-          />
-          <Route
-            path='/tutee/search'
+            path="/tutee/search"
             element={
               <Search
                 user={user}
@@ -72,11 +63,11 @@ function App() {
             }
           />
           <Route
-            path='/tutee/askanything'
+            path="/tutee/askanything"
             element={<AskAnythingTutee user={user} />}
           />
           <Route
-            path='/tutee/editprofile'
+            path="/tutee/editprofile"
             element={<EditProfileTutee user={user} />}
           />
           <Route

@@ -1,5 +1,4 @@
 import { Field, Formik, Form } from "formik";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import urlcat from "urlcat";
@@ -8,7 +7,6 @@ import TutorModal from "../../components/TutorModal";
 
 const SERVER = import.meta.env.VITE_SERVER;
 const Search = ({ user, myFavTutors, setMyFavTutors }) => {
-  console.log(user);
   const [tutor, setTutor] = useState([]);
 
   const [page, setPage] = useState(0);
@@ -19,6 +17,7 @@ const Search = ({ user, myFavTutors, setMyFavTutors }) => {
   const [sortState, setSortState] = useState("");
   const sortOptions = ["rating", "region", "subjects", "classType", "rates"];
   const tutorurl = urlcat(url, `/tutor/alltutor`);
+  const currentUserId = user._id;
   const handleModal = (index) => {
     setIsOpen(true);
     setWhatToOpen(index);
@@ -92,15 +91,18 @@ const Search = ({ user, myFavTutors, setMyFavTutors }) => {
     });
   };
 
-  // const favUrl = urlcat(url, `tutee/updateFavList/${tutor.id}}`);
-  // axios.put(favUrl, { tutor }).then((response) => {
-  //   console.log(response.data);
-  // });
+  // find current tutee, update current tutee profile favTutors array
 
   const addmyTutor = (tutor) => {
-    const newTutorList = [...myFavTutors, tutor];
-    setMyFavTutors(newTutorList);
+    const favUrl = urlcat(
+      SERVER,
+      `tutee/updateFavList/?username=${currentUserId}`
+    );
+    axios.put(favUrl, tutor).then((response) => {
+      console.log(response.data);
+    });
   };
+
   return (
     <>
       <h1 style={{ fontSize: "50px" }}>Search</h1>
@@ -255,6 +257,7 @@ const Search = ({ user, myFavTutors, setMyFavTutors }) => {
               tutor={tutor[whatToOpen]}
             />
 
+            <br />
             <button
               disabled={page === 0}
               onClick={() => setPage(Math.max(0, page - 1))}
