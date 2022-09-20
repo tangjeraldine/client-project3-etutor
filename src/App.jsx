@@ -46,16 +46,7 @@ function App() {
 
         <Route path="/tutee" element={<LayoutTutee user={user} />}>
           <Route index element={<MyClassesTutee user={user} />} />
-          <Route
-            path="/tutee/mytutors"
-            element={
-              <MyTutors
-                user={user}
-                myFavTutors={myFavTutors}
-                setMyFavTutors={setMyFavTutors}
-              />
-            }
-          />
+          <Route path="/tutee/mytutors" element={<MyTutors user={user} />} />
           <Route
             path="/tutee/search"
             element={
