@@ -40,7 +40,7 @@ function App() {
           />
           <Route
             path="/tutor/editprofile"
-            element={<EditProfileTutee user={user} />}
+            element={<EditProfileTutor user={user} />}
           />
         </Route>
 

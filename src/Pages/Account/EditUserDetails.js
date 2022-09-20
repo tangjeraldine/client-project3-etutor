@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import signUpAsTuteeValidation from "../../Validations/signUpAsTuteeValidation";
+import classesValidation from "../../Validations/classesValidation";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -8,15 +8,12 @@ import urlcat from "urlcat";
 const SERVER = import.meta.env.VITE_SERVER;
 
 const EditTuteeProfile = ({ user }) => {
-  const [isTuteeProfileSetUp, setIsTuteeProfileSetUp] = useState(true);
-  const [matchingLevelSub, setMatchingLevelSub] = useState(true);
   const [tuteeData, setTuteeData] = useState({});
   const [wantToEdit, setWantToEdit] = useState(false);
 
   const navigate = useNavigate();
   // console.log(user);
 
-  //* First fetch on load
   useEffect(() => {
     const url = urlcat(SERVER, `/tutee/editprofile/${user._id}`);
     axios
@@ -32,109 +29,6 @@ const EditTuteeProfile = ({ user }) => {
         }
       });
   }, []);
-
-  //* Update fetch on clicking "Update Profile"
-  const handleUpdateTuteeProfile = (values) => {
-    const url = urlcat(SERVER, `/tutee/editprofile/${user._id}`);
-    axios
-      .put(url, values)
-      .then(({ data }) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        if (error.response.data.error === "Tutee profile was not updated.") {
-          console.log("Tutee profile was not updated.");
-          // error page
-        }
-      });
-  };
-
-  const priSubjects = ["Mathematics", "Science"];
-
-  const secSubjects = [
-    "Additional Mathematics",
-    "Elementary Mathematics",
-    "Biology",
-    "Physics",
-    "Chemistry",
-  ];
-
-  const priClassLevel = [
-    "Primary 1",
-    "Primary 2",
-    "Primary 3",
-    "Primary 4",
-    "Primary 5",
-    "Primary 6",
-  ];
-
-  const secClassLevel = [
-    "Secondary 1",
-    "Secondary 2",
-    "Secondary 3",
-    "Secondary 4",
-    "Secondary 5",
-  ];
-
-  const CheckClassLevelAndSubject = () => {
-    const { values } = useFormikContext(); //a way to excess form values globally
-    useEffect(() => {
-      setMatchingLevelSub(true);
-      let anyPriLevel = false;
-      let anySecLevel = false;
-      let anyPriSub = false;
-      let anySecSub = false;
-      let anyLowerPri = false;
-      let anyUpperPri = false;
-      values.classLevel.map((level) => {
-        if (level.split(" ")[0] === "Primary") {
-          anyPriLevel = true;
-          if (level.split(" ")[1] !== "1" && level.split(" ")[1] !== "2") {
-            anyUpperPri = true; //if tkde lower level
-          } else {
-            anyLowerPri = true;
-          }
-        } else if (level.split(" ")[0] === "Secondary") {
-          anySecLevel = true;
-        }
-      });
-
-      values.subjects.map((subject) => {
-        if (subject === "English") {
-          if (anyPriLevel === true) {
-            anyPriSub = true;
-          }
-          if (anySecLevel === true) {
-            anySecSub = true;
-          }
-        } else if (priSubjects.indexOf(subject) !== -1) {
-          anyPriSub = true;
-        } else if (secSubjects.indexOf(subject) !== -1) {
-          anySecSub = true;
-        }
-        if (subject === "Science") {
-          if (
-            anyUpperPri === false ||
-            (values.subjects.indexOf("Mathematics") === -1 &&
-              values.subjects.indexOf("English") === -1 &&
-              anyLowerPri === true)
-          ) {
-            anyPriSub = false;
-          }
-        }
-      });
-
-      if (
-        (anyPriLevel === true && anyPriSub === false) ||
-        (anyPriLevel === false && anyPriSub === true) ||
-        (anySecLevel === true && anySecSub === false) ||
-        (anySecLevel === false && anySecSub === true)
-      ) {
-        console.log("please select matching class levels and subjects");
-        setMatchingLevelSub(false);
-      }
-    }, [values.classLevel, values.subjects]);
-  };
 
   const handleEdit = () => {
     setWantToEdit(true);
@@ -191,10 +85,10 @@ const EditTuteeProfile = ({ user }) => {
             educationBackground: "",
             teachingExperience: "",
           }}
-          validationSchema={signUpAsTuteeValidation}
+          validationSchema={signUpAsTutorValidation}
           onSubmit={(values) => {
             console.log(values);
-            handleUpdateTuteeProfile(values);
+            handleSignUpAsTutor(values);
           }}>
           {({
             handleChange,

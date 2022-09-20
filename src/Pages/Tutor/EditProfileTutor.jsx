@@ -7,12 +7,48 @@ import urlcat from "urlcat";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const EditTutorProfile = () => {
+const EditTutorProfile = ({ user }) => {
   const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
+  const [tutorData, setTutorData] = useState({});
   const [wantToEdit, setWantToEdit] = useState(false);
 
   const navigate = useNavigate();
+  // console.log(user);
+
+  //* First fetch on load
+  useEffect(() => {
+    const url = urlcat(SERVER, `/tutor/editprofile/${user._id}`);
+    axios
+      .get(url)
+      .then(({ data }) => {
+        setTutorData(data);
+        // console.log(data);
+      })
+      .catch((error) => {
+        if (error.response.data.error === "Tutor not found.") {
+          console.log("Tutor not found.");
+          // error page
+        }
+      });
+  }, []);
+
+  //* Update fetch on clicking "Update Profile"
+  const handleUpdateTutorProfile = (values) => {
+    const url = urlcat(SERVER, `/tutor/editprofile/${user._id}`);
+    axios
+      .put(url, values)
+      .then(({ data }) => {
+        console.log(data);
+        navigate("/tutor/editprofile");
+      })
+      .catch((error) => {
+        if (error.response.data.error === "Tutor profile was not updated.") {
+          console.log("Tutor profile was not updated.");
+          // error page
+        }
+      });
+  };
 
   const priSubjects = ["Mathematics", "Science"];
 
@@ -101,21 +137,6 @@ const EditTutorProfile = () => {
     }, [values.classLevel, values.subjects]);
   };
 
-  const handleSignUpAsTutor = (values) => {
-    setIsTutorProfileSetUp(true);
-    const url = urlcat(SERVER, "/tutor/profile-signup");
-    axios
-      .post(url, values)
-      .then(({ data }) => {
-        navigate("/tutor");
-      })
-      .catch((error) => {
-        if (error.response.data.error === "Tutor profile cannot be updated.") {
-          setIsTutorProfileSetUp(false);
-        }
-      });
-  };
-
   const handleEdit = () => {
     setWantToEdit(true);
   };
@@ -127,7 +148,26 @@ const EditTutorProfile = () => {
   if (!wantToEdit) {
     return (
       <div>
+        <h1 style={{ fontSize: "30px" }}>Edit Tutor Profile</h1>
+        <br />
         <p>Full Name: </p>
+        <p> {tutorData.fullName}</p>
+        <p>Phone: </p>
+        <p>{tutorData.phone} </p>
+        <p>Region: </p>
+        <p>{tutorData.region} </p>
+        <p>Rates Per Lesson: </p>
+        <p>${tutorData.rates} </p>
+        <p>Class Type: </p>
+        <p>{tutorData.classType.join(", ")} </p>
+        <p>Class Level: </p>
+        <p>{tutorData.classLevel.join(", ")} </p>
+        <p>Subjects: </p>
+        <p>{tutorData.subjects.join(", ")} </p>
+        <p>Education Background: </p>
+        <p>{tutorData.educationBackground}</p>
+        <p>Teaching Experience: </p>
+        <p>{tutorData.teachingExperience} </p>
         <button style={{ backgroundColor: "lime" }} onClick={handleEdit}>
           Edit Profile
         </button>
@@ -137,7 +177,7 @@ const EditTutorProfile = () => {
   } else {
     return (
       <>
-        <h1 style={{ fontSize: "50px" }}>View Tutor Profile</h1>
+        <h1 style={{ fontSize: "30px" }}>Edit Tutor Profile</h1>
 
         {/* using formik */}
         <Formik
@@ -156,8 +196,7 @@ const EditTutorProfile = () => {
           onSubmit={(values) => {
             console.log(values);
             handleSignUpAsTutor(values);
-          }}
-        >
+          }}>
           {({
             handleChange,
             handleBlur,
@@ -167,9 +206,10 @@ const EditTutorProfile = () => {
             initialValues,
           }) => (
             <Form>
-              <p>Full Name</p>
+              <p>Full Name: </p>
               <Field
-                name="fullName"
+                name='fullName'
+                placeholder={tutorData.fullName}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.fullName}
@@ -178,47 +218,50 @@ const EditTutorProfile = () => {
                 <div>{errors.fullName}</div>
               ) : null}
               <br />
-              <p>Phone</p>
+              <p>Phone: </p>
               <Field
-                name="phone"
+                name='phone'
+                placeholder={tutorData.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.phone}
               />
               {errors.phone && touched.phone ? <div>{errors.phone}</div> : null}
               <br />
-              <p>Region</p>
+              <p>Region: </p>
               <Field
-                as="select"
-                name="region"
+                as='select'
+                name='region'
+                placeholder={tutorData.region}
                 values={values.region}
-                onChange={handleChange}
-              >
+                onChange={handleChange}>
                 <option disabled>select</option>
-                <option value="North">North</option>
-                <option value="South">South</option>
-                <option value="East">East</option>
-                <option value="West">West</option>
-                <option value="Central">Central</option>
+                <option value='North'>North</option>
+                <option value='South'>South</option>
+                <option value='East'>East</option>
+                <option value='West'>West</option>
+                <option value='Central'>Central</option>
               </Field>
               {errors.region && touched.region ? (
                 <div>{errors.region}</div>
               ) : null}
               <br />
               <br />
-              <p>Rates per lesson</p>
+              <p>Rates per lesson: </p>
+              <p>{tutorData.rates}</p>
               <Field
-                name="rates"
+                name='rates'
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.rates}
               />
               {errors.rates && touched.rates ? <div>{errors.rates}</div> : null}
               <br />
-              <p>Class Type</p>
-              <Field type="checkbox" name="classType" value="In-Person" />
+              <p>Class Type: </p>
+              <p>{tutorData.classType}</p>
+              <Field type='checkbox' name='classType' value='In-Person' />
               In-Person
-              <Field type="checkbox" name="classType" value="Remote" />
+              <Field type='checkbox' name='classType' value='Remote' />
               Remote
               <br />
               {errors.classType && touched.classType ? (
@@ -226,13 +269,14 @@ const EditTutorProfile = () => {
               ) : null}
               <br />
               <br />
-              <p>Class Level</p>
+              <p>Class Level: </p>
+              <p>{tutorData.classLevel}</p>
               <div>
                 Primary
                 {priClassLevel.map((level) => {
                   return (
                     <div key={level}>
-                      <Field type="checkbox" name="classLevel" value={level} />
+                      <Field type='checkbox' name='classLevel' value={level} />
                       {level}
                     </div>
                   );
@@ -242,7 +286,7 @@ const EditTutorProfile = () => {
                 {secClassLevel.map((level) => {
                   return (
                     <div key={level}>
-                      <Field type="checkbox" name="classLevel" value={level} />
+                      <Field type='checkbox' name='classLevel' value={level} />
                       {level}
                     </div>
                   );
@@ -252,13 +296,14 @@ const EditTutorProfile = () => {
                 <div>{errors.classLevel}</div>
               ) : null}
               <br />
-              <p>Subjects</p>
+              <p>Subjects: </p>
+              <p>{tutorData.subjects}</p>
               <div>
                 Primary
                 {priSubjects.map((subject) => {
                   return (
                     <div key={subject}>
-                      <Field type="checkbox" name="subjects" value={subject} />
+                      <Field type='checkbox' name='subjects' value={subject} />
                       {subject}
                     </div>
                   );
@@ -268,7 +313,7 @@ const EditTutorProfile = () => {
                 {secSubjects.map((subject) => {
                   return (
                     <div key={subject}>
-                      <Field type="checkbox" name="subjects" value={subject} />
+                      <Field type='checkbox' name='subjects' value={subject} />
                       {subject}
                     </div>
                   );
@@ -276,7 +321,7 @@ const EditTutorProfile = () => {
                 <br />
                 Primary/Secondary
                 <br />
-                <Field type="checkbox" name="subjects" value="English" />
+                <Field type='checkbox' name='subjects' value='English' />
                 English
               </div>
               {errors.subjects && touched.subjects ? (
@@ -287,9 +332,10 @@ const EditTutorProfile = () => {
               )}
               <br />
               <br />
-              <p>Education Background</p>
+              <p>Education Background: </p>
+              <p>{tutorData.educationBackground}</p>
               <Field
-                name="educationBackground"
+                name='educationBackground'
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.educationBackground}
@@ -297,9 +343,10 @@ const EditTutorProfile = () => {
               {errors.educationBackground && touched.educationBackground ? (
                 <div>{errors.educationBackground}</div>
               ) : null}
-              <p>Teaching Experience</p>
+              <p>Teaching Experience: </p>
+              <p>{tutorData.teachingExperience}</p>
               <Field
-                name="teachingExperience"
+                name='teachingExperience'
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.teachingExperience}
@@ -309,17 +356,16 @@ const EditTutorProfile = () => {
               ) : null}
               <br />
               <button
-                type="submit"
-                disabled={
-                  !(
-                    Object.keys(errors).length === 0 &&
-                    Object.keys(touched).length ===
-                      Object.keys(initialValues).length
-                  )
-                }
+                type='submit'
+                // disabled={
+                //   !(
+                //     Object.keys(errors).length === 0 &&
+                //     Object.keys(touched).length ===
+                //       Object.keys(initialValues).length
+                //   )
+                // }
                 style={{ backgroundColor: "lime" }}
-                onClick={handleCompleteEditing}
-              >
+                onClick={handleCompleteEditing}>
                 Complete Editing
               </button>
               {/* {!isEmailUnique && <p>Email already in use!</p>} */}

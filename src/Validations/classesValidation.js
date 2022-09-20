@@ -26,7 +26,7 @@ const classesValidation = yup.object({
       }
     )
     .required("At least one class level is required."),
-  subjects: yup
+  subject: yup
     .string()
     .required("Exactly one subject is required.")
     .matches(
@@ -38,12 +38,13 @@ const classesValidation = yup.object({
     ),
   timeDay: yup
     .date()
-    .default(() => new Date()) //! How to make the date not before today
-    .required("Date and time is required."),
+    .default(() => new Date()), //! How to make the date not before today
+    // .required("Date and time is required."),
   // tutor: yup.string().required("A tutor is required."),
   // bookedBy: yup.array().of(yup.string()),
   groupSize: yup
     .number()
+    .typeError("Group size must be a number.")
     .positive()
     .integer()
     .required("Group size is required.")
