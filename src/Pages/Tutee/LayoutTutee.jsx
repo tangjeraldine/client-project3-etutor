@@ -66,6 +66,16 @@ const LayoutTutee = ({ user }) => {
                       My Account
                     </button>
                   </li>
+
+                  <li>
+                    <button
+                      onClick={() => {
+                        navigate("/tutee/edituserdetails");
+                      }}
+                      className='text-gray-500 transition hover:text-gray-500/75'>
+                      Edit User Details
+                    </button>
+                  </li>
                 </ul>
               </nav>
             </div>

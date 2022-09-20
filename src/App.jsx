@@ -17,6 +17,7 @@ import AskAnythingTutor from "./Pages/Tutor/AskAnythingTutor";
 import AboutUs from "./Pages/General Pages/AboutUs";
 import EditProfileTutee from "./Pages/Tutee/EditProfileTutee";
 import EditProfileTutor from "./Pages/Tutor/EditProfileTutor";
+import EditUserDetails from "./Pages/Account/EditUserDetails";
 
 function App() {
   const [user, setUser] = useState({});
@@ -41,6 +42,10 @@ function App() {
           <Route
             path='/tutor/editprofile'
             element={<EditProfileTutor user={user} />}
+          />
+          <Route
+            path='/tutor/edituserdetails'
+            element={<EditUserDetails user={user} />}
           />
         </Route>
 
@@ -73,6 +78,10 @@ function App() {
           <Route
             path='/tutee/editprofile'
             element={<EditProfileTutee user={user} />}
+          />
+          <Route
+            path='/tutee/edituserdetails'
+            element={<EditUserDetails user={user} />}
           />
         </Route>
       </Routes>

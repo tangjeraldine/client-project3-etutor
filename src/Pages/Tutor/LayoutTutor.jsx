@@ -56,6 +56,16 @@ const LayoutTutor = ({ user }) => {
                       Edit Profile
                     </button>
                   </li>
+
+                  <li>
+                    <button
+                      onClick={() => {
+                        navigate("/tutor/edituserdetails");
+                      }}
+                      className='text-gray-500 transition hover:text-gray-500/75'>
+                      Edit User Details
+                    </button>
+                  </li>
                 </ul>
               </nav>
             </div>
