@@ -26,8 +26,8 @@ const EditTuteeProfile = ({ user }) => {
         // console.log(data);
       })
       .catch((error) => {
-        if (error.response.data.error === "Tutee not found.") {
-          console.log("Tutee not found.");
+        if (error.response.data.error === "Tutee profile not found.") {
+          console.log("Tutee profile not found.");
           // error page
         }
       });
@@ -35,11 +35,14 @@ const EditTuteeProfile = ({ user }) => {
 
   //* Update fetch on clicking "Update Profile"
   const handleUpdateTuteeProfile = (values) => {
+    setWantToEdit(false);
+    setTuteeData(values);
     const url = urlcat(SERVER, `/tutee/editprofile/${user._id}`);
     axios
       .put(url, values)
       .then(({ data }) => {
         console.log(data);
+        navigate("/tutee/editprofile");
       })
       .catch((error) => {
         if (error.response.data.error === "Tutee profile was not updated.") {
@@ -86,43 +89,44 @@ const EditTuteeProfile = ({ user }) => {
       let anySecSub = false;
       let anyLowerPri = false;
       let anyUpperPri = false;
-      values.classLevel.map((level) => {
-        if (level.split(" ")[0] === "Primary") {
-          anyPriLevel = true;
-          if (level.split(" ")[1] !== "1" && level.split(" ")[1] !== "2") {
-            anyUpperPri = true; //if tkde lower level
-          } else {
-            anyLowerPri = true;
-          }
-        } else if (level.split(" ")[0] === "Secondary") {
-          anySecLevel = true;
+      // values.currentLevel.map((level) => {
+      if (values.currentLevel.split(" ")[0] === "Primary") {
+        anyPriLevel = true;
+        if (
+          values.currentLevel.split(" ")[1] !== "1" &&
+          values.currentLevel.split(" ")[1] !== "2"
+        ) {
+          anyUpperPri = true; //if tkde lower level
+        } else {
+          anyLowerPri = true;
         }
-      });
+      } else if (values.currentLevel.split(" ")[0] === "Secondary") {
+        anySecLevel = true;
+      }
 
-      values.subjects.map((subject) => {
-        if (subject === "English") {
-          if (anyPriLevel === true) {
-            anyPriSub = true;
-          }
-          if (anySecLevel === true) {
-            anySecSub = true;
-          }
-        } else if (priSubjects.indexOf(subject) !== -1) {
+      // values.subjects.map((subject) => {
+      if (values.subjects === "English") {
+        if (anyPriLevel === true) {
           anyPriSub = true;
-        } else if (secSubjects.indexOf(subject) !== -1) {
+        }
+        if (anySecLevel === true) {
           anySecSub = true;
         }
-        if (subject === "Science") {
-          if (
-            anyUpperPri === false ||
-            (values.subjects.indexOf("Mathematics") === -1 &&
-              values.subjects.indexOf("English") === -1 &&
-              anyLowerPri === true)
-          ) {
-            anyPriSub = false;
-          }
+      } else if (priSubjects.indexOf(values.subjects) !== -1) {
+        anyPriSub = true;
+      } else if (secSubjects.indexOf(values.subjects) !== -1) {
+        anySecSub = true;
+      }
+      if (values.subjects === "Science") {
+        if (
+          anyUpperPri === false ||
+          (values.subjects.indexOf("Mathematics") === -1 &&
+            values.subjects.indexOf("English") === -1 &&
+            anyLowerPri === true)
+        ) {
+          anyPriSub = false;
         }
-      });
+      }
 
       if (
         (anyPriLevel === true && anyPriSub === false) ||
@@ -140,33 +144,23 @@ const EditTuteeProfile = ({ user }) => {
     setWantToEdit(true);
   };
 
-  const handleCompleteEditing = () => {
-    setWantToEdit(false);
-  };
-
   if (!wantToEdit) {
     return (
       <div>
         <h1 style={{ fontSize: "30px" }}>Edit Tutee Profile</h1>
         <br />
         <p>Full Name: </p>
-        <p> {tuteeData.fullName}</p>
+        <p> {tuteeData?.fullName}</p>
         <p>Phone: </p>
-        <p>{tuteeData.phone} </p>
-        <p>Region: </p>
-        <p>{tuteeData.region} </p>
-        <p>Rates Per Lesson: </p>
-        <p>${tuteeData.rates} </p>
-        <p>Class Type: </p>
-        <p>{tuteeData.classType.join(", ")} </p>
+        <p>{tuteeData?.phone} </p>
+        <p>Preferred Contact Mode: </p>
+        <p>{tuteeData?.preferredContactMode} </p>
         <p>Class Level: </p>
-        <p>{tuteeData.classLevel.join(", ")} </p>
+        <p>{tuteeData?.currentLevel} </p>
+        <p>Region: </p>
+        <p>{tuteeData?.region} </p>
         <p>Subjects: </p>
-        <p>{tuteeData.subjects.join(", ")} </p>
-        <p>Education Background: </p>
-        <p>{tuteeData.educationBackground}</p>
-        <p>Teaching Experience: </p>
-        <p>{tuteeData.teachingExperience} </p>
+        <p>{tuteeData?.subjects?.join(", ")} </p>
         <button style={{ backgroundColor: "lime" }} onClick={handleEdit}>
           Edit Profile
         </button>
@@ -176,20 +170,17 @@ const EditTuteeProfile = ({ user }) => {
   } else {
     return (
       <>
-        <h1 style={{ fontSize: "30px" }}>Edit Tutor Profile</h1>
+        <h1 style={{ fontSize: "30px" }}>Edit Tutee Profile</h1>
 
         {/* using formik */}
         <Formik
           initialValues={{
-            fullName: "",
-            phone: "",
-            region: "select",
-            rates: "",
-            classType: [],
-            classLevel: [],
-            subjects: [],
-            educationBackground: "",
-            teachingExperience: "",
+            fullName: `${tuteeData?.fullName}`,
+            phone: `${tuteeData?.phone}`,
+            preferredContactMode: `${tuteeData?.preferredContactMode}`,
+            currentLevel: `${tuteeData?.currentLevel}`,
+            region: `${tuteeData?.region}`,
+            subjects: `${tuteeData?.subjects}`,
           }}
           validationSchema={signUpAsTuteeValidation}
           onSubmit={(values) => {
@@ -206,7 +197,6 @@ const EditTuteeProfile = ({ user }) => {
           }) => (
             <Form>
               <p>Full Name: </p>
-              <p>{tuteeData.fullName}</p>
               <Field
                 name='fullName'
                 onChange={handleChange}
@@ -218,7 +208,6 @@ const EditTuteeProfile = ({ user }) => {
               ) : null}
               <br />
               <p>Phone: </p>
-              <p>{tuteeData.phone}</p>
               <Field
                 name='phone'
                 onChange={handleChange}
@@ -227,8 +216,44 @@ const EditTuteeProfile = ({ user }) => {
               />
               {errors.phone && touched.phone ? <div>{errors.phone}</div> : null}
               <br />
+              <p>New Preferred Contact Mode: </p>
+              <Field
+                as='select'
+                name='preferredContactMode'
+                values={values.preferredContactMode}
+                onChange={handleChange}>
+                <option disabled>select</option>
+                <option value='Email'>Email</option>
+                <option value='WhatsApp Message'>WhatsApp Message</option>
+                <option value='Phone Call'>Phone Call</option>
+              </Field>
+              <br />
+              {errors.classType && touched.classType ? (
+                <div>{errors.classType}</div>
+              ) : null}
+              <br />
+              <br />
+              <p>Current Class Level: {tuteeData?.currentLevel} </p>
+              <p>New Class Level(s): </p>
+              <Field
+                as='select'
+                name='currentLevel'
+                values={values.currentLevel}
+                onChange={handleChange}>
+                <option disabled>select</option>
+                {priClassLevel.map((level) => (
+                  <option value={level}>{level}</option>
+                ))}
+                {secClassLevel.map((level) => (
+                  <option value={level}>{level}</option>
+                ))}
+              </Field>
+              {errors.currentLevel && touched.currentLevel ? (
+                <div>{errors.currentLevel}</div>
+              ) : null}
+              <br />
+              <br />
               <p>Region: </p>
-              <p>{tuteeData.region}</p>
               <Field
                 as='select'
                 name='region'
@@ -246,57 +271,8 @@ const EditTuteeProfile = ({ user }) => {
               ) : null}
               <br />
               <br />
-              <p>Rates per lesson: </p>
-              <p>{tuteeData.rates}</p>
-              <Field
-                name='rates'
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.rates}
-              />
-              {errors.rates && touched.rates ? <div>{errors.rates}</div> : null}
-              <br />
-              <p>Class Type: </p>
-              <p>{tuteeData.classType}</p>
-              <Field type='checkbox' name='classType' value='In-Person' />
-              In-Person
-              <Field type='checkbox' name='classType' value='Remote' />
-              Remote
-              <br />
-              {errors.classType && touched.classType ? (
-                <div>{errors.classType}</div>
-              ) : null}
-              <br />
-              <br />
-              <p>Class Level: </p>
-              <p>{tuteeData.classLevel}</p>
-              <div>
-                Primary
-                {priClassLevel.map((level) => {
-                  return (
-                    <div key={level}>
-                      <Field type='checkbox' name='classLevel' value={level} />
-                      {level}
-                    </div>
-                  );
-                })}
-                <br />
-                Secondary
-                {secClassLevel.map((level) => {
-                  return (
-                    <div key={level}>
-                      <Field type='checkbox' name='classLevel' value={level} />
-                      {level}
-                    </div>
-                  );
-                })}
-              </div>
-              {errors.classLevel && touched.classLevel ? (
-                <div>{errors.classLevel}</div>
-              ) : null}
-              <br />
-              <p>Subjects: </p>
-              <p>{tuteeData.subjects}</p>
+              <p>Current Subject(s): {tuteeData?.subjects?.join(", ")} </p>
+              <p>New Subject(s): </p>
               <div>
                 Primary
                 {priSubjects.map((subject) => {
@@ -330,44 +306,17 @@ const EditTuteeProfile = ({ user }) => {
                 <p>Please select matching class levels and subjects.</p>
               )}
               <br />
-              <br />
-              <p>Education Background: </p>
-              <p>{tuteeData.educationBackground}</p>
-              <Field
-                name='educationBackground'
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.educationBackground}
-              />
-              {errors.educationBackground && touched.educationBackground ? (
-                <div>{errors.educationBackground}</div>
-              ) : null}
-              <p>Teaching Experience: </p>
-              <p>{tuteeData.teachingExperience}</p>
-              <Field
-                name='teachingExperience'
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.teachingExperience}
-              />
-              {errors.teachingExperience && touched.teachingExperience ? (
-                <div>{errors.teachingExperience}</div>
-              ) : null}
-              <br />
               <button
                 type='submit'
-                // disabled={
-                //   !(
-                //     Object.keys(errors).length === 0 &&
-                //     Object.keys(touched).length ===
-                //       Object.keys(initialValues).length
-                //   )
-                // }
-                style={{ backgroundColor: "lime" }}
-                onClick={handleCompleteEditing}>
+                disabled={
+                  !(
+                    Object.keys(errors).length === 0 &&
+                    Object.keys(touched).length !== 0
+                  )
+                }
+                style={{ backgroundColor: "lime" }}>
                 Complete Editing
               </button>
-              {/* {!isEmailUnique && <p>Email already in use!</p>} */}
               {!isTuteeProfileSetUp && (
                 <p>Tutor profile unable to be set up.</p>
               )}
