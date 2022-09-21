@@ -67,11 +67,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
       .put(urlEditClass, values)
       .then(({ data }) => {
         console.log(data);
-        if (data.length === 0) {
-          console.log("no classes created yet");
-        } else {
           setClasses(data);
-        }
       })
       .catch((error) => {
         if (
@@ -126,6 +122,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
                 classLevel: `${eachClass.classLevel}`,
                 bookedBy: `${bookedById}`,
                 groupSize: `${eachClass.groupSize}`,
+                tutor: `${eachClass.tutor._id}`
               }}
               validationSchema={classesValidation}
               onSubmit={(values) => {
