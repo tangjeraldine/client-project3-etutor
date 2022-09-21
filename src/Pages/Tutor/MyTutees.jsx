@@ -1,7 +1,7 @@
 import urlcat from "urlcat";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import TuteeModal from "../../components/TuteeModal";
+import PendingTuteeModal from "../../components/PendingTuteeModal";
 
 const SERVER = import.meta.env.VITE_SERVER;
 const url = urlcat(SERVER, "/tutee");
@@ -11,6 +11,8 @@ const MyTutees = ({ user }) => {
   const [pendingTutee, setPendingTutee] = useState([]);
   const [tutorDetails, setTutorDetails] = useState([]);
   const [tuteeDetails, setTuteeDetails] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [whatToOpen, setWhatToOpen] = useState("");
 
   // use the tutor's user_id to find tutees
 
@@ -52,6 +54,11 @@ const MyTutees = ({ user }) => {
       });
   }, [tutorDetails]);
 
+  const handleModal = (index) => {
+    setIsOpen(true);
+    setWhatToOpen(index);
+  };
+
   return (
     <>
       <div>
@@ -75,17 +82,25 @@ const MyTutees = ({ user }) => {
           tuteeDetails?.map((tutee, index) => {
             if (tutee.pendingTutors.includes(tutorDetails._id)) {
               return (
-                <div key={index} onClick={() => console.log("")}>
+                <div key={index} onClick={() => handleModal(index)}>
                   <p key={tutee._id}>{tutee.fullName}</p>
-                  {/* <button style={{ backgroundColor: "lime" }}>accept</button>
-                  <button style={{ backgroundColor: "red" }}>reject</button> */}
                 </div>
               );
             }
           })
         )}
         <div>
-          <TuteeModal />
+          <PendingTuteeModal
+            open={isOpen}
+            onClose={() => setIsOpen(false)}
+            eachTuteeDetails={tuteeDetails[whatToOpen]}
+            user={user}
+            setTuteeDetails={setTuteeDetails}
+            tuteeDetails={tuteeDetails}
+            whatToOpen={whatToOpen}
+            tutorDetails={tutorDetails}
+            setIsOpen={setIsOpen}
+          />
         </div>
       </div>
     </>

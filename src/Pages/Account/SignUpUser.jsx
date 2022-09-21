@@ -3,6 +3,7 @@ import { useState } from "react";
 import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import axios from "axios";
+import { BsEyeSlashFill, BsEyeFill } from "react-icons/bs";
 import signUpValidation from "../../Validations/signUpValidation";
 import Footer from "../General Pages/Footer";
 
@@ -12,6 +13,7 @@ const SignUpUser = () => {
   const [isUserProfileSetUp, setIsUserProfileSetUp] = useState(true);
   const [isEmailUnique, setIsEmailUnique] = useState(true);
   const [isUsernameUnique, setIsUsernameUnique] = useState(true);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSignUp = (values) => {
@@ -41,6 +43,10 @@ const SignUpUser = () => {
           setIsEmailUnique(false);
         }
       });
+  };
+
+  const handleToggle = () => {
+    setOpen(!open);
   };
 
   return (
@@ -131,17 +137,27 @@ const SignUpUser = () => {
                         class='block text-sm font-medium text-gray-700'>
                         Set A Password
                       </label>
-                      <Field
-                        name='password'
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.password}
-                        placeholder='password'
-                        class='w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
-                      />
-                      {errors.password && touched.password ? (
-                        <div>{errors.password}</div>
-                      ) : null}
+                      <div className='w-full mx-auto relative'>
+                        <Field
+                          type={open === false ? "password" : "text"}
+                          name='password'
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.password}
+                          placeholder='password'
+                          class='w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
+                        />
+                        {errors.password && touched.password ? (
+                          <div>{errors.password}</div>
+                        ) : null}
+                        <div className='text-2xl absolute top-3 right-1'>
+                          {open === false ? (
+                            <BsEyeSlashFill onClick={handleToggle} />
+                          ) : (
+                            <BsEyeFill onClick={handleToggle} />
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <div class='col-span-6'>

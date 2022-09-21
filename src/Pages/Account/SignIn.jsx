@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import urlcat from "urlcat";
 import { Field, Formik, Form } from "formik";
 import axios from "axios";
+import { BsEyeSlashFill, BsEyeFill } from "react-icons/bs";
 import signInValidation from "../../Validations/signInValidation";
 import { useState } from "react";
 import Footer from "../General Pages/Footer";
@@ -10,9 +11,10 @@ import Testimonials from "../General Pages/Testimonials";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const SignIn = ({ setUser }) => {
+const SignIn = ({ setUser, user }) => {
   const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
   // const [user, setUser] = useState({});
   const [signInSuccessful, setSignInSuccessful] = useState(true);
 
@@ -35,20 +37,56 @@ const SignIn = ({ setUser }) => {
     return JSON.parse(jsonPayload);
   };
 
+  const checkForTutorProfile = (USER) => {
+    const url = urlcat(SERVER, `/tutor/${USER._id}`);
+    axios
+      .get(url)
+      .then(({ data }) => {
+        console.log("data", data);
+        navigate("/tutor");
+      })
+      .catch((error) => {
+        if (error.response.data.error === "Tutor not found.") {
+          console.log("ooops", error);
+          navigate("/signup/tutor");
+        }
+      });
+  };
+
+  const checkForTuteeProfile = (USER) => {
+    const url = urlcat(SERVER, `/tutee/editprofile/${USER._id}`);
+    axios
+      .get(url)
+      .then(({ data }) => {
+        console.log("data", data);
+        navigate("/tutee");
+      })
+      .catch((error) => {
+        if (error.response.data.error === "Tutee not found.") {
+          console.log("ooops", error);
+          navigate("/signup/tutee");
+        }
+      });
+  };
+
   const handleSignIn = (values) => {
     setSignInSuccessful(true);
     const url = urlcat(SERVER, "/user/signin");
     axios
       .post(url, values)
       .then(({ data }) => {
-        const user = parseJwt(data.token).user;
-        setUser(user);
+        const USER = parseJwt(data.token).user;
+        setUser(USER);
         // const userType = parseJwt(data.token).user.userType;
-        const userType = user.userType;
+        const userType = USER.userType;
         if (userType === "Tutor") {
-          navigate("/tutor");
+          if (user) {
+            checkForTutorProfile(USER);
+          }
         } else if (userType === "Tutee") {
-          navigate("/tutee");
+          if (user) {
+            checkForTuteeProfile(USER);
+          }
         }
       })
       .catch((error) => {
@@ -62,33 +100,37 @@ const SignIn = ({ setUser }) => {
       });
   };
 
+  const handleToggle = () => {
+    setOpen(!open);
+  };
+
   return (
-    <section class="bg-yellow-300 h-screen">
-      <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
-        <aside class="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
+    <section class='bg-yellow-300 h-screen'>
+      <div class='lg:grid lg:min-h-screen lg:grid-cols-12'>
+        <aside class='relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6'>
           <img
-            alt="Happy"
-            src="https://images.unsplash.com/photo-1597614645324-225ff8159d70?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-            class="absolute inset-0 object-cover w-full h-full"
+            alt='Happy'
+            src='https://images.unsplash.com/photo-1597614645324-225ff8159d70?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80'
+            class='absolute inset-0 object-cover w-full h-full'
           />
         </aside>
 
-        <main class="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:py-12 lg:px-16 xl:col-span-6">
-          <div class="max-w-xl lg:max-w-3xl">
-            <a class="block text-blue-600" href="/">
-              <span class="sr-only">Home</span>
+        <main class='flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:py-12 lg:px-16 xl:col-span-6'>
+          <div class='max-w-xl lg:max-w-3xl'>
+            <a class='block text-blue-600' href='/'>
+              <span class='sr-only'>Home</span>
               <img
-                className="h-32"
-                src="https://cdn-icons-png.flaticon.com/512/3212/3212202.png"
-                alt="Welcome"
+                className='h-32'
+                src='https://cdn-icons-png.flaticon.com/512/3212/3212202.png'
+                alt='Welcome'
               />
             </a>
 
-            <h1 class="mt-6 text-2xl font-bold text-red-500 sm:text-3xl md:text-4xl">
+            <h1 class='mt-6 text-2xl font-bold text-red-500 sm:text-3xl md:text-4xl'>
               If you're striving for greatness, we're here for you.
             </h1>
 
-            <p class="mt-4 leading-relaxed text-rose-700">
+            <p class='mt-4 leading-relaxed text-rose-700'>
               eTutor is Singapore's leading hosting site for tutors and tutees
               to connect and manage their tuition sessions. Try now by signing
               up, setting up, or booking classes! Using this platform is
@@ -101,8 +143,7 @@ const SignIn = ({ setUser }) => {
                 password: "",
               }}
               validationSchema={signInValidation}
-              onSubmit={(values) => handleSignIn(values)}
-            >
+              onSubmit={(values) => handleSignIn(values)}>
               {({
                 handleChange,
                 handleBlur,
@@ -112,79 +153,74 @@ const SignIn = ({ setUser }) => {
                 initialValues,
               }) => (
                 <Form>
-                  <main class="flex items-center justify-center ">
+                  {" "}
+                  <label
+                    for='Username'
+                    class='block text-sm font-medium text-gray-700'>
+                    Username
+                  </label>
+                  <Field
+                    id='username'
+                    name='username'
+                    type='text'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.username}
+                    placeholder='Username'
+                    class='w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
+                  />
+                  {errors.username && touched.username ? (
+                    <div>{errors.username}</div>
+                  ) : null}
+                  <label
+                    for='Password'
+                    class='block text-sm font-medium text-gray-700'>
+                    Password
+                  </label>
+                  <div className='w-full mx-auto relative'>
                     {" "}
-                    <div class="col-span-6 sm:col-span-3">
-                      <label
-                        for="Username"
-                        class="block text-sm font-medium text-gray-700"
-                      >
-                        Username
-                      </label>
-                      <Field
-                        id="username"
-                        name="username"
-                        type="text"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.username}
-                        placeholder="Username"
-                        class="w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm"
-                      />
-                      {errors.username && touched.username ? (
-                        <div>{errors.username}</div>
-                      ) : null}
+                    <Field
+                      id='password'
+                      name='password'
+                      type={open === false ? "password" : "text"}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.password}
+                      placeholder='Password'
+                      class='w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
+                    />
+                    {errors.password && touched.password ? (
+                      <div>{errors.password}</div>
+                    ) : null}
+                    <div className='text-2xl absolute top-3 right-1'>
+                      {open === false ? (
+                        <BsEyeSlashFill onClick={handleToggle} />
+                      ) : (
+                        <BsEyeFill onClick={handleToggle} />
+                      )}
                     </div>
-                    <div class="col-span-6 sm:col-span-3">
-                      <label
-                        for="Password"
-                        class="block text-sm font-medium text-gray-700"
-                      >
-                        Password
-                      </label>
-                      <Field
-                        id="password"
-                        name="password"
-                        type="text"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.password}
-                        placeholder="Password"
-                        class="w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm"
-                      />
-                      {errors.password && touched.password ? (
-                        <div>{errors.password}</div>
-                      ) : null}
-                    </div>
-                    <div class="col-span-6 col-start-3 col-end-5">
-                      <button
-                        type="submit"
-                        disabled={
-                          !(
-                            Object.keys(errors).length === 0 &&
-                            Object.keys(touched).length !== 0
-                          )
-                        }
-                        class="inline-block px-12 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 flex justify-center"
-                      >
-                        Sign in
-                      </button>
-                    </div>
-                    <div class="col-span-6 col-start-2 col-end-5">
-                      <p class="text-sm text-gray-700 float-right">
-                        Don't have an account yet?
-                      </p>
-                      <button
-                        class="inline-block px-10 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 float-right"
-                        onClick={() => {
-                          navigate("/signup");
-                        }}
-                      >
-                        Create an account
-                      </button>
-                    </div>
-                  </main>
-
+                  </div>
+                  <button
+                    type='submit'
+                    disabled={
+                      !(
+                        Object.keys(errors).length === 0 &&
+                        Object.keys(touched).length !== 0
+                      )
+                    }
+                    class='block mt-4 px-12 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+                    Sign in
+                  </button>
+                  <p class='text-sm text-gray-700 float-right'>
+                    Don't have an account yet?
+                  </p>
+                  <button
+                    class='block mt-4 px-10 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                    onClick={() => {
+                      navigate("/signup");
+                    }}>
+                    Create an account
+                  </button>
                   {!signInSuccessful && <p>Sign in failed!</p>}
                 </Form>
               )}

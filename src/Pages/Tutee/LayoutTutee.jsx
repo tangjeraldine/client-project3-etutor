@@ -1,28 +1,49 @@
 import { Outlet, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import ErrorPage from "../Error Page/ErrorPage";
+import Footer from "../General Pages/Footer";
 
 const LayoutTutee = ({ user }) => {
   if (user.userType !== "Tutee") {
     return <ErrorPage />;
   }
-
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  const showEdit = () => {
+    setOpen(!open);
+  };
+
   return (
     <>
-      <header className='bg-white'>
-        <div className='px-4 mx-auto max-w-screen-xl sm:px-6 lg:px-8'>
-          <div className='flex items-center justify-center h-16'>
-            <div className='md:block'>
-              <nav aria-labelledby='header-navigation'>
-                {/* <h2 className="sr-only" id="header-navigation">Header navigation</h2> */}
+      <header class='bg-red-600'>
+        <div class='px-4 mx-auto max-w-screen-xl sm:px-6 lg:px-8'>
+          <div class='flex items-center justify-between h-16'>
+            <div class='md:flex md:items-center md:gap-12'>
+              <img
+                src='https://cdn-icons-png.flaticon.com/512/3212/3212202.png'
+                alt='welcome'
+                className='h-16 cursor-pointer'
+                nClick={() => {
+                  navigate("/");
+                }}
+              />
+              <p></p>
+            </div>
 
-                <ul className='flex items-center text-sm gap-6'>
+            <div class='hidden md:block'>
+              <nav aria-labelledby='header-navigation'>
+                <h2 class='sr-only' id='header-navigation'>
+                  Header navigation
+                </h2>
+
+                <ul class='flex items-center text-sm gap-6'>
                   <li>
                     <button
                       onClick={() => {
                         navigate("/tutee");
                       }}
-                      className='text-gray-500 transition hover:text-gray-500/75'>
+                      class='text-yellow-300 transition hover:text-blue-400/75'>
                       My Classes
                     </button>
                   </li>
@@ -32,7 +53,7 @@ const LayoutTutee = ({ user }) => {
                       onClick={() => {
                         navigate("/tutee/mytutors");
                       }}
-                      className='text-gray-500 transition hover:text-gray-500/75'>
+                      class='text-yellow-300 transition hover:text-blue-400/75'>
                       My Tutors
                     </button>
                   </li>
@@ -42,7 +63,7 @@ const LayoutTutee = ({ user }) => {
                       onClick={() => {
                         navigate("/tutee/search");
                       }}
-                      className='text-gray-500 transition hover:text-gray-500/75'>
+                      class='text-yellow-300 transition hover:text-blue-400/75'>
                       Search For Tutors
                     </button>
                   </li>
@@ -52,48 +73,54 @@ const LayoutTutee = ({ user }) => {
                       onClick={() => {
                         navigate("/tutee/askanything");
                       }}
-                      className='text-gray-500 transition hover:text-gray-500/75'>
+                      class='text-yellow-300 transition hover:text-blue-400/75'>
                       Ask Anything
-                    </button>
-                  </li>
-
-                  <li>
-                    <button
-                      className='text-gray-500 transition hover:text-gray-500/75'
-                      onClick={() => {
-                        navigate("/tutee/editprofile");
-                      }}>
-                      My Account
-                    </button>
-                  </li>
-
-                  <li>
-                    <button
-                      onClick={() => {
-                        navigate("/tutee/edituserdetails");
-                      }}
-                      className='text-gray-500 transition hover:text-gray-500/75'>
-                      Edit User Details
                     </button>
                   </li>
                 </ul>
               </nav>
             </div>
 
-            <div className='flex items-center gap-4'>
-              {/* this is the menu icon, will appear when the screen size become smaller */}
-              <div className='block md:hidden'>
-                <button className='p-2 text-gray-600 bg-gray-100 rounded transition hover:text-gray-600/75'>
+            <div class='flex items-center gap-4'>
+              <button
+                onClick={showEdit}
+                class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-yellow-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+                {!open ? "Show Account Settings" : "Hide Settings"}
+              </button>
+              {open ? (
+                <div class='flex items-center gap-4'>
+                  <button
+                    onClick={() => {
+                      navigate("/tutee/edituserdetails");
+                    }}
+                    class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
+                    Edit Profile
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/tutee/editprofile");
+                    }}
+                    class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
+                    Edit User Details
+                  </button>
+                </div>
+              ) : (
+                <div></div>
+              )}
+
+              <div class='block md:hidden'>
+                <button class='p-2 text-gray-600 bg-gray-100 rounded transition hover:text-gray-600/75'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
-                    className='w-5 h-5'
+                    class='w-5 h-5'
                     fill='none'
                     viewBox='0 0 24 24'
                     stroke='currentColor'
-                    strokeWidth='2'>
+                    stroke-width='2'>
                     <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
+                      stroke-linecap='round'
+                      stroke-linejoin='round'
                       d='M4 6h16M4 12h16M4 18h16'
                     />
                   </svg>
@@ -103,10 +130,8 @@ const LayoutTutee = ({ user }) => {
           </div>
         </div>
       </header>
-
       <Outlet />
-
-      <p>insert footer here</p>
+      <Footer />
     </>
   );
 };
