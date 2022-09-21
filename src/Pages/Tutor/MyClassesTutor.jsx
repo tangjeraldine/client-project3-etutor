@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import classesValidation from "../../Validations/classesValidation";
 import ClassModal from "../../components/ClassModal";
+import { format } from 'date-fns'
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -61,12 +62,23 @@ const MyClassesTutor = ({ user }) => {
     }
   }, [renderClasses, tutorDetails]);
 
+  // const date = new Date('1995-12-17T03:24:00')
+  // const datestring = date.toString();
+  // console.log(typeof(date))
+  // console.log(typeof(datestring))
+
   const handleCreateClass = (values) => {
     const urlCreateClasses = urlcat(SERVER, "/class/create-class");
-    const newClass = { ...values };
-    newClass.tutor = tutorDetails._id;
+    const date = values.date
+    const time = values.time
+    const timeDay = `${date}T${time}:00`
+    delete values.date
+    delete values.time
+    values.timeDay = new Date(timeDay)
+    // const newClass = { ...values };
+    values.tutor = tutorDetails._id;
     axios
-      .post(urlCreateClasses, newClass)
+      .post(urlCreateClasses, values)
       .then(({ data }) => {
         setCreateClassSuccessful(true);
       })
@@ -89,7 +101,7 @@ const MyClassesTutor = ({ user }) => {
         if (data.length === 0) {
           console.log("no classes created yet");
         } else {
-          setClasses(data);
+          setRenderClasses(!renderClasses);
         }
       })
       .catch((error) => {
@@ -101,32 +113,6 @@ const MyClassesTutor = ({ user }) => {
         }
       });
   };
-
-  // const handleEditClass = (id, values) => {
-  //   const editedClass = { ...values };
-  //   const urlEditClass = urlcat(
-  //     SERVER,
-  //     `/class/edit-class/${id}/${tutorDetails._id}`
-  //   );
-  //   axios
-  //     .put(urlEditClass, editedClass)
-  //     .then(({ data }) => {
-  //       console.log(data);
-  //       if (data.length === 0) {
-  //         console.log("no classes created yet");
-  //       } else {
-  //         setClasses(data);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (
-  //         error.response.data.error === "Unable to edit class." ||
-  //         error.response.data.error === "Class not found."
-  //       ) {
-  //         setEditClassSuccessful(false);
-  //       }
-  //     });
-  // };
 
   const handleModal = (index) => {
     setIsOpen(true);
@@ -142,6 +128,8 @@ const MyClassesTutor = ({ user }) => {
       <Formik
         initialValues={{
           classTitle: "",
+          time: "",
+          date: "",
           classType: "select",
           subject: "select",
           classLevel: "select",
@@ -166,6 +154,30 @@ const MyClassesTutor = ({ user }) => {
             {errors.classTitle && touched.classTitle ? (
               <div>{errors.classTitle}</div>
             ) : null}
+            <br />
+
+            <p>Date and Time</p>
+            <input
+              type="date"
+              name="date"
+              min="2022-08-21"
+              max="2025-10-27"
+              value={values.date}
+              onChange={handleChange}
+            />
+            <input
+              type="time"
+              name="time"
+              value={values.time}
+              onChange={handleChange}
+            />
+            {errors.date && Object.keys(touched).length===5 ? (
+              <div>{errors.date}</div>
+            ) : null}
+            {errors.time && Object.keys(touched).length===5 ? (
+              <div>{errors.time}</div>
+            ) : null}
+            <br />
             <br />
 
             <p>Class Type</p>
@@ -265,15 +277,15 @@ const MyClassesTutor = ({ user }) => {
         {classes.map((eachClass, index) => {
           const tutees = [];
           eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
+          const date = eachClass.timeDay.toString().substring(0, 10)
+          const time = eachClass.timeDay.toString().substring(11, 16)
           return (
             <div key={index}>
               <p>Class Title: {eachClass.classTitle}</p>
-              <p>Date, Time: {eachClass.timeDay}</p>
+              <p>Date, Time: {`${date}, ${time}`}</p>
               <p>Class Type: {eachClass.classType}</p>
               <p>Subject: {eachClass.subject}</p>
               <p>Class Level: {eachClass.classLevel}</p>
-              {/* <p>Tutor: {eachClass.tutor.fullName}</p>
-              not sure if tutor is necessary since its their own account xD */}
               <p>Tutees: {tutees.join(", ") || "none"}</p>
               <p>Group Size: {eachClass.groupSize}</p>
               <button
@@ -282,12 +294,7 @@ const MyClassesTutor = ({ user }) => {
               >
                 remove class
               </button>
-              {/* <button
-                style={{ backgroundColor: "lime" }}
-                onClick={() => handleEditClass(eachClass._id)}
-              >
-                edit class
-              </button> */}
+
               <button
                 style={{ backgroundColor: "lime" }}
                 onClick={() => handleModal(index)}
@@ -298,8 +305,6 @@ const MyClassesTutor = ({ user }) => {
           );
         })}
         {!deleteClassSuccessful && <p>Unable to delete class.</p>}
-        {/* <button style={{ backgroundColor: "lime" }} onClick={() => handleEditClass(eachClass._id)}>edit class</button> */}
-        {/* {!editClassSuccessful && <p>Unable to edit class.</p>} */}
         {!loadClassesSuccessful && <p>Unable to load classes.</p>}
       </div>
 
@@ -308,6 +313,9 @@ const MyClassesTutor = ({ user }) => {
         onClose={() => setIsOpen(false)}
         eachClass={classes[whatToOpen]}
         tutorDetails={tutorDetails}
+        setClasses={setClasses}
+        setRenderClasses={setRenderClasses}
+        renderClasses={renderClasses}
       />
     </>
   );

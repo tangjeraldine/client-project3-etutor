@@ -1,5 +1,8 @@
 import * as yup from "yup";
 
+const today = new Date();
+today.setHours(0, 0, 0, 0)
+
 const classesValidation = yup.object({
   classTitle: yup
     .string()
@@ -36,12 +39,14 @@ const classesValidation = yup.object({
         excludeEmptyString: true,
       }
     ),
-  timeDay: yup
-    .date()
-    .default(() => new Date()), //! How to make the date not before today
-    // .required("Date and time is required."),
-  // tutor: yup.string().required("A tutor is required."),
-  // bookedBy: yup.array().of(yup.string()),
+  // timeDay: yup
+  //   .date()
+  //   .required("Date and time is required."),
+  //   // .default(() => new Date()),//! How to make the date not before today
+  // // tutor: yup.string().required("A tutor is required."),
+  // // bookedBy: yup.array().of(yup.string()),
+  date: yup.date().min(today, 'Date cannot be in the past.').required('Date is required.'),
+  time: yup.string().required('Time is required.'),
   groupSize: yup
     .number()
     .typeError("Group size must be a number.")
