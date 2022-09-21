@@ -16,19 +16,15 @@ const LayoutTutee = ({ user }) => {
 
   return (
     <>
-      <header class='bg-red-600'>
+      <header class='bg-red-800'>
         <div class='px-4 mx-auto max-w-screen-xl sm:px-6 lg:px-8'>
           <div class='flex items-center justify-between h-16'>
             <div class='md:flex md:items-center md:gap-12'>
               <img
                 src='https://cdn-icons-png.flaticon.com/512/3212/3212202.png'
                 alt='welcome'
-                className='h-16 cursor-pointer'
-                nClick={() => {
-                  navigate("/");
-                }}
+                className='h-16'
               />
-              <p></p>
             </div>
 
             <div class='hidden md:block'>
@@ -37,7 +33,7 @@ const LayoutTutee = ({ user }) => {
                   Header navigation
                 </h2>
 
-                <ul class='flex items-center text-sm gap-6'>
+                <ul class='flex items-center text-sm gap-10'>
                   <li>
                     <button
                       onClick={() => {
@@ -85,7 +81,7 @@ const LayoutTutee = ({ user }) => {
               <button
                 onClick={showEdit}
                 class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-yellow-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-                {!open ? "Show Account Settings" : "Hide Settings"}
+                {!open ? "Account" : "Hide"}
               </button>
               {open ? (
                 <div class='flex items-center gap-4'>
@@ -103,6 +99,14 @@ const LayoutTutee = ({ user }) => {
                     }}
                     class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
                     Edit User Details
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/");
+                    }}
+                    class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
+                    Logout
                   </button>
                 </div>
               ) : (

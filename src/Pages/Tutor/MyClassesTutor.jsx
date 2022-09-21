@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import classesValidation from "../../Validations/classesValidation";
 import ClassModal from "../../components/ClassModal";
-import { format } from 'date-fns'
+import { format } from "date-fns";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -69,12 +69,12 @@ const MyClassesTutor = ({ user }) => {
 
   const handleCreateClass = (values) => {
     const urlCreateClasses = urlcat(SERVER, "/class/create-class");
-    const date = values.date
-    const time = values.time
-    const timeDay = `${date}T${time}:00`
-    delete values.date
-    delete values.time
-    values.timeDay = new Date(timeDay)
+    const date = values.date; //2022-11-12
+    const time = values.time;
+    const timeDay = `${date}T${time}:00`;
+    delete values.date;
+    delete values.time;
+    values.timeDay = new Date(timeDay);
     // const newClass = { ...values };
     values.tutor = tutorDetails._id;
     axios
@@ -140,13 +140,12 @@ const MyClassesTutor = ({ user }) => {
           setRenderClasses(!renderClasses);
           handleCreateClass(values);
           resetForm();
-        }}
-      >
+        }}>
         {({ handleChange, handleBlur, values, errors, touched }) => (
           <Form>
             <p>Class Title</p>
             <Field
-              name="classTitle"
+              name='classTitle'
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.classTitle}
@@ -158,23 +157,23 @@ const MyClassesTutor = ({ user }) => {
 
             <p>Date and Time</p>
             <input
-              type="date"
-              name="date"
-              min="2022-08-21"
-              max="2025-10-27"
+              type='date'
+              name='date'
+              min='2022-08-21'
+              max='2025-10-27'
               value={values.date}
               onChange={handleChange}
             />
             <input
-              type="time"
-              name="time"
+              type='time'
+              name='time'
               value={values.time}
               onChange={handleChange}
             />
-            {errors.date && Object.keys(touched).length===5 ? (
+            {errors.date && Object.keys(touched).length === 5 ? (
               <div>{errors.date}</div>
             ) : null}
-            {errors.time && Object.keys(touched).length===5 ? (
+            {errors.time && Object.keys(touched).length === 5 ? (
               <div>{errors.time}</div>
             ) : null}
             <br />
@@ -182,11 +181,10 @@ const MyClassesTutor = ({ user }) => {
 
             <p>Class Type</p>
             <Field
-              as="select"
-              name="classType"
+              as='select'
+              name='classType'
               values={values.classType}
-              onChange={handleChange}
-            >
+              onChange={handleChange}>
               <option disabled>select</option>
               {tutorDetails.classType?.map((type) => (
                 <option key={type} value={type}>
@@ -202,11 +200,10 @@ const MyClassesTutor = ({ user }) => {
 
             <p>Subject</p>
             <Field
-              as="select"
-              name="subject"
+              as='select'
+              name='subject'
               values={values.subject}
-              onChange={handleChange}
-            >
+              onChange={handleChange}>
               <option disabled>select</option>
               {tutorDetails.subjects?.map((subject) => (
                 <option key={subject} value={subject}>
@@ -225,11 +222,10 @@ const MyClassesTutor = ({ user }) => {
 
             <p>Class Level</p>
             <Field
-              as="select"
-              name="classLevel"
+              as='select'
+              name='classLevel'
               values={values.classLevel}
-              onChange={handleChange}
-            >
+              onChange={handleChange}>
               <option disabled>select</option>
               {tutorDetails.classLevel?.map((level) => (
                 <option key={level} value={level}>
@@ -245,7 +241,7 @@ const MyClassesTutor = ({ user }) => {
 
             <p>Group Size</p>
             <Field
-              name="groupSize"
+              name='groupSize'
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.groupSize}
@@ -256,15 +252,14 @@ const MyClassesTutor = ({ user }) => {
             <br />
             <br />
             <button
-              type="submit"
+              type='submit'
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
                   Object.keys(touched).length !== 0
                 )
               }
-              style={{ backgroundColor: "lime" }}
-            >
+              style={{ backgroundColor: "lime" }}>
               create class
             </button>
             {!createClassSuccessful && <p>Class unable to be created.</p>}
@@ -277,8 +272,8 @@ const MyClassesTutor = ({ user }) => {
         {classes.map((eachClass, index) => {
           const tutees = [];
           eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
-          const date = eachClass.timeDay.toString().substring(0, 10)
-          const time = eachClass.timeDay.toString().substring(11, 16)
+          const date = eachClass.timeDay.toString().substring(0, 10);
+          const time = eachClass.timeDay.toString().substring(11, 16);
           return (
             <div key={index}>
               <p>Class Title: {eachClass.classTitle}</p>
@@ -290,15 +285,13 @@ const MyClassesTutor = ({ user }) => {
               <p>Group Size: {eachClass.groupSize}</p>
               <button
                 style={{ backgroundColor: "lime" }}
-                onClick={() => handleRemoveClass(eachClass._id)}
-              >
+                onClick={() => handleRemoveClass(eachClass._id)}>
                 remove class
               </button>
 
               <button
                 style={{ backgroundColor: "lime" }}
-                onClick={() => handleModal(index)}
-              >
+                onClick={() => handleModal(index)}>
                 details
               </button>
             </div>
