@@ -3,10 +3,21 @@ import { Field, Formik, Form, useFormikContext } from "formik";
 import classesValidation from "../Validations/classesValidation";
 import urlcat from "urlcat";
 import axios from "axios";
+import { format, parseISO } from "date-fns";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, renderClasses }) => {
+const ClassModal = ({
+  open,
+  eachClass,
+  onClose,
+  tutorDetails,
+  setRenderClasses,
+  renderClasses,
+  CheckClassLevelAndSubject,
+  matchingLevelSub,
+  setMatchingLevelSub,
+}) => {
   if (!open) return null;
 
   const [editClassSuccessful, setEditClassSuccessful] = useState(true);
@@ -39,7 +50,6 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
     bookedByFullName.push(tutee.fullName);
     bookedById.push(tutee._id);
   });
-  console.log(bookedById)
 
   useEffect(() => {
     //access tutees database and find all tutees of this tutor
@@ -59,16 +69,16 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
   }, []);
 
   const handleEditClass = (values) => {
-    console.log(values)
     const urlEditClass = urlcat(
       SERVER,
       `/class/edit-class/${eachClass._id}/${tutorDetails._id}`
     );
+    // values.timeDay = new Date(values.timeDay);
     axios
       .put(urlEditClass, values)
       .then(({ data }) => {
         console.log(data);
-        setShowEditableClass(!showEditableClass)
+        setShowEditableClass(!showEditableClass);
       })
       .catch((error) => {
         if (
@@ -80,6 +90,15 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
       });
   };
 
+  const timeDay = format(
+    parseISO(eachClass.timeDay),
+    "EEE, dd/MM/yyyy, hh:mm aaaa"
+  );
+  const timeDayForInput = format(
+    parseISO(eachClass.timeDay),
+    "yyyy-MM-dd'T'hh:mm"
+  );
+
   return (
     <>
       {!showEditableClass && (
@@ -88,7 +107,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
           <div style={MODAL_STYLES}>
             <div style={{ fontSize: "30px" }}>Class modal</div>
             <p>Class Title: {eachClass.classTitle}</p>
-            <p>Date, Time: {eachClass.timeDay}</p>
+            <p>Date, Time: {timeDay}</p>
             <p>Class Type: {eachClass.classType}</p>
             <p>Subject: {eachClass.subject}</p>
             <p>Class Level: {eachClass.classLevel}</p>
@@ -116,14 +135,14 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
           <div style={MODAL_STYLES}>
             <Formik
               initialValues={{
-                classTitle: `${eachClass.classTitle}`,
-                timeDay: `${eachClass.timeDay}`,
-                classType: `${eachClass.classType}`,
-                subject: `${eachClass.subject}`,
-                classLevel: `${eachClass.classLevel}`,
+                classTitle: eachClass.classTitle,
+                timeDay: timeDayForInput,
+                classType: eachClass.classType,
+                subject: eachClass.subject,
+                classLevel: eachClass.classLevel,
                 bookedBy: bookedById,
-                groupSize: `${eachClass.groupSize}`,
-                tutor: `${eachClass.tutor}`,
+                groupSize: eachClass.groupSize,
+                tutor: eachClass.tutor,
               }}
               validationSchema={classesValidation}
               onSubmit={(values) => {
@@ -148,7 +167,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
                   <Field
                     as="select"
                     name="subject"
-                    values={values.subject}
+                    value={values.subject}
                     onChange={handleChange}
                   >
                     <option disabled>select</option>
@@ -171,7 +190,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
                   <Field
                     as="select"
                     name="classLevel"
-                    values={values.classLevel}
+                    value={values.classLevel}
                     onChange={handleChange}
                   >
                     <option disabled>select</option>
@@ -184,6 +203,25 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
                   {errors.classLevel && touched.classLevel ? (
                     <div>{errors.classLevel}</div>
                   ) : null}
+                  {!matchingLevelSub && (
+                    <p>Please select matching class levels and subjects.</p>
+                  )}
+                  <br />
+                  <br />
+
+                  <p>Date and Time</p>
+                  <input
+                    type="datetime-local"
+                    name="timeDay"
+                    value={format(
+                      parseISO(values.timeDay),
+                      "yyyy-MM-dd'T'hh:mm"
+                    )}
+                    onChange={handleChange}
+                  />
+                  {errors.timeDay && Object.keys(touched).length === 5 ? (
+                    <div>{errors.timeDay}</div>
+                  ) : null}
                   <br />
                   <br />
 
@@ -191,7 +229,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
                   <Field
                     as="select"
                     name="classType"
-                    values={values.classType}
+                    value={values.classType}
                     onChange={handleChange}
                   >
                     <option disabled>select</option>
@@ -224,9 +262,6 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
                   {errors.bookedBy && touched.bookedBy ? (
                     <div>{errors.bookedBy}</div>
                   ) : null}
-                  {/* {!matchingLevelSub && (
-              <p>Please select matching class levels and subjects.</p>
-            )} */}
 
                   <p>Group Size</p>
                   <Field
@@ -242,13 +277,15 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, 
                   <br />
                   <button
                     type="submit"
-                    disabled={!(Object.keys(errors).length === 0)}
+                    disabled={
+                      !(Object.keys(errors).length === 0 && matchingLevelSub)
+                    }
                     style={{ backgroundColor: "lime" }}
                   >
                     submit edit
                   </button>
                   {!editClassSuccessful && <p>Class unable to be edited.</p>}
-                  {/* <CheckClassLevelAndSubject /> */}
+                  <CheckClassLevelAndSubject />
                 </Form>
               )}
             </Formik>

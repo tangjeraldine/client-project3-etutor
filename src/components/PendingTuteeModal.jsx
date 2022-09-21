@@ -43,11 +43,17 @@ const PendingTuteeModal = ({
     setIsOpen(false);
   };
 
-  const handleReject = () => {};
+  const handleReject = () => {
+    const updatedPendingTutors = eachTuteeDetails.pendingTutors.filter(
+      (tutor) => tutor !== tutorDetails._id
+    );
+    console.log(updatedPendingTutors);
+    const updatedTuteeDetails = [...tuteeDetails];
+    updatedTuteeDetails[whatToOpen].pendingTutors = updatedPendingTutors;
+    setTuteeDetails(updatedTuteeDetails);
 
-  // axios.get(url).then(({ data }) => {
-  //   console.log(data);
-  // });
+    setIsOpen(false);
+  };
 
   const MODAL_STYLES = {
     position: "fixed",

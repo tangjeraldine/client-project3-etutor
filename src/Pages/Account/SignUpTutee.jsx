@@ -280,7 +280,8 @@ const SignUpTutee = () => {
                       disabled={
                         !(
                           Object.keys(errors).length === 0 &&
-                          Object.keys(touched).length !== 0
+                          Object.keys(touched).length !== 0 &&
+                          matchingLevelSub
                         )
                       }
                       class='block mt-4 px-10 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
