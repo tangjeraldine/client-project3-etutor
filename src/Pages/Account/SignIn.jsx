@@ -113,7 +113,6 @@ const SignIn = ({ setUser }) => {
                 <Form>
                   <main class='flex items-center justify-center '>
                     {" "}
-                    <form action='#' class='grid grid-cols-6 gap-6 mt-8'>
                       <div class='col-span-6 sm:col-span-3'>
                         <label
                           for='Username'
@@ -179,7 +178,6 @@ const SignIn = ({ setUser }) => {
                           Create an account
                         </button>
                       </div>
-                    </form>
                   </main>
 
                   {!signInSuccessful && <p>Sign in failed!</p>}
