@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import classesValidation from "../../Validations/classesValidation";
 import ClassModal from "../../components/ClassModal";
-import { format } from 'date-fns'
+import { format } from "date-fns";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -69,12 +69,12 @@ const MyClassesTutor = ({ user }) => {
 
   const handleCreateClass = (values) => {
     const urlCreateClasses = urlcat(SERVER, "/class/create-class");
-    const date = values.date
-    const time = values.time
-    const timeDay = `${date}T${time}:00`
-    delete values.date
-    delete values.time
-    values.timeDay = new Date(timeDay)
+    const date = values.date;
+    const time = values.time;
+    const timeDay = `${date}T${time}:00`;
+    delete values.date;
+    delete values.time;
+    values.timeDay = new Date(timeDay);
     // const newClass = { ...values };
     values.tutor = tutorDetails._id;
     axios
@@ -171,10 +171,10 @@ const MyClassesTutor = ({ user }) => {
               value={values.time}
               onChange={handleChange}
             />
-            {errors.date && Object.keys(touched).length===5 ? (
+            {errors.date && Object.keys(touched).length === 5 ? (
               <div>{errors.date}</div>
             ) : null}
-            {errors.time && Object.keys(touched).length===5 ? (
+            {errors.time && Object.keys(touched).length === 5 ? (
               <div>{errors.time}</div>
             ) : null}
             <br />
@@ -277,8 +277,9 @@ const MyClassesTutor = ({ user }) => {
         {classes.map((eachClass, index) => {
           const tutees = [];
           eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
-          const date = eachClass.timeDay.toString().substring(0, 10)
-          const time = eachClass.timeDay.toString().substring(11, 16)
+          const date = eachClass.timeDay.toString().substring(0, 10);
+          const time = eachClass.timeDay.toString().substring(11, 16);
+
           return (
             <div key={index}>
               <p>Class Title: {eachClass.classTitle}</p>
