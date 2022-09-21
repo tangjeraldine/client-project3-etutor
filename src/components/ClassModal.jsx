@@ -6,7 +6,7 @@ import axios from "axios";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
+const ClassModal = ({ open, eachClass, onClose, tutorDetails, setRenderClasses, renderClasses }) => {
   if (!open) return null;
 
   const [editClassSuccessful, setEditClassSuccessful] = useState(true);
@@ -39,12 +39,13 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
     bookedByFullName.push(tutee.fullName);
     bookedById.push(tutee._id);
   });
+  console.log(bookedById)
 
   useEffect(() => {
     //access tutees database and find all tutees of this tutor
     const urlTuteeDetails = urlcat(
       SERVER,
-      `/tutee/myTutees/${tutorDetails._id}`
+      `/tutee/myClasses/${tutorDetails._id}`
     );
     axios
       .get(urlTuteeDetails)
@@ -58,7 +59,7 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
   }, []);
 
   const handleEditClass = (values) => {
-    // const editedClass = { ...values };
+    console.log(values)
     const urlEditClass = urlcat(
       SERVER,
       `/class/edit-class/${eachClass._id}/${tutorDetails._id}`
@@ -67,12 +68,12 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
       .put(urlEditClass, values)
       .then(({ data }) => {
         console.log(data);
-          setClasses(data);
+        setShowEditableClass(!showEditableClass)
       })
       .catch((error) => {
         if (
-          error.response.data.error === "Unable to edit class." ||
-          error.response.data.error === "Class not found."
+          error.response?.data?.error === "Unable to edit class." ||
+          error.response?.data?.error === "Class not found."
         ) {
           setEditClassSuccessful(false);
         }
@@ -120,13 +121,13 @@ const ClassModal = ({ open, eachClass, onClose, tutorDetails }) => {
                 classType: `${eachClass.classType}`,
                 subject: `${eachClass.subject}`,
                 classLevel: `${eachClass.classLevel}`,
-                bookedBy: `${bookedById}`,
+                bookedBy: bookedById,
                 groupSize: `${eachClass.groupSize}`,
-                tutor: `${eachClass.tutor._id}`
+                tutor: `${eachClass.tutor}`,
               }}
               validationSchema={classesValidation}
               onSubmit={(values) => {
-                console.log(values);
+                setRenderClasses(!renderClasses);
                 handleEditClass(values);
               }}
             >
