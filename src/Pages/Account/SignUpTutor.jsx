@@ -122,10 +122,10 @@ const SignUpTutor = () => {
 
   return (
     <>
-      <section className='bg-yellow-300'>
-        <div class='max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8 sm:py-24'>
-          <div class='max-w-3xl'>
-            <h2 class='text-3xl font-bold sm:text-4xl text-red-500'>
+      <section className="bg-yellow-300">
+        <div class="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8 sm:py-24">
+          <div class="max-w-3xl">
+            <h2 class="text-3xl font-bold sm:text-4xl text-red-500">
               Congrats on your first step! &#127881; &#127881; &#127881;
               <br />
               But you don't have a profile yet. Set one up to let others notice
@@ -133,16 +133,16 @@ const SignUpTutor = () => {
             </h2>
           </div>
 
-          <div class='grid grid-cols-1 gap-8 mt-8 lg:gap-16 lg:grid-cols-2'>
-            <div class='relative h-64 overflow-hidden sm:h-80 lg:h-full'>
+          <div class="grid grid-cols-1 gap-8 mt-8 lg:gap-16 lg:grid-cols-2">
+            <div class="relative h-64 overflow-hidden sm:h-80 lg:h-full">
               <img
-                alt='Party'
-                src='https://images.unsplash.com/photo-1496843916299-590492c751f4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1771&q=80'
-                class='absolute inset-0 object-cover w-full h-full'
+                alt="Party"
+                src="https://images.unsplash.com/photo-1496843916299-590492c751f4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1771&q=80"
+                class="absolute inset-0 object-cover w-full h-full"
               />
             </div>
 
-            <div class='lg:py-6'>
+            <div class="lg:py-6">
               {/* using formik */}
               <Formik
                 initialValues={{
@@ -160,7 +160,8 @@ const SignUpTutor = () => {
                 onSubmit={(values) => {
                   console.log(values);
                   handleSignUpAsTutor(values);
-                }}>
+                }}
+              >
                 {({
                   handleChange,
                   handleBlur,
@@ -170,36 +171,37 @@ const SignUpTutor = () => {
                   initialValues,
                 }) => (
                   <Form>
-                    <p className='font-bold'>Full Name</p>
+                    <p className="font-bold">Full Name</p>
                     <Field
-                      name='fullName'
+                      name="fullName"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       value={values.fullName}
-                      class='w-full p-3 text-sm border-gray-200 rounded-lg'
+                      class="w-full p-3 text-sm border-gray-200 rounded-lg"
                     />
                     {errors.fullName && touched.fullName ? (
                       <div>{errors.fullName}</div>
                     ) : null}
                     <br />
-                    <p className='font-bold'>Phone</p>
+                    <p className="font-bold">Phone</p>
                     <Field
-                      name='phone'
+                      name="phone"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       value={values.phone}
-                      class='w-full p-3 text-sm border-gray-200 rounded-lg'
+                      class="w-full p-3 text-sm border-gray-200 rounded-lg"
                     />
                     {errors.phone && touched.phone ? (
                       <div>{errors.phone}</div>
                     ) : null}
                     <br />
-                    <p className='font-bold'>Region</p>
+                    <p className="font-bold">Region</p>
                     <Field
-                      as='select'
-                      name='region'
+                      as="select"
+                      name="region"
                       values={values.region}
-                      onChange={handleChange}>
+                      onChange={handleChange}
+                    >
                       <option disabled>select</option>
                       {regions.map((region) => (
                         <option key={region} value={region}>
@@ -211,39 +213,39 @@ const SignUpTutor = () => {
                       <div>{errors.region}</div>
                     ) : null}
                     <br />
-                    <p className='font-bold'>Rate per lesson (in SGD)</p>
+                    <p className="font-bold">Rate per lesson (in SGD)</p>
                     <Field
-                      name='rates'
+                      name="rates"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       value={values.rates}
-                      class='w-48 p-3 text-sm border-gray-200 rounded-lg'
+                      class="w-48 p-3 text-sm border-gray-200 rounded-lg"
                     />
                     {errors.rates && touched.rates ? (
                       <div>{errors.rates}</div>
                     ) : null}
                     <br />
-                    <p className='font-bold'>Class Type</p>
-                    <Field type='checkbox' name='classType' value='In-Person' />
+                    <p className="font-bold">Class Type</p>
+                    <Field type="checkbox" name="classType" value="In-Person" />
                     In-Person
-                    <Field type='checkbox' name='classType' value='Remote' />
+                    <Field type="checkbox" name="classType" value="Remote" />
                     Remote
                     <br />
                     {errors.classType && touched.classType ? (
                       <div>{errors.classType}</div>
                     ) : null}
                     <br />
-                    <p className='font-bold'>Class Level</p>
+                    <p className="font-bold">Class Level</p>
                     <div>
-                      <p className='text-decoration-line: underline'>
+                      <p className="text-decoration-line: underline">
                         Primary Levels
                       </p>
                       {priClassLevel.map((level) => {
                         return (
                           <div key={level}>
                             <Field
-                              type='checkbox'
-                              name='classLevel'
+                              type="checkbox"
+                              name="classLevel"
                               value={level}
                             />
                             {level}
@@ -251,15 +253,15 @@ const SignUpTutor = () => {
                         );
                       })}
                       <br />
-                      <p className='text-decoration-line: underline'>
+                      <p className="text-decoration-line: underline">
                         Secondary Levels
                       </p>
                       {secClassLevel.map((level) => {
                         return (
                           <div key={level}>
                             <Field
-                              type='checkbox'
-                              name='classLevel'
+                              type="checkbox"
+                              name="classLevel"
                               value={level}
                             />
                             {level}
@@ -271,17 +273,17 @@ const SignUpTutor = () => {
                       <div>{errors.classLevel}</div>
                     ) : null}
                     <br />
-                    <p className='font-bold'>Subjects</p>
+                    <p className="font-bold">Subjects</p>
                     <div>
-                      <p className='text-decoration-line: underline'>
+                      <p className="text-decoration-line: underline">
                         Primary Level Subjects
                       </p>
                       {priSubjects.map((subject) => {
                         return (
                           <div key={subject}>
                             <Field
-                              type='checkbox'
-                              name='subjects'
+                              type="checkbox"
+                              name="subjects"
                               value={subject}
                             />
                             {subject}
@@ -289,15 +291,15 @@ const SignUpTutor = () => {
                         );
                       })}
                       <br />
-                      <p className='text-decoration-line: underline'>
+                      <p className="text-decoration-line: underline">
                         Secondary Level Subjects
                       </p>
                       {secSubjects.map((subject) => {
                         return (
                           <div key={subject}>
                             <Field
-                              type='checkbox'
-                              name='subjects'
+                              type="checkbox"
+                              name="subjects"
                               value={subject}
                             />
                             {subject}
@@ -305,10 +307,10 @@ const SignUpTutor = () => {
                         );
                       })}
                       <br />
-                      <p className='text-decoration-line: underline'>
+                      <p className="text-decoration-line: underline">
                         Primary/Secondary Subject(s)
                       </p>
-                      <Field type='checkbox' name='subjects' value='English' />
+                      <Field type="checkbox" name="subjects" value="English" />
                       English
                     </div>
                     {errors.subjects && touched.subjects ? (
@@ -318,39 +320,41 @@ const SignUpTutor = () => {
                       <p>Please select matching class levels and subjects.</p>
                     )}
                     <br />
-                    <p className='font-bold'>Education Background</p>
+                    <p className="font-bold">Education Background</p>
                     <Field
-                      name='educationBackground'
+                      name="educationBackground"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       value={values.educationBackground}
-                      class='w-full p-3 text-sm border-gray-200 rounded-lg'
+                      class="w-full p-3 text-sm border-gray-200 rounded-lg"
                     />
                     {errors.educationBackground &&
                     touched.educationBackground ? (
                       <div>{errors.educationBackground}</div>
                     ) : null}
-                    <p className='font-bold'>Teaching Experience</p>
+                    <p className="font-bold">Teaching Experience</p>
                     <Field
-                      name='teachingExperience'
+                      name="teachingExperience"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       value={values.teachingExperience}
-                      class='w-full p-3 text-sm border-gray-200 rounded-lg'
+                      class="w-full p-3 text-sm border-gray-200 rounded-lg"
                     />
                     {errors.teachingExperience && touched.teachingExperience ? (
                       <div>{errors.teachingExperience}</div>
                     ) : null}
                     <br />
                     <button
-                      type='submit'
+                      type="submit"
                       disabled={
                         !(
                           Object.keys(errors).length === 0 &&
-                          Object.keys(touched).length !== 0
+                          Object.keys(touched).length !== 0 &&
+                          matchingLevelSub
                         )
                       }
-                      class='block mt-4 px-10 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+                      class="block mt-4 px-10 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 "
+                    >
                       Save My Profile
                     </button>
                     {!isTutorProfileSetUp && (

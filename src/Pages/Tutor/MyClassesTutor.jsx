@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import classesValidation from "../../Validations/classesValidation";
 import ClassModal from "../../components/ClassModal";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
@@ -18,6 +18,7 @@ const MyClassesTutor = ({ user }) => {
   const [loadClassesSuccessful, setLoadClassesSuccessful] = useState(true);
   const [createClassSuccessful, setCreateClassSuccessful] = useState(true);
   const [deleteClassSuccessful, setDeleteClassSuccessful] = useState(true);
+  const [matchingLevelSub, setMatchingLevelSub] = useState(true);
   const [tutorDetails, setTutorDetails] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
@@ -62,20 +63,59 @@ const MyClassesTutor = ({ user }) => {
     }
   }, [renderClasses, tutorDetails]);
 
-  // const date = new Date('1995-12-17T03:24:00')
-  // const datestring = date.toString();
-  // console.log(typeof(date))
-  // console.log(typeof(datestring))
+  const priSubjects = ["Mathematics", "Science"];
+
+  const secSubjects = [
+    "Additional Mathematics",
+    "Elementary Mathematics",
+    "Biology",
+    "Physics",
+    "Chemistry",
+  ];
+
+  const CheckClassLevelAndSubject = () => {
+    const { values } = useFormikContext(); //a way to excess form values globally
+    useEffect(() => {
+      setMatchingLevelSub(true);
+      const currentLevel = values.classLevel.split(" ");
+      let anyPriSub = false;
+      let anySecSub = false;
+      if (values.subject === "English") {
+        if (currentLevel[0] === "Primary") {
+          anyPriSub = true;
+        } else {
+          anySecSub = true;
+        }
+      } else if (priSubjects.indexOf(values.subject) !== -1) {
+        anyPriSub = true;
+      } else if (secSubjects.indexOf(values.subject) !== -1) {
+        anySecSub = true;
+      }
+      if (values.subject === "Science") {
+        if (currentLevel[0] === "Primary") {
+          if (currentLevel[1] !== "1" && currentLevel[1] !== "2") {
+            anyPriSub = true;
+          } else {
+            anyPriSub = false;
+          }
+        }
+      }
+
+      if (
+        (currentLevel[0] === "Primary" && anyPriSub === false) ||
+        (currentLevel[0] === "Primary" && anySecSub === true) ||
+        (currentLevel[0] === "Secondary" && anySecSub === false) ||
+        (currentLevel[0] === "Secondary" && anyPriSub === true)
+      ) {
+        console.log("please select matching class levels and subjects");
+        setMatchingLevelSub(false);
+      }
+    }, [values.classLevel, values.subject]);
+  };
 
   const handleCreateClass = (values) => {
+    console.log(values);
     const urlCreateClasses = urlcat(SERVER, "/class/create-class");
-    const date = values.date;
-    const time = values.time;
-    const timeDay = `${date}T${time}:00`;
-    delete values.date;
-    delete values.time;
-    values.timeDay = new Date(timeDay);
-    // const newClass = { ...values };
     values.tutor = tutorDetails._id;
     axios
       .post(urlCreateClasses, values)
@@ -128,8 +168,7 @@ const MyClassesTutor = ({ user }) => {
       <Formik
         initialValues={{
           classTitle: "",
-          time: "",
-          date: "",
+          timeDay: "",
           classType: "select",
           subject: "select",
           classLevel: "select",
@@ -158,24 +197,13 @@ const MyClassesTutor = ({ user }) => {
 
             <p>Date and Time</p>
             <input
-              type="date"
-              name="date"
-              min="2022-08-21"
-              max="2025-10-27"
-              value={values.date}
+              type="datetime-local"
+              name="timeDay"
+              value={values.timeDay}
               onChange={handleChange}
             />
-            <input
-              type="time"
-              name="time"
-              value={values.time}
-              onChange={handleChange}
-            />
-            {errors.date && Object.keys(touched).length === 5 ? (
-              <div>{errors.date}</div>
-            ) : null}
-            {errors.time && Object.keys(touched).length === 5 ? (
-              <div>{errors.time}</div>
+            {errors.timeDay && Object.keys(touched).length === 5 ? (
+              <div>{errors.timeDay}</div>
             ) : null}
             <br />
             <br />
@@ -184,7 +212,7 @@ const MyClassesTutor = ({ user }) => {
             <Field
               as="select"
               name="classType"
-              values={values.classType}
+              value={values.classType}
               onChange={handleChange}
             >
               <option disabled>select</option>
@@ -204,7 +232,7 @@ const MyClassesTutor = ({ user }) => {
             <Field
               as="select"
               name="subject"
-              values={values.subject}
+              value={values.subject}
               onChange={handleChange}
             >
               <option disabled>select</option>
@@ -217,9 +245,6 @@ const MyClassesTutor = ({ user }) => {
             {errors.subject && touched.subject ? (
               <div>{errors.subject}</div>
             ) : null}
-            {/* {!matchingLevelSub && (
-              <p>Please select matching class levels and subjects.</p>
-            )} */}
             <br />
             <br />
 
@@ -227,7 +252,7 @@ const MyClassesTutor = ({ user }) => {
             <Field
               as="select"
               name="classLevel"
-              values={values.classLevel}
+              value={values.classLevel}
               onChange={handleChange}
             >
               <option disabled>select</option>
@@ -240,6 +265,9 @@ const MyClassesTutor = ({ user }) => {
             {errors.classLevel && touched.classLevel ? (
               <div>{errors.classLevel}</div>
             ) : null}
+            {!matchingLevelSub && (
+              <p>Please select matching class levels and subjects.</p>
+            )}
             <br />
             <br />
 
@@ -260,7 +288,8 @@ const MyClassesTutor = ({ user }) => {
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
-                  Object.keys(touched).length !== 0
+                  Object.keys(touched).length !== 0 &&
+                  matchingLevelSub
                 )
               }
               style={{ backgroundColor: "lime" }}
@@ -268,7 +297,7 @@ const MyClassesTutor = ({ user }) => {
               create class
             </button>
             {!createClassSuccessful && <p>Class unable to be created.</p>}
-            {/* <CheckClassLevelAndSubject /> */}
+            <CheckClassLevelAndSubject />
           </Form>
         )}
       </Formik>
@@ -277,13 +306,14 @@ const MyClassesTutor = ({ user }) => {
         {classes.map((eachClass, index) => {
           const tutees = [];
           eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
-          const date = eachClass.timeDay.toString().substring(0, 10);
-          const time = eachClass.timeDay.toString().substring(11, 16);
-
+          const timeDay = format(
+            parseISO(eachClass.timeDay),
+            "EEE, dd/MM/yyyy, hh:mm aaaa"
+          );
           return (
             <div key={index}>
               <p>Class Title: {eachClass.classTitle}</p>
-              <p>Date, Time: {`${date}, ${time}`}</p>
+              <p>Date, Time: {timeDay}</p>
               <p>Class Type: {eachClass.classType}</p>
               <p>Subject: {eachClass.subject}</p>
               <p>Class Level: {eachClass.classLevel}</p>
@@ -317,6 +347,9 @@ const MyClassesTutor = ({ user }) => {
         setClasses={setClasses}
         setRenderClasses={setRenderClasses}
         renderClasses={renderClasses}
+        CheckClassLevelAndSubject={CheckClassLevelAndSubject}
+        matchingLevelSub={matchingLevelSub}
+        setMatchingLevelSub={setMatchingLevelSub}
       />
     </>
   );
