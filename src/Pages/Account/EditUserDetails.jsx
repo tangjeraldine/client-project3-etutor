@@ -99,7 +99,7 @@ const EditUserDetails = ({ user }) => {
             <Form>
               <p>Username: </p>
               <Field
-                name='fullName'
+                name='username'
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.username}
@@ -108,9 +108,9 @@ const EditUserDetails = ({ user }) => {
                 <div>{errors.username}</div>
               ) : null}
               <br />
-              {/* <p>Password: </p>
+              <p>Password: </p>
               <Field
-                name='phone'
+                name='password'
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.password}
@@ -118,10 +118,10 @@ const EditUserDetails = ({ user }) => {
               {errors.password && touched.password ? (
                 <div>{errors.password}</div>
               ) : null}
-              <br /> */}
+              <br />
               <p>Email: </p>
               <Field
-                name='phone'
+                name='email'
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.email}

@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import ErrorPage from "../Error Page/ErrorPage";
+import Footer from "../General Pages/Footer";
 
 const LayoutTutor = ({ user }) => {
   if (user.userType !== "Tutor") {
@@ -96,7 +97,7 @@ const LayoutTutor = ({ user }) => {
 
       <Outlet />
 
-      <p>insert footer here</p>
+      <Footer />
     </>
   );
 };
