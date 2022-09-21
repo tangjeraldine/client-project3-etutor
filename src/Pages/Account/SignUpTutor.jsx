@@ -300,7 +300,8 @@ const SignUpTutor = () => {
               disabled={
                 !(
                   Object.keys(errors).length === 0 &&
-                  Object.keys(touched).length !== 0
+                  Object.keys(touched).length !== 0 &&
+                  matchingLevelSub
                 )
               }
               style={{ backgroundColor: "lime" }}
