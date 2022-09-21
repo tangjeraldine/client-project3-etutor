@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const MyTutors = ({ user }) => {
+const MyTutors = ({ user, favTutors, setFavTutors }) => {
   const [myTutors, setMyTutors] = useState([]);
   const [pendingTutors, setPendingTutors] = useState([]);
-  const [favTutors, setFavTutors] = useState([]);
+
   const url = urlcat(SERVER, "/tutee");
   const currentUserId = user._id;
 
@@ -21,17 +21,16 @@ const MyTutors = ({ user }) => {
     });
   }, []);
 
-  const deletefavTutor = (tutor) => {
+  const deletefavTutor = (tutorID) => {
     const favUrl = urlcat(
       SERVER,
       `tutee/deleteFavList/?username=${currentUserId}`
     );
-    axios.put(favUrl, tutor).then((response) => {
+    axios.put(favUrl, { tutorID }).then((response) => {
       console.log(response);
+      setFavTutors(response.data.favTutors);
     });
   };
-
-  console.log(pendingTutors);
 
   return (
     <>
@@ -58,11 +57,13 @@ const MyTutors = ({ user }) => {
         {favTutors.length === 0 ? (
           <div>You have no favorite tutor</div>
         ) : (
-          favTutors.map((tutor) => (
+          favTutors?.map((tutor) => (
             <>
               <div>
                 <p key={tutor._id}>{tutor.fullName}</p>
-                <button onClick={() => deletefavTutor(tutor)}> Delete</button>
+                <button onClick={() => deletefavTutor(tutor._id)}>
+                  Delete
+                </button>
               </div>
             </>
           ))

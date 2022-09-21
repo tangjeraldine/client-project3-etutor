@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import TutorModal from "../../components/TutorModal";
 
 const SERVER = import.meta.env.VITE_SERVER;
-const Search = ({ user, myFavTutors, setMyFavTutors }) => {
+const Search = ({ user, favTutors, setFavTutors }) => {
   const [tutor, setTutor] = useState([]);
 
   const [page, setPage] = useState(0);
@@ -94,13 +94,30 @@ const Search = ({ user, myFavTutors, setMyFavTutors }) => {
   // find current tutee, update current tutee profile favTutors array
 
   const addmyTutor = (tutor) => {
-    const favUrl = urlcat(
-      SERVER,
-      `tutee/updateFavList/?username=${currentUserId}`
-    );
-    axios.put(favUrl, tutor).then((response) => {
-      console.log(response.data);
-    });
+    console.log(favTutors);
+    if (favTutors.length === 0) {
+      const favUrl = urlcat(
+        SERVER,
+        `tutee/updateFavList/?username=${currentUserId}`
+      );
+      axios.put(favUrl, tutor).then((response) => {
+        console.log(response.data);
+        setFavTutors(response.data.favTutors);
+      });
+    } else {
+      favTutors.map((favTutor) => {
+        if (favTutor._id !== tutor._id) {
+          const favUrl = urlcat(
+            SERVER,
+            `tutee/updateFavList/?username=${currentUserId}`
+          );
+          axios.put(favUrl, tutor).then((response) => {
+            console.log(response.data);
+            setFavTutors(response.data.favTutors);
+          });
+        }
+      });
+    }
   };
 
   return (
@@ -245,9 +262,7 @@ const Search = ({ user, myFavTutors, setMyFavTutors }) => {
                   <p>Rates: {tutor.rates}</p>
                 </div>
 
-                <button onClick={() => addmyTutor(tutor)}>
-                  Add to my tutor
-                </button>
+                <button onClick={() => addmyTutor(tutor)}>Add fav tutor</button>
               </>
             ))}
 
