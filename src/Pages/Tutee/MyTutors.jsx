@@ -11,7 +11,7 @@ const MyTutors = ({ user }) => {
   const [renderTuteeDetails, setRenderTuteeDetails] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
-  const [modalType, setModalType] = useState('')
+  const [modalType, setModalType] = useState("");
 
   const [favUnfavSuccessful, setFavUnfavSuccessful] = useState(true);
   const [updatePendingSuccessful, setUpdatePendingSuccessful] = useState(true);
@@ -100,42 +100,34 @@ const MyTutors = ({ user }) => {
     } else if (string === "favTutors") {
       setTutors(tuteeDetails.favTutors);
     }
-    setModalType(string)
+    setModalType(string);
     setIsOpen(true);
     setWhatToOpen(index);
   };
 
   return (
     <>
-      <section class='text-red-700 bg-white'>
-        <div class='px-4 py-16 mx-auto max-w-screen-xl sm:px-6 lg:px-8'>
-          <div class='max-w-lg mx-auto text-center'>
-            <h2 class='text-3xl font-bold sm:text-4xl'>
+      <section class="text-red-700 bg-white">
+        <div class="px-4 py-16 mx-auto max-w-screen-xl sm:px-6 lg:px-8">
+          <div class="max-w-lg mx-auto text-center">
+            <h2 class="text-3xl font-bold sm:text-4xl">
               View and manage your list of tutors here.
             </h2>
 
-            <p class='mt-4 text-rose-700'>
+            <p class="mt-4 text-rose-700">
               Pro-Tip: As soon as the tutor you have contacted has accepted you,
               you will be able to see their available class slots for booking!
               If you have any doubts, clarify them with your tutor.
             </p>
           </div>
 
-          <div class='mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3'>
+          <div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div>
-<<<<<<< HEAD
               <h1 style={{ fontSize: "30px" }}>My Tutors</h1>
-=======
-              <h1 class='text-2xl text-red-700 text-center m-2 sm:text-3xl'>
-                Current Tutors
-              </h1>
->>>>>>> c8d6a6ba40a006fd7b721533a33bb68ed875bb35
               {tuteeDetails?.myTutors?.length === 0 ? (
                 <div>You have not engaged any tutors at the moment.</div>
               ) : (
-<<<<<<< HEAD
                 tuteeDetails?.myTutors?.map((tutor, index) => {
-
                   return (
                     <div key={index}>
                       <div onClick={() => handleModal("myTutors", index)}>
@@ -165,53 +157,19 @@ const MyTutors = ({ user }) => {
                           </h3>
                         </a>
                       </div>
-
-=======
-                tuteeDetails?.myTutors?.map((tutor, index) => (
-                  <>
-                    <div
-                      key={index}
-                      className='m-3'
-                      onClick={() => handleModal("myTutors", index)}>
-                      <a
-                        class='block p-8 border border-gray-800 shadow-xl transition rounded-xl hover:shadow-red-700/10 hover:border-red-500/10 cursor-pointer'
-                        key={tutor._id}>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          class='w-10 h-10 text-pink-500'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          stroke='currentColor'>
-                          <path d='M12 14l9-5-9-5-9 5 9 5z' />
-                          <path d='M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z' />
-                          <path
-                            stroke-linecap='round'
-                            stroke-linejoin='round'
-                            stroke-width='2'
-                            d='M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222'
-                          />
-                        </svg>
-
-                        <h3 class='mt-4 text-xl font-bold text-black'>
-                          {tutor.fullName}
-                        </h3>
-                      </a>
->>>>>>> c8d6a6ba40a006fd7b721533a33bb68ed875bb35
                     </div>
                   );
                 })
               )}
             </div>
             <div>
-              <h1 class='text-2xl text-red-700 text-center m-2 sm:text-3xl'>
+              <h1 class="text-2xl text-red-700 text-center m-2 sm:text-3xl">
                 Pending Tutors
               </h1>
               {tuteeDetails?.pendingTutors?.length === 0 ? (
                 <div>You have no tutors on your Pending list.</div>
               ) : (
-<<<<<<< HEAD
                 tuteeDetails?.pendingTutors?.map((tutor, index) => {
-
                   return (
                     <>
                       <div
@@ -253,59 +211,9 @@ const MyTutors = ({ user }) => {
             </div>
             <div>
               <h1 style={{ fontSize: "30px" }}>Favourite Tutors</h1>
-=======
-                tuteeDetails?.pendingTutors?.map((tutor, index) => (
-                  <>
-                    <div
-                      className='m-3'
-                      onClick={() => {
-                        setShowCancelButton(true);
-                        setShowButton(true);
-                        handleModal("pendingTutors", index);
-                      }}
-                      key={index}>
-                      <a
-                        class='block p-8 border border-gray-800 shadow-xl transition rounded-xl hover:shadow-red-700/10 hover:border-red-500/10 cursor-pointer'
-                        key={tutor._id}>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          class='w-10 h-10 text-pink-500'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          stroke='currentColor'>
-                          <path d='M12 14l9-5-9-5-9 5 9 5z' />
-                          <path d='M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z' />
-                          <path
-                            stroke-linecap='round'
-                            stroke-linejoin='round'
-                            stroke-width='2'
-                            d='M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222'
-                          />
-                        </svg>
-
-                        <h3 class='mt-4 text-xl font-bold text-black'>
-                          {tutor.fullName}
-                        </h3>
-                      </a>
-                    </div>
-                    <TutorModal
-                      open={isOpen}
-                      onClose={() => setIsOpen(false)}
-                      tutor={pendingTutors[whatToOpen]}
-                    />
-                  </>
-                ))
-              )}
-            </div>
-            <div>
-              <h1 class='text-2xl text-red-700 text-center m-2 sm:text-3xl'>
-                Favourite Tutors
-              </h1>
->>>>>>> c8d6a6ba40a006fd7b721533a33bb68ed875bb35
               {tuteeDetails?.favTutors?.length === 0 ? (
                 <div>You have no tutors on your Favourites list.</div>
               ) : (
-<<<<<<< HEAD
                 tuteeDetails?.favTutors?.map((tutor, index) => {
                   return (
                     <div key={index}>
@@ -314,42 +222,6 @@ const MyTutors = ({ user }) => {
                           {tutor.fullName}
                         </p>
                       </div>
-=======
-                tuteeDetails?.favTutors?.map((tutor, index) => (
-                  <>
-                    <div
-                      className='m-3'
-                      onClick={() => handleModal("favTutors", index)}
-                      key={index}>
-                      <a
-                        class='block p-8 border border-gray-800 shadow-xl transition rounded-xl hover:shadow-red-700/10 hover:border-red-500/10 cursor-pointer'
-                        key={tutor._id}>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          class='w-10 h-10 text-pink-500'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          stroke='currentColor'>
-                          <path d='M12 14l9-5-9-5-9 5 9 5z' />
-                          <path d='M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z' />
-                          <path
-                            stroke-linecap='round'
-                            stroke-linejoin='round'
-                            stroke-width='2'
-                            d='M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222'
-                          />
-                        </svg>
-
-                        <h3 class='mt-4 text-xl font-bold text-black'>
-                          {tutor.fullName}
-                        </h3>
-                        <button
-                          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
-                          onClick={() => deletefavTutor(tutor._id)}>
-                          Delete
-                        </button>
-                      </a>
->>>>>>> c8d6a6ba40a006fd7b721533a33bb68ed875bb35
                     </div>
                   );
                 })

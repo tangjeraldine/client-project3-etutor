@@ -73,13 +73,9 @@ const MyTutees = ({ user }) => {
 
           <div class='mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2'>
             <div>
-<<<<<<< HEAD
-              <h1 style={{ fontSize: "30px" }}>My Tutees</h1>
-=======
               <h1 class='text-2xl text-red-700 text-center m-2 sm:text-3xl'>
                 Accepted Tutees
               </h1>
->>>>>>> c8d6a6ba40a006fd7b721533a33bb68ed875bb35
               {tuteeDetails.length === 0 ? (
                 <div>You have no tutees</div>
               ) : (
