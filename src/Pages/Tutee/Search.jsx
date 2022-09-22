@@ -92,6 +92,19 @@ const Search = ({ user, favTutors, setFavTutors }) => {
     });
   };
 
+  const handleAddToPending = (tutor) => {
+    console.log(tutor);
+    const addToPendingTutorURL = urlcat(
+      url,
+      `tutee/addToPendingTutee/${user._id}`
+    );
+
+    axios.put(addToPendingTutorURL, tutor).then((response) => {
+      console.log(response);
+    });
+    // add tutor to tutee's pendingTutor
+  };
+
   // find current tutee, update current tutee profile favTutors array
 
   const addmyTutor = (tutor) => {
@@ -272,6 +285,16 @@ const Search = ({ user, favTutors, setFavTutors }) => {
                 >
                   Add fav tutor
                 </button>
+                <br />
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleAddToPending(tutor);
+                  }}
+                  style={{ backgroundColor: "lime" }}
+                >
+                  add to pending
+                </button>
               </>
             ))}
 
@@ -285,8 +308,10 @@ const Search = ({ user, favTutors, setFavTutors }) => {
               setAddPendingButton={setAddPendingButton}
               user={user}
               setTutor={setTutor}
+              handleAddToPending={handleAddToPending}
+              addmyTutor={addmyTutor}
             />
-
+            <br />
             <br />
             <button
               disabled={page === 0}

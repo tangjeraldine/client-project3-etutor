@@ -17,19 +17,23 @@ const TutorModal = ({
   setAddPendingButton,
   user,
   setTutor,
+  handleAddToPending,
+  addmyTutor,
 }) => {
   if (!open) return null;
+  console.log(tutor);
   const updateTutorURL = urlcat(url, "/updatePendingTutee");
   const [updateTuteeSuccessful, setUpdateTuteeSuccessful] = useState(true);
 
-  const handleReject = () => {
+  const handleReject = (tutor) => {
+    console.log(tutor);
     const updatedPendingTutee = tuteeDetails.pendingTutors.filter(
       (tutor) => tutor === tuteeDetails.pendingTutors[whatToOpen]._id
     );
     console.log(updatedPendingTutee);
 
     console.log(tuteeDetails);
-    const updatedTuteeDetails = tuteeDetails.pendingTutors.splice(0);
+    const updatedTuteeDetails = tuteeDetails.pendingTutors.splice(0, 1);
     console.log(updatedTuteeDetails);
 
     axios
@@ -47,15 +51,6 @@ const TutorModal = ({
           setUpdateTuteeSuccessful(false);
         }
       });
-  };
-
-  const handleAddToPending = () => {
-    const addToPendingTutorURL = urlcat(url, `/addToPendingTutee/${user._id}`);
-
-    axios.put(addToPendingTutorURL, tutor).then((response) => {
-      console.log(response);
-    });
-    // add tutor to tutee's pendingTutor
   };
 
   const MODAL_STYLES = {
@@ -102,9 +97,27 @@ const TutorModal = ({
         <p>Education Background: {tutor.educationBackground}</p>
         <p> Teaching Experience: {tutor.teachingExperience}</p>
 
+        <button
+          style={{ backgroundColor: "lime" }}
+          onClick={() => {
+            setIsOpen(false);
+            addmyTutor(tutor);
+          }}
+        >
+          Add fav tutor
+        </button>
+
+        <br />
+
         {showCancelButton && (
           <>
-            <button onClick={handleReject} style={{ backgroundColor: "red" }}>
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                handleReject();
+              }}
+              style={{ backgroundColor: "red" }}
+            >
               cancel
             </button>
           </>
@@ -115,7 +128,7 @@ const TutorModal = ({
             <button
               onClick={() => {
                 setIsOpen(false);
-                handleAddToPending;
+                handleAddToPending(tutor);
               }}
               style={{ backgroundColor: "lime" }}
             >
