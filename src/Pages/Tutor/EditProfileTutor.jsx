@@ -162,8 +162,7 @@ const EditTutorProfile = ({ user }) => {
 
             <p class='mt-3 text-gray-500'>
               Click on the button at the bottom of this page to edit your
-              profile as a tutor. Do note that you will not be able to amend
-              your user type. <br />
+              profile as a tutor. <br />
               To amend your user details, navigate to 'Edit User Details'
               instead.
             </p>

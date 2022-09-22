@@ -118,7 +118,7 @@ const EditUserDetails = ({ user }) => {
         <div class='w-full px-4 py-2 lg:w-2/3 sm:px-6 lg:px-8 sm:py-2 lg:py-2'>
           <div class='max-w-lg mx-auto text-center'>
             <h1 class='text-2xl font-bold text-red-700 m-2 sm:text-3xl'>
-              Edit Tutor Profile
+              Edit User Details
             </h1>
           </div>
           <div>
