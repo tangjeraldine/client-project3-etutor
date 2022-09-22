@@ -132,7 +132,7 @@ const MyClassesTutor = ({ user }) => {
   const handleRemoveClass = (id) => {
     const urlRemoveClass = urlcat(
       SERVER,
-      `/class/remove-class/${id}/${tutorDetails._id}`
+      `/class/remove-class/${id}`
     );
     axios
       .delete(urlRemoveClass)
@@ -301,6 +301,7 @@ const MyClassesTutor = ({ user }) => {
         {classes.map((eachClass, index) => {
           const tutees = [];
           eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
+          const filledSlots = eachClass.bookedBy.length
           const timeDay = format(
             parseISO(eachClass.timeDay),
             "EEE, dd/MM/yyyy, hh:mm aaaa"
@@ -313,7 +314,7 @@ const MyClassesTutor = ({ user }) => {
               <p>Subject: {eachClass.subject}</p>
               <p>Class Level: {eachClass.classLevel}</p>
               <p>Tutees: {tutees.join(", ") || "none"}</p>
-              <p>Group Size: {eachClass.groupSize}</p>
+              <p>Group Size: {filledSlots}/{eachClass.groupSize}</p>
               <button
                 style={{ backgroundColor: "lime" }}
                 onClick={() => handleRemoveClass(eachClass._id)}>
@@ -342,7 +343,6 @@ const MyClassesTutor = ({ user }) => {
         renderClasses={renderClasses}
         CheckClassLevelAndSubject={CheckClassLevelAndSubject}
         matchingLevelSub={matchingLevelSub}
-        setMatchingLevelSub={setMatchingLevelSub}
       />
     </>
   );
