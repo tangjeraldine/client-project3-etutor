@@ -71,29 +71,40 @@ const PendingTuteeModal = ({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,.7",
+    backgroundColor: "rgba(0,0,0,.7)",
     zIndex: 1000,
   };
   return (
     <>
       <div style={OVERLAY_STYLES} />
       <div style={MODAL_STYLES}>
-        <button style={{ backgroundColor: "lime" }} onClick={onClose}>
-          close Modal
+        <button
+          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+          onClick={onClose}>
+          Close
         </button>
-        <div style={{ fontSize: "30px" }}>Pending Tutees</div>
-        <p>Name: {eachTuteeDetails.fullName}</p>
-        <p> Class Level: {eachTuteeDetails.currentLevel}</p>
-        <p>Phone: {eachTuteeDetails.phone}</p>
-        <p>Region: {eachTuteeDetails.region}</p>
-        <p>Subjects: {eachTuteeDetails.subjects.join(", ")}</p>
-        <br />
-        <br />
-        <button onClick={handleAccept} style={{ backgroundColor: "lime" }}>
-          accept
+        <div className='font-bold' style={{ fontSize: "30px" }}>
+          Tutee Details
+        </div>
+        <p className='font-bold'>Name: </p>
+        <p>{eachTuteeDetails.fullName}</p>
+        <p className='font-bold'>Class Level: </p>
+        <p>{eachTuteeDetails.currentLevel}</p>
+        <p className='font-bold'>Phone: </p>
+        <p>{eachTuteeDetails.phone}</p>
+        <p className='font-bold'>Region: </p>
+        <p>{eachTuteeDetails.region}</p>
+        <p className='font-bold'>Subjects: </p>
+        <p>{eachTuteeDetails.subjects.join(", ")}</p>
+        <button
+          onClick={handleAccept}
+          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+          Accept
         </button>
-        <button onClick={handleReject} style={{ backgroundColor: "red" }}>
-          reject
+        <button
+          onClick={handleReject}
+          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+          Reject
         </button>
       </div>
     </>
