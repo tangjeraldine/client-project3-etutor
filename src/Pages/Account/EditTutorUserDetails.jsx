@@ -90,14 +90,14 @@ const EditUserDetails = ({ user }) => {
             <p class='font-bold text-red-700 m-1 sm:text-1xl'>Password: </p>
             <p>*********</p>
             <p class='font-bold text-red-700 m-1 sm:text-1xl'>UserType: </p>
-            <p>{userData?.userType} </p>
+            <p>{user?.userType} </p>
             <p class='text-gray-400'>(Cannot be changed) </p>
             <p class='font-bold text-red-700 m-1 sm:text-1xl'>Email:</p>
             <p>{userData?.email}</p>
             <button
               class='block mt-4 px-10 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
               onClick={handleEdit}>
-              Edit Profile
+              Edit User Details
             </button>
             <br />
           </div>
@@ -159,7 +159,7 @@ const EditUserDetails = ({ user }) => {
                   <br />
                   <div className=' mx-auto relative'>
                     <label class='font-bold text-red-700 m-1 sm:text-1xl'>
-                      New Password:{" "}
+                      Change Password:{" "}
                     </label>
                     <Field
                       name='password'
@@ -198,12 +198,7 @@ const EditUserDetails = ({ user }) => {
                   <br />
                   <button
                     type='submit'
-                    disabled={
-                      !(
-                        Object.keys(errors).length === 0 &&
-                        Object.keys(touched).length !== 0
-                      )
-                    }
+                    disabled={!(Object.keys(errors).length === 0)}
                     class='block mt-2 px-10 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                     Complete Editing
                   </button>

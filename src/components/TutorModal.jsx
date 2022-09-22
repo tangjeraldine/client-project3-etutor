@@ -6,6 +6,7 @@ const TutorModal = ({
   setIsOpen,
   tutor,
   tuteeDetails,
+  showCancelButton,
   setShowCancelButton,
   addPendingButton,
   setAddPendingButton,
