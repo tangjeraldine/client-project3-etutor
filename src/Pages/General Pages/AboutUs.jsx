@@ -30,9 +30,9 @@ function AboutUs() {
       <aside>
         <div class='px-4 py-8 mx-auto max-w-screen-2xl sm:px-6 lg:px-8'>
           <div class='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <div class='p-8 bg-yellow-300 md:p-12 lg:px-16 lg:py-24 md:order-last'>
+            <div class='p-8 bg-amber-200 md:p-12 lg:px-16 lg:py-24 md:order-last'>
               <div class='max-w-xl mx-auto text-center'>
-                <h2 class='text-1xl font-bold text-red-500 md:text-3xl'>
+                <h2 class='text-1xl font-bold text-red-700 md:text-3xl'>
                   eTutor.
                   <br />
                   No hidden fees.
@@ -40,7 +40,7 @@ function AboutUs() {
                   No extra charges.
                 </h2>
 
-                <p class='hidden sm:block sm:mt-4 text-rose-700'>
+                <p class='hidden sm:block sm:mt-12 text-rose-700'>
                   eTutor is a free one-stop sign up and booking platform for
                   students and tutors. If you're a tutor, just create your
                   profile and available timeslots. If you're a tutee, all you
@@ -48,9 +48,9 @@ function AboutUs() {
                   ABC.
                 </p>
                 <br />
-                <div class='mt-4 md:mt-8 grid-cols-2'>
+                <div class='mt-4 md:mt-12 grid-cols-2'>
                   <button
-                    class='inline-block px-10 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                    class='inline-block px-10 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                     onClick={() => navigate("/signup")}>
                     Get Started
                   </button>

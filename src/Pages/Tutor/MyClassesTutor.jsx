@@ -22,6 +22,7 @@ const MyClassesTutor = ({ user }) => {
   const [tutorDetails, setTutorDetails] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
+  const [createClass, setCreateClass] = useState(false);
 
   useEffect(() => {
     //get tutor details to see their subjects, class levels, and class types of specific tutor
@@ -130,10 +131,7 @@ const MyClassesTutor = ({ user }) => {
   };
 
   const handleRemoveClass = (id) => {
-    const urlRemoveClass = urlcat(
-      SERVER,
-      `/class/remove-class/${id}`
-    );
+    const urlRemoveClass = urlcat(SERVER, `/class/remove-class/${id}`);
     axios
       .delete(urlRemoveClass)
       .then(({ data }) => {
@@ -159,191 +157,270 @@ const MyClassesTutor = ({ user }) => {
     setWhatToOpen(index);
   };
 
+  const handleMakeClass = () => {
+    setCreateClass(!createClass);
+  };
+
   return (
     <>
-      <h1 style={{ fontSize: "50px" }}>my classes</h1>
-      {/* <Calendar /> */}
-
-      {/* with formik, create new class */}
-      <Formik
-        initialValues={{
-          classTitle: "",
-          timeDay: "",
-          classType: "select",
-          subject: "select",
-          classLevel: "select",
-          groupSize: "",
+      <section
+        style={{
+          backgroundImage: `url("https://images.unsplash.com/photo-1485322551133-3a4c27a9d925?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80")`,
         }}
-        validationSchema={classesValidation}
-        onSubmit={(values, { resetForm }) => {
-          setRenderClasses(!renderClasses);
-          handleCreateClass(values);
-          resetForm();
-        }}>
-        {({ handleChange, handleBlur, values, errors, touched }) => (
-          <Form>
-            <p>Class Title</p>
-            <Field
-              name='classTitle'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.classTitle}
-            />
-            {errors.classTitle && touched.classTitle ? (
-              <div>{errors.classTitle}</div>
-            ) : null}
-            <br />
+        class='z-1'>
+        <div class='px-4 py-10 mx-auto max-w-screen-xl lg:h-96 lg:items-center lg:flex '>
+          <div class='max-w-xl mx-auto text-center bg-white opacity-90 rounded z-2 p-5'>
+            <h1 class='text-3xl font-extrabold sm:text-5xl z-3'>
+              Hi, {tutorDetails.fullName}!
+              <strong class='font-extrabold text-red-700 sm:block'>
+                Welcome.
+              </strong>
+            </h1>
 
-            <p>Date and Time</p>
-            <input
-              type='datetime-local'
-              name='timeDay'
-              value={values.timeDay}
-              onChange={handleChange}
-            />
-            {errors.timeDay && Object.keys(touched).length === 5 ? (
-              <div>{errors.timeDay}</div>
-            ) : null}
-            <br />
-            <br />
+            <p class='mt-4 sm:leading-relaxed sm:text-xl z-3'>
+              View your upcoming classes below, or click on this button to
+              create a new class.
+            </p>
 
-            <p>Class Type</p>
-            <Field
-              as='select'
-              name='classType'
-              value={values.classType}
-              onChange={handleChange}>
-              <option disabled>select</option>
-              {tutorDetails.classType?.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </Field>
-            {errors.classType && touched.classType ? (
-              <div>{errors.classType}</div>
-            ) : null}
-            <br />
-            <br />
-
-            <p>Subject</p>
-            <Field
-              as='select'
-              name='subject'
-              value={values.subject}
-              onChange={handleChange}>
-              <option disabled>select</option>
-              {tutorDetails.subjects?.map((subject) => (
-                <option key={subject} value={subject}>
-                  {subject}
-                </option>
-              ))}
-            </Field>
-            {errors.subject && touched.subject ? (
-              <div>{errors.subject}</div>
-            ) : null}
-            <br />
-            <br />
-
-            <p>Class Level</p>
-            <Field
-              as='select'
-              name='classLevel'
-              value={values.classLevel}
-              onChange={handleChange}>
-              <option disabled>select</option>
-              {tutorDetails.classLevel?.map((level) => (
-                <option key={level} value={level}>
-                  {level}
-                </option>
-              ))}
-            </Field>
-            {errors.classLevel && touched.classLevel ? (
-              <div>{errors.classLevel}</div>
-            ) : null}
-            {!matchingLevelSub && (
-              <p>Please select matching class levels and subjects.</p>
-            )}
-            <br />
-            <br />
-
-            <p>Group Size</p>
-            <Field
-              name='groupSize'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.groupSize}
-            />
-            {errors.groupSize && touched.groupSize ? (
-              <div>{errors.groupSize}</div>
-            ) : null}
-            <br />
-            <br />
-            <button
-              type='submit'
-              disabled={
-                !(
-                  Object.keys(errors).length === 0 &&
-                  Object.keys(touched).length !== 0 &&
-                  matchingLevelSub
-                )
-              }
-              style={{ backgroundColor: "lime" }}>
-              create class
-            </button>
-            {!createClassSuccessful && <p>Class unable to be created.</p>}
-            <CheckClassLevelAndSubject />
-          </Form>
-        )}
-      </Formik>
-      {/* list of classes of this tutor */}
-      <div>
-        {classes.map((eachClass, index) => {
-          const tutees = [];
-          eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
-          const filledSlots = eachClass.bookedBy.length
-          const timeDay = format(
-            parseISO(eachClass.timeDay),
-            "EEE, dd/MM/yyyy, hh:mm aaaa"
-          );
-          return (
-            <div key={index}>
-              <p>Class Title: {eachClass.classTitle}</p>
-              <p>Date, Time: {timeDay}</p>
-              <p>Class Type: {eachClass.classType}</p>
-              <p>Subject: {eachClass.subject}</p>
-              <p>Class Level: {eachClass.classLevel}</p>
-              <p>Tutees: {tutees.join(", ") || "none"}</p>
-              <p>Group Size: {filledSlots}/{eachClass.groupSize}</p>
+            <div class='flex flex-wrap justify-center mt-4 gap-4 z-3'>
               <button
-                style={{ backgroundColor: "lime" }}
-                onClick={() => handleRemoveClass(eachClass._id)}>
-                remove class
-              </button>
-
-              <button
-                style={{ backgroundColor: "lime" }}
-                onClick={() => handleModal(index)}>
-                details
+                class='block w-full px-12 py-3 text-sm font-medium text-white bg-red-700 rounded shadow sm:w-auto bg-red-700 hover:bg-white hover:text-red-700 focus:outline-none focus:ring'
+                onClick={handleMakeClass}>
+                {!createClass ? "Create A New Class" : "Hide Create Class Form"}
               </button>
             </div>
-          );
-        })}
-        {!deleteClassSuccessful && <p>Unable to delete class.</p>}
-        {!loadClassesSuccessful && <p>Unable to load classes.</p>}
-      </div>
+          </div>
+        </div>
+      </section>
+      <br />
+      <div className='flex grid-cols-2 w-screen'>
+        {/* list of classes of this tutor */}
+        <div className='w-1/2'>
+          <h1 class='text-2xl font-bold text-left text-red-700 sm:text-3xl mt-4'>
+            Upcoming Classes
+          </h1>
+          {classes.map((eachClass, index) => {
+            const tutees = [];
+            eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
+            const filledSlots = eachClass.bookedBy.length;
+            const timeDay = format(
+              parseISO(eachClass.timeDay),
+              "EEE, dd/MM/yyyy, hh:mm aaaa"
+            );
+            return (
+              <div key={index}>
+                <div class='relative block p-8 overflow-hidden border border-gray-100 rounded-lg mt-6'>
+                  <span class='absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600'></span>
 
-      <ClassModal
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        eachClass={classes[whatToOpen]}
-        tutorDetails={tutorDetails}
-        setClasses={setClasses}
-        setRenderClasses={setRenderClasses}
-        renderClasses={renderClasses}
-        CheckClassLevelAndSubject={CheckClassLevelAndSubject}
-        matchingLevelSub={matchingLevelSub}
-      />
+                  <div class='justify-between sm:flex'>
+                    <div>
+                      <h5 class='text-xl font-bold text-gray-900'>
+                        {eachClass.classTitle}
+                      </h5>
+
+                      <p class='mt-1 text-xs font-medium text-gray-600'>
+                        Subject: {eachClass.subject}
+                      </p>
+                    </div>
+                    <div class='flex-shrink-0 hidden ml-3 sm:block'>
+                      <button
+                        class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                        onClick={() => handleModal(index)}>
+                        Details
+                      </button>
+                      <button
+                        class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                        onClick={() => handleRemoveClass(eachClass._id)}>
+                        Remove This Class
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class='mt-4 sm:pr-8'>
+                    <p class='text-sm text-gray-500'>
+                      Class Level: {eachClass.classLevel} <br />
+                      Tutees: {tutees.join(", ") || "none"} <br />
+                      Group Size: {filledSlots}/{eachClass.groupSize}
+                    </p>
+                  </div>
+
+                  <dl class='flex mt-6'>
+                    <div class='flex flex-col-reverse'>
+                      <dt class='text-sm font-medium text-gray-600'>
+                        {timeDay}
+                      </dt>
+                      <dd class='text-xs text-gray-500'>Date and Time</dd>
+                    </div>
+
+                    <div class='flex flex-col-reverse ml-3 sm:ml-6'>
+                      <dt class='text-sm font-medium text-gray-600'>
+                        {eachClass.classType}
+                      </dt>
+                      <dd class='text-xs text-gray-500'>Class Type</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            );
+          })}
+          {!deleteClassSuccessful && <p>Unable to delete class.</p>}
+          {!loadClassesSuccessful && <p>Unable to load classes.</p>}
+        </div>
+        <ClassModal
+          open={isOpen}
+          onClose={() => setIsOpen(false)}
+          eachClass={classes[whatToOpen]}
+          tutorDetails={tutorDetails}
+          setClasses={setClasses}
+          setRenderClasses={setRenderClasses}
+          renderClasses={renderClasses}
+          CheckClassLevelAndSubject={CheckClassLevelAndSubject}
+          matchingLevelSub={matchingLevelSub}
+          setMatchingLevelSub={setMatchingLevelSub}
+        />
+        {createClass ? (
+          <div class='px-1 py-4 mx-auto w-1/2 sm:px-6 lg:px-8 bg-amber-100 rounded'>
+            <div class='max-w-lg mx-auto'>
+              <h1 class='text-2xl font-bold text-left text-red-700 sm:text-3xl'>
+                Add A New Class
+              </h1>
+
+              <Formik
+                initialValues={{
+                  classTitle: "",
+                  timeDay: "",
+                  classType: "select",
+                  subject: "select",
+                  classLevel: "select",
+                  groupSize: "",
+                }}
+                validationSchema={classesValidation}
+                onSubmit={(values, { resetForm }) => {
+                  setRenderClasses(!renderClasses);
+                  handleCreateClass(values);
+                  resetForm();
+                }}>
+                {({ handleChange, handleBlur, values, errors, touched }) => (
+                  <Form className='w-1/2'>
+                    <p className='mt-6'>Class Title</p>
+                    <Field
+                      name='classTitle'
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.classTitle}
+                      class='w-full mt-2 p-4 pr-12 text-sm border-gray-200 rounded-lg shadow-sm'
+                    />
+                    {errors.classTitle && touched.classTitle ? (
+                      <div>{errors.classTitle}</div>
+                    ) : null}
+                    <br />
+
+                    <p className='mt-6'>Date and Time</p>
+                    <input
+                      type='datetime-local'
+                      name='timeDay'
+                      value={values.timeDay}
+                      onChange={handleChange}
+                      class='w-full mt-2 p-4 pr-12 text-sm border-gray-200 rounded-lg shadow-sm'
+                    />
+                    {errors.timeDay && Object.keys(touched).length === 5 ? (
+                      <div>{errors.timeDay}</div>
+                    ) : null}
+                    <br />
+
+                    <p className='mt-6'>Class Type</p>
+                    <Field
+                      as='select'
+                      name='classType'
+                      value={values.classType}
+                      onChange={handleChange}>
+                      <option disabled>select</option>
+                      {tutorDetails.classType?.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </Field>
+                    {errors.classType && touched.classType ? (
+                      <div>{errors.classType}</div>
+                    ) : null}
+                    <br />
+
+                    <p className='mt-6'>Subject</p>
+                    <Field
+                      as='select'
+                      name='subject'
+                      value={values.subject}
+                      onChange={handleChange}>
+                      <option disabled>select</option>
+                      {tutorDetails.subjects?.map((subject) => (
+                        <option key={subject} value={subject}>
+                          {subject}
+                        </option>
+                      ))}
+                    </Field>
+                    {errors.subject && touched.subject ? (
+                      <div>{errors.subject}</div>
+                    ) : null}
+                    <br />
+
+                    <p className='mt-6'>Class Level</p>
+                    <Field
+                      as='select'
+                      name='classLevel'
+                      value={values.classLevel}
+                      onChange={handleChange}>
+                      <option disabled>select</option>
+                      {tutorDetails.classLevel?.map((level) => (
+                        <option key={level} value={level}>
+                          {level}
+                        </option>
+                      ))}
+                    </Field>
+                    {errors.classLevel && touched.classLevel ? (
+                      <div>{errors.classLevel}</div>
+                    ) : null}
+                    {!matchingLevelSub && (
+                      <p>Please select matching class levels and subjects.</p>
+                    )}
+                    <br />
+                    <p className='mt-6'>Group Size</p>
+                    <Field
+                      name='groupSize'
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.groupSize}
+                      class='w-full p-4 pr-12 text-sm border-gray-200 rounded-lg shadow-sm'
+                    />
+                    {errors.groupSize && touched.groupSize ? (
+                      <div>{errors.groupSize}</div>
+                    ) : null}
+                    <br />
+                    <button
+                      type='submit'
+                      disabled={
+                        !(
+                          Object.keys(errors).length === 0 &&
+                          Object.keys(touched).length !== 0 &&
+                          matchingLevelSub
+                        )
+                      }
+                      class='block mt-6 px-5 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+                      Create New Class
+                    </button>
+                    {!createClassSuccessful && (
+                      <p>Class unable to be created.</p>
+                    )}
+                    <CheckClassLevelAndSubject />
+                  </Form>
+                )}
+              </Formik>
+            </div>
+          </div>
+        ) : (
+          <div className='w-1/2'></div>
+        )}
+      </div>
     </>
   );
 };

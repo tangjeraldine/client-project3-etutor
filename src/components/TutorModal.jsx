@@ -94,7 +94,7 @@ const TutorModal = ({
         </button>
         <div style={{ fontSize: "50px" }}>Tutor modal</div>
         <p>Name: {tutor.fullName}</p>
-        <p> Class Level: {tutor.classLevel.join(", ")}</p>
+        <p>Class Level: {tutor.classLevel.join(", ")}</p>
         <p>Region: {tutor.region}</p>
         <p>Class Type: {tutor.classType.join(", ")}</p>
         <p>Rates: {tutor.rates}</p>

@@ -105,7 +105,7 @@ const SignIn = ({ setUser, user }) => {
   };
 
   return (
-    <section class='bg-yellow-300 h-screen'>
+    <section class='bg-amber-200 h-screen'>
       <div class='lg:grid lg:min-h-screen lg:grid-cols-12'>
         <aside class='relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6'>
           <img
@@ -126,11 +126,15 @@ const SignIn = ({ setUser, user }) => {
               />
             </a>
 
-            <h1 class='mt-6 text-2xl font-bold text-red-500 sm:text-3xl md:text-4xl'>
+            <h1
+              class='mt-8 text-2xl font-bold text-red-700 sm:text-3xl md:text-4xl cursor-pointer hover:text-white'
+              onClick={() => {
+                navigate("/aboutus");
+              }}>
               If you're striving for greatness, we're here for you.
             </h1>
 
-            <p class='mt-4 leading-relaxed text-rose-700'>
+            <p class='mt-10 leading-relaxed text-rose-700'>
               eTutor is Singapore's leading hosting site for tutors and tutees
               to connect and manage their tuition sessions. Try now by signing
               up, setting up, or booking classes! Using this platform is
@@ -156,7 +160,7 @@ const SignIn = ({ setUser, user }) => {
                   {" "}
                   <label
                     for='Username'
-                    class='block text-sm font-medium text-gray-700'>
+                    class='block text-sm font-medium text-gray-700 mt-6'>
                     Username
                   </label>
                   <Field
@@ -167,14 +171,14 @@ const SignIn = ({ setUser, user }) => {
                     onBlur={handleBlur}
                     value={values.username}
                     placeholder='Username'
-                    class='w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
+                    class='w-full mt-2 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
                   />
                   {errors.username && touched.username ? (
                     <div>{errors.username}</div>
                   ) : null}
                   <label
                     for='Password'
-                    class='block text-sm font-medium text-gray-700'>
+                    class='block text-sm font-medium text-gray-700 mt-6'>
                     Password
                   </label>
                   <div className='w-full mx-auto relative'>
@@ -187,7 +191,7 @@ const SignIn = ({ setUser, user }) => {
                       onBlur={handleBlur}
                       value={values.password}
                       placeholder='Password'
-                      class='w-full mt-1 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
+                      class='w-full mt-2 text-sm text-gray-700 bg-white border-gray-200 rounded-md shadow-sm'
                     />
                     {errors.password && touched.password ? (
                       <div>{errors.password}</div>
@@ -208,14 +212,14 @@ const SignIn = ({ setUser, user }) => {
                         Object.keys(touched).length !== 0
                       )
                     }
-                    class='block mt-4 px-12 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+                    class='block mt-6 px-12 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                     Sign in
                   </button>
-                  <p class='text-sm text-gray-700 float-right'>
+                  <p class='text-sm text-gray-700 mt-8'>
                     Don't have an account yet?
                   </p>
                   <button
-                    class='block mt-4 px-10 py-2 text-sm font-medium text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                    class='block mt-2 px-10 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                     onClick={() => {
                       navigate("/signup");
                     }}>

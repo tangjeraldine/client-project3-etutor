@@ -51,13 +51,13 @@ const SignUpUser = () => {
 
   return (
     <>
-      <section class='bg-yellow-300'>
+      <section class='bg-amber-200'>
         <div class='lg:grid lg:min-h-screen lg:grid-cols-12'>
           <section class='relative flex items-end h-32 bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6'>
             <img
               alt='Laptop'
               src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
-              class='absolute inset-0 object-cover w-full h-full opacity-80'
+              class='absolute inset-0 object-cover w-full h-full opacity-40'
             />
 
             <div class=' lg:block lg:relative lg:p-12'>
@@ -190,7 +190,7 @@ const SignUpUser = () => {
                           Object.keys(touched).length !== 0
                         )
                       }
-                      class='inline-block px-12 py-6 text-sm font-medium text-white transition bg-red-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 flex justify-center'>
+                      class='inline-block px-12 py-6 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 flex justify-center'>
                       {/* trying to use disabled={!Formik.isValid} but it doesnt detect even when isValid is true*/}
                       Next
                     </button>
@@ -200,7 +200,7 @@ const SignUpUser = () => {
                       <p>User account unable to be created.</p>
                     )}
                     <button
-                      class='inline-block px-12 py-6 text-sm font-medium text-white transition bg-red-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 flex justify-center'
+                      class='inline-block px-12 py-6 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 flex justify-center'
                       onClick={() => navigate("/")}>
                       Back To Sign In
                     </button>

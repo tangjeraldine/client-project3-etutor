@@ -127,25 +127,33 @@ const ClassModal = ({
         <>
           <div style={OVERLAY_STYLES} />
           <div style={MODAL_STYLES}>
-            <div style={{ fontSize: "30px" }}>Class modal</div>
-            <p>Class Title: {eachClass.classTitle}</p>
-            <p>Date, Time: {timeDay}</p>
-            <p>Class Type: {eachClass.classType}</p>
-            <p>Subject: {eachClass.subject}</p>
-            <p>Class Level: {eachClass.classLevel}</p>
-            <p>Tutees: {bookedByFullName.join(", ") || "none"}</p>
-            <p>Group Size: {eachClass.groupSize}</p>
+            <div style={{ fontSize: "30px" }}>Full Class Details:</div>
+            <p className='font-bold'>Class Title: </p>
+            <p> {eachClass.classTitle}</p>
+            <p className='font-bold'>Date and Time: </p>
+            <p>{timeDay}</p>
+            <p className='font-bold'>Class Type: </p>
+            <p>{eachClass.classType}</p>
+            <p className='font-bold'>Subject: </p>
+            <p>{eachClass.subject}</p>
+            <p className='font-bold'>Class Level: </p>
+            <p>{eachClass.classLevel}</p>
+            <p className='font-bold'>Tutees: </p>
+            <p>{bookedByFullName.join(", ") || "none"}</p>
+            <p className='font-bold'>Total Group Size: </p>
+            <p>{eachClass.groupSize}</p>
 
             <button
-              style={{ backgroundColor: "lime" }}
-              onClick={() => setShowEditableClass(true)}
-            >
-              edit
+              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+              onClick={() => setShowEditableClass(true)}>
+              Edit
             </button>
             {!editClassSuccessful && <p>Unable to edit class.</p>}
 
-            <button style={{ backgroundColor: "lime" }} onClick={onClose}>
-              close Modal
+            <button
+              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+              onClick={onClose}>
+              Close
             </button>
           </div>
         </>
@@ -170,13 +178,12 @@ const ClassModal = ({
               onSubmit={(values) => {
                 setRenderClasses(!renderClasses);
                 handleEditClass(values);
-              }}
-            >
+              }}>
               {({ handleChange, handleBlur, values, errors, touched }) => (
                 <Form>
-                  <p>Class Title</p>
+                  <p className='font-bold'>Class Title</p>
                   <Field
-                    name="classTitle"
+                    name='classTitle'
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.classTitle}
@@ -185,13 +192,12 @@ const ClassModal = ({
                     <div>{errors.classTitle}</div>
                   ) : null}
                   <br />
-                  <p>Subject</p>
+                  <p className='font-bold'>Subject</p>
                   <Field
-                    as="select"
-                    name="subject"
+                    as='select'
+                    name='subject'
                     value={values.subject}
-                    onChange={handleChange}
-                  >
+                    onChange={handleChange}>
                     <option disabled>select</option>
                     {tutorDetails.subjects?.map((subject) => (
                       <option key={subject} value={subject}>
@@ -206,15 +212,13 @@ const ClassModal = ({
               <p>Please select matching class levels and subjects.</p>
             )} */}
                   <br />
-                  <br />
 
-                  <p>Class Level</p>
+                  <p className='font-bold'>Class Level</p>
                   <Field
-                    as="select"
-                    name="classLevel"
+                    as='select'
+                    name='classLevel'
                     value={values.classLevel}
-                    onChange={handleChange}
-                  >
+                    onChange={handleChange}>
                     <option disabled>select</option>
                     {tutorDetails.classLevel?.map((level) => (
                       <option key={level} value={level}>
@@ -229,12 +233,11 @@ const ClassModal = ({
                     <p>Please select matching class levels and subjects.</p>
                   )}
                   <br />
-                  <br />
 
-                  <p>Date and Time</p>
+                  <p className='font-bold'>Date and Time</p>
                   <input
-                    type="datetime-local"
-                    name="timeDay"
+                    type='datetime-local'
+                    name='timeDay'
                     value={format(
                       parseISO(values.timeDay),
                       "yyyy-MM-dd'T'hh:mm"
@@ -245,15 +248,13 @@ const ClassModal = ({
                     <div>{errors.timeDay}</div>
                   ) : null}
                   <br />
-                  <br />
 
-                  <p>Class Type</p>
+                  <p className='font-bold'>Class Type</p>
                   <Field
-                    as="select"
-                    name="classType"
+                    as='select'
+                    name='classType'
                     value={values.classType}
-                    onChange={handleChange}
-                  >
+                    onChange={handleChange}>
                     <option disabled>select</option>
                     {tutorDetails.classType?.map((type) => (
                       <option key={type} value={type}>
@@ -265,15 +266,14 @@ const ClassModal = ({
                     <div>{errors.classType}</div>
                   ) : null}
                   <br />
-                  <br />
 
-                  <p>Tutees</p>
+                  <p className='font-bold'>Tutees</p>
                   <div>
                     {tuteeDetails.map((tutee) => (
                       <div key={tutee._id}>
                         <Field
-                          type="checkbox"
-                          name="bookedBy"
+                          type='checkbox'
+                          name='bookedBy'
                           value={tutee._id}
                         />
                         {tutee.fullName}
@@ -288,9 +288,9 @@ const ClassModal = ({
                     <p>Please select tutees with valid subject and level.</p>
                   )}
 
-                  <p>Group Size</p>
+                  <p className='font-bold'>Total Group Size</p>
                   <Field
-                    name="groupSize"
+                    name='groupSize'
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.groupSize}
@@ -299,15 +299,14 @@ const ClassModal = ({
                     <div>{errors.groupSize}</div>
                   ) : null}
                   <br />
-                  <br />
+
                   <button
-                    type="submit"
+                    type='submit'
                     disabled={
                       !(Object.keys(errors).length === 0 && matchingLevelSub)
                     }
-                    style={{ backgroundColor: "lime" }}
-                  >
-                    submit edit
+                    class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+                    Submit Changes
                   </button>
                   {!editClassSuccessful && <p>Class unable to be edited.</p>}
                   <CheckClassLevelAndSubject />
@@ -315,8 +314,10 @@ const ClassModal = ({
                 </Form>
               )}
             </Formik>
-            <button style={{ backgroundColor: "lime" }} onClick={onClose}>
-              close Modal
+            <button
+              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+              onClick={onClose}>
+              Close
             </button>
           </div>
         </>
