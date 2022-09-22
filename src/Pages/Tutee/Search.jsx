@@ -14,15 +14,38 @@ const Search = ({ user, favTutors, setFavTutors }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+  const [showFavButton, setShowFavButton] = useState(false);
   const url = urlcat(SERVER);
-  const [sortState, setSortState] = useState("");
-  const sortOptions = ["rating", "region", "subjects", "classType", "rates"];
+  const [sortState, setSortState] = useState("Sort");
+  const [filterValues, setFilterValues] = useState({
+    subjects: [],
+    region: [],
+    classLevel: "select level",
+    classType: [],
+  });
+  const sortOptions = ["rating", "region", "rates"];
   const tutorurl = urlcat(url, `/tutor/alltutor`);
   const currentUserId = user._id;
   const handleModal = (index) => {
     setIsOpen(true);
     setWhatToOpen(index);
   };
+
+  useEffect(() => {
+    const handleFilter = () => {
+      const filterURL = urlcat(
+        tutorurl,
+        `/search/${sortState}/?subjects=${filterValues.subjects}&classLevel=${filterValues.classLevel}&classType=${filterValues.classType}&region=${filterValues.region}&page=0`
+      );
+      console.log(filterValues);
+      console.log(filterURL);
+      axios.get(filterURL).then((data) => {
+        setTutor(data.data.filteredTutor);
+        setTotalPages(data.data.totalPages);
+      });
+    };
+    handleFilter();
+  }, [filterValues, sortState]);
 
   useEffect(() => {
     axios.get(tutorurl).then((data) => {
@@ -79,23 +102,25 @@ const Search = ({ user, favTutors, setFavTutors }) => {
     classType: [],
   };
 
-  const handleFilter = (values) => {
-    const filterURL = urlcat(
-      tutorurl,
-      `/search/?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}&region=${values.region}`
+  const handleAddToPending = (tutor) => {
+    console.log(tutor);
+    const addToPendingTutorURL = urlcat(
+      url,
+      `tutee/addToPendingTutee/${user._id}`
     );
-    console.log(values);
-    console.log(filterURL);
-    axios.get(filterURL).then((data) => {
-      setTutor(data.data.filteredTutor);
-      setTotalPages(data.data.totalPages);
+
+    axios.put(addToPendingTutorURL, tutor).then((response) => {
+      console.log(response);
     });
+    // add tutor to tutee's pendingTutor
   };
 
   // find current tutee, update current tutee profile favTutors array
 
   const addmyTutor = (tutor) => {
     console.log(favTutors);
+    console.log(favTutors.length);
+    console.log(tutor._id);
     if (favTutors.length === 0) {
       const favUrl = urlcat(
         SERVER,
@@ -107,6 +132,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
       });
     } else {
       favTutors.map((favTutor) => {
+        console.log(favTutor._id);
         if (favTutor._id !== tutor._id) {
           const favUrl = urlcat(
             SERVER,
@@ -116,6 +142,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
             console.log(response.data);
             setFavTutors(response.data.favTutors);
           });
+        } else {
         }
       });
     }
@@ -130,7 +157,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
         initialValues={startingValue}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          handleFilter(values);
+          setFilterValues(values);
         }}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (
@@ -211,7 +238,6 @@ const Search = ({ user, favTutors, setFavTutors }) => {
           initialValues={{
             sort: "Sort",
           }}
-          onChange={() => console.log("change")}
         >
           {({ handleChange, handleBlur, values, errors, touched }) => (
             <div>
@@ -223,7 +249,6 @@ const Search = ({ user, favTutors, setFavTutors }) => {
                   value={values.sort}
                   onChange={(e) => {
                     handleChange(e);
-
                     setSortState(e.target.value);
                   }}
                   onBlur={handleBlur}
@@ -251,6 +276,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
               <>
                 <div
                   onClick={() => {
+                    setShowFavButton(true);
                     setAddPendingButton(true);
                     handleModal(index);
                   }}
@@ -272,6 +298,16 @@ const Search = ({ user, favTutors, setFavTutors }) => {
                 >
                   Add fav tutor
                 </button>
+                <br />
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleAddToPending(tutor);
+                  }}
+                  style={{ backgroundColor: "lime" }}
+                >
+                  add to pending
+                </button>
               </>
             ))}
 
@@ -283,8 +319,14 @@ const Search = ({ user, favTutors, setFavTutors }) => {
               showCancelButton={showCancelButton}
               addPendingButton={addPendingButton}
               setAddPendingButton={setAddPendingButton}
+              user={user}
+              setTutor={setTutor}
+              handleAddToPending={handleAddToPending}
+              addmyTutor={addmyTutor}
+              setShowFavButton={setShowFavButton}
+              showFavButton={showFavButton}
             />
-
+            <br />
             <br />
             <button
               disabled={page === 0}
