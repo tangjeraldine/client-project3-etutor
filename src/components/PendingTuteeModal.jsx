@@ -128,13 +128,13 @@ const PendingTuteeModal = ({
           <>
             <button
               onClick={handleAccept}
-              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-green-300 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-              accept
+              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-green-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+              Accept
             </button>
             <button
               onClick={handleReject}
-              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-              reject
+              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+              Reject
             </button>
           </>
         )}

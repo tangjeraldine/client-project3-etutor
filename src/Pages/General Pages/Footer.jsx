@@ -4,7 +4,7 @@ function Footer() {
   const navigate = useNavigate();
   return (
     <footer class='bg-amber-400'>
-      <div class='relative px-4 py-4 mx-auto max-w-screen-xl sm:px-6 lg:px-8 lg:pt-24'>
+      <div class='relative px-4 py-4 mx-auto max-w-screen-xl sm:px-6 lg:px-8 lg:pt-8'>
         <div class='lg:flex lg:items-end lg:justify-between'>
           <div>
             <div class='flex justify-center text-teal-600 lg:justify-start'>
