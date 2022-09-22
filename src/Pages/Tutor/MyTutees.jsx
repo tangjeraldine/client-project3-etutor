@@ -13,13 +13,7 @@ const MyTutees = ({ user }) => {
   const [tuteeDetails, setTuteeDetails] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
-
-  // use the tutor's user_id to find tutees
-
-  // pending tutors
-  // pressing accept, -> delete tutee from pendingtutors and add tutee to myTutors
-  // pressing reject -> delete tutee from pending tutors only
-  // when tutors
+  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     //get tutor details to see their subjects, class levels, and class types of specific tutor
@@ -66,9 +60,19 @@ const MyTutees = ({ user }) => {
         {tuteeDetails.length === 0 ? (
           <div>You have no tutees</div>
         ) : (
-          tuteeDetails?.map((tutee) => {
+          tuteeDetails?.map((tutee, index) => {
             if (tutee.myTutors.includes(tutorDetails._id)) {
-              return <p key={tutee._id}>{tutee.fullName}</p>;
+              return (
+                <p
+                  key={tutee._id}
+                  onClick={() => {
+                    setShowButton(false);
+                    handleModal(index);
+                  }}
+                >
+                  {tutee.fullName}
+                </p>
+              );
             }
           })
         )}
@@ -82,9 +86,16 @@ const MyTutees = ({ user }) => {
           tuteeDetails?.map((tutee, index) => {
             if (tutee.pendingTutors.includes(tutorDetails._id)) {
               return (
-                <div key={index} onClick={() => handleModal(index)}>
-                  <p key={tutee._id}>{tutee.fullName}</p>
-                </div>
+                <p
+                  key={tutee._id}
+                  onClick={() => {
+                    setShowButton(true);
+                    handleModal(index);
+                  }}
+                >
+                  {tutee.fullName}
+                </p>
+                // </div>
               );
             }
           })
@@ -92,7 +103,6 @@ const MyTutees = ({ user }) => {
         <div>
           <PendingTuteeModal
             open={isOpen}
-            onClose={() => setIsOpen(false)}
             eachTuteeDetails={tuteeDetails[whatToOpen]}
             user={user}
             setTuteeDetails={setTuteeDetails}
@@ -100,6 +110,8 @@ const MyTutees = ({ user }) => {
             whatToOpen={whatToOpen}
             tutorDetails={tutorDetails}
             setIsOpen={setIsOpen}
+            setShowButton={setShowButton}
+            showButton={showButton}
           />
         </div>
       </div>

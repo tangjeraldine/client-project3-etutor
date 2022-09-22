@@ -1,5 +1,6 @@
 import urlcat from "urlcat";
 import axios from "axios";
+import { useState } from "react";
 const SERVER = import.meta.env.VITE_SERVER;
 const url = urlcat(SERVER, "/tutee");
 
@@ -13,21 +14,19 @@ const PendingTuteeModal = ({
   whatToOpen,
   tutorDetails,
   setIsOpen,
+  setShowButton,
+  showButton,
 }) => {
   if (!open) return null;
-  console.log(eachTuteeDetails);
-  console.log(user);
 
-  /// Tutor Karen, pending tutee is sarah. if i accept sarah as my tutee, remove from pending, move to my tutees
-  // find sarah in the database, remove karen from pendingtutors and add to  mytutors
-  // fetch that will update tutee database, remove
+  const [updateTuteeSuccessful, setUpdateTuteeSuccessful] = useState(true);
+
+  const updateTutorURL = urlcat(url, "/updatePendingTutee");
   const handleAccept = () => {
     const updatedPendingTutors = eachTuteeDetails.pendingTutors.filter(
       (tutor) => tutor !== tutorDetails._id
     );
     console.log(updatedPendingTutors);
-
-    // eachTuteeDetails.pendingTutors = updatedPendingTutors;
 
     const updatedTuteeDetails = [...tuteeDetails];
     updatedTuteeDetails[whatToOpen].pendingTutors = updatedPendingTutors;
@@ -35,12 +34,26 @@ const PendingTuteeModal = ({
       ...updatedTuteeDetails[whatToOpen].myTutors,
       tutorDetails._id,
     ];
-
-    // send in updatedTuteeDetails as body findoneandupdate
     console.log(updatedTuteeDetails);
-    setTuteeDetails(updatedTuteeDetails);
 
-    setIsOpen(false);
+    axios
+      .put(updateTutorURL, updatedTuteeDetails[whatToOpen])
+      .then(({ data }) => {
+        console.log(data);
+        console.log(updatedTuteeDetails);
+        setTuteeDetails(updatedTuteeDetails);
+        setUpdateTuteeSuccessful(true);
+        setIsOpen(false);
+      })
+      .catch((error) => {
+        if (
+          error.response.data.error === "Unable to accept/reject Tutee." ||
+          error.response.data.error === "Tutee not found."
+        ) {
+          setUpdateTuteeSuccessful(false);
+        }
+      });
+    // send in updatedTuteeDetails as body findoneandupdate
   };
 
   const handleReject = () => {
@@ -50,9 +63,24 @@ const PendingTuteeModal = ({
     console.log(updatedPendingTutors);
     const updatedTuteeDetails = [...tuteeDetails];
     updatedTuteeDetails[whatToOpen].pendingTutors = updatedPendingTutors;
-    setTuteeDetails(updatedTuteeDetails);
 
-    setIsOpen(false);
+    axios
+      .put(updateTutorURL, updatedTuteeDetails[whatToOpen])
+      .then(({ data }) => {
+        console.log(data);
+        console.log(updatedTuteeDetails);
+        setTuteeDetails(updatedTuteeDetails);
+        setUpdateTuteeSuccessful(true);
+        setIsOpen(false);
+      })
+      .catch((error) => {
+        if (
+          error.response.data.error === "Unable to accept/reject Tutee." ||
+          error.response.data.error === "Tutee not found."
+        ) {
+          setUpdateTuteeSuccessful(false);
+        }
+      });
   };
 
   const MODAL_STYLES = {
@@ -78,7 +106,13 @@ const PendingTuteeModal = ({
     <>
       <div style={OVERLAY_STYLES} />
       <div style={MODAL_STYLES}>
-        <button style={{ backgroundColor: "lime" }} onClick={onClose}>
+        <button
+          style={{ backgroundColor: "lime" }}
+          onClick={() => {
+            setShowButton(false);
+            setIsOpen(false);
+          }}
+        >
           close Modal
         </button>
         <div style={{ fontSize: "30px" }}>Pending Tutees</div>
@@ -89,12 +123,18 @@ const PendingTuteeModal = ({
         <p>Subjects: {eachTuteeDetails.subjects.join(", ")}</p>
         <br />
         <br />
-        <button onClick={handleAccept} style={{ backgroundColor: "lime" }}>
-          accept
-        </button>
-        <button onClick={handleReject} style={{ backgroundColor: "red" }}>
-          reject
-        </button>
+        {showButton && (
+          <>
+            <button onClick={handleAccept} style={{ backgroundColor: "lime" }}>
+              accept
+            </button>
+            <button onClick={handleReject} style={{ backgroundColor: "red" }}>
+              reject
+            </button>
+          </>
+        )}
+
+        {!updateTuteeSuccessful && <p>Unable to accept/reject Tutee.</p>}
       </div>
     </>
   );

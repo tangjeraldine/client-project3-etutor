@@ -6,15 +6,14 @@ import TutorModal from "../../components/TutorModal";
 const SERVER = import.meta.env.VITE_SERVER;
 
 const MyTutors = ({ user, favTutors, setFavTutors }) => {
+  const [tutors, setTutors] = useState("");
   const [myTutors, setMyTutors] = useState([]);
   const [pendingTutors, setPendingTutors] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
-  const handleModal = (index) => {
-    setIsOpen(true);
-    setWhatToOpen(index);
-  };
-
+  const [tuteeDetails, setTuteeDetails] = useState({});
+  const [showCancelButton, setShowCancelButton] = useState(false);
+  const [addPendingButton, setAddPendingButton] = useState(false);
   const url = urlcat(SERVER, "/tutee");
   const currentUserId = user._id;
 
@@ -24,6 +23,8 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
       setMyTutors(response.data.myTutors);
       setPendingTutors(response.data.pendingTutors);
       setFavTutors(response.data.favTutors);
+      console.log(response.data);
+      setTuteeDetails(response.data);
     });
   }, []);
 
@@ -38,23 +39,30 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
     });
   };
 
+  const handleModal = (string, index) => {
+    if (string === "pendingTutors") {
+      setTutors(tuteeDetails.pendingTutors);
+    } else if (string === "myTutors") {
+      setTutors(tuteeDetails.myTutors);
+    } else if (string === "favTutors") {
+      setTutors(tuteeDetails.favTutors);
+    }
+    setIsOpen(true);
+    setWhatToOpen(index);
+  };
+
   return (
     <>
       <div>
         <h1 style={{ fontSize: "30px" }}>my tutors</h1>
-        {myTutors.length === 0 ? (
+        {tuteeDetails?.myTutors?.length === 0 ? (
           <div>You have no tutor</div>
         ) : (
-          myTutors.map((tutor, index) => (
+          tuteeDetails?.myTutors?.map((tutor, index) => (
             <>
-              <div key={index}>
+              <div key={index} onClick={() => handleModal("myTutors", index)}>
                 <p>{tutor.fullName}</p>
               </div>
-              {/* <TutorModal
-                open={isOpen}
-                onClose={() => setIsOpen(false)}
-                tutor={myTutors[whatToOpen]}
-              /> */}
             </>
           ))
         )}
@@ -62,19 +70,20 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
       <br />
       <div>
         <h1 style={{ fontSize: "30px" }}>pending tutors</h1>
-        {pendingTutors.length === 0 ? (
+        {tuteeDetails?.pendingTutors?.length === 0 ? (
           <div>You have no pending tutor</div>
         ) : (
-          pendingTutors.map((tutor, index) => (
+          tuteeDetails?.pendingTutors?.map((tutor, index) => (
             <>
-              <div onClick={() => handleModal(index)} key={index}>
+              <div
+                onClick={() => {
+                  setShowButton(true);
+                  handleModal("pendingTutors", index);
+                }}
+                key={index}
+              >
                 <p>{tutor.fullName}</p>
               </div>
-              <TutorModal
-                open={isOpen}
-                onClose={() => setIsOpen(false)}
-                tutor={pendingTutors[whatToOpen]}
-              />
             </>
           ))
         )}
@@ -83,13 +92,15 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
       <br />
       <div>
         <h1 style={{ fontSize: "30px" }}>Fav Tutor</h1>
-        {favTutors.length === 0 ? (
+        {tuteeDetails?.favTutors?.length === 0 ? (
           <div>You have no favorite tutor</div>
         ) : (
-          favTutors?.map((tutor) => (
+          tuteeDetails?.favTutors?.map((tutor, index) => (
             <>
               <div key={tutor._id}>
-                <p>{tutor.fullName}</p>
+                <p onClick={() => handleModal("favTutors", index)}>
+                  {tutor.fullName}
+                </p>
                 <button onClick={() => deletefavTutor(tutor._id)}>
                   Delete
                 </button>
@@ -97,6 +108,21 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
             </>
           ))
         )}
+        <div>
+          <TutorModal
+            user={user}
+            whatToOpen={whatToOpen}
+            open={isOpen}
+            setIsOpen={setIsOpen}
+            tutor={tutors[whatToOpen]}
+            setShowCancelButton={setShowCancelButton}
+            showCancelButton={showCancelButton}
+            tuteeDetails={tuteeDetails}
+            setTuteeDetails={setTuteeDetails}
+            addPendingButton={addPendingButton}
+            setAddPendingButton={setAddPendingButton}
+          />
+        </div>
       </div>
     </>
   );

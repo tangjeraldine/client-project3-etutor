@@ -8,7 +8,8 @@ import TutorModal from "../../components/TutorModal";
 const SERVER = import.meta.env.VITE_SERVER;
 const Search = ({ user, favTutors, setFavTutors }) => {
   const [tutor, setTutor] = useState([]);
-
+  const [showCancelButton, setShowCancelButton] = useState(false);
+  const [addPendingButton, setAddPendingButton] = useState(false);
   const [page, setPage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
@@ -249,7 +250,10 @@ const Search = ({ user, favTutors, setFavTutors }) => {
             {tutor.map((tutor, index) => (
               <>
                 <div
-                  onClick={() => handleModal(index)}
+                  onClick={() => {
+                    setAddPendingButton(true);
+                    handleModal(index);
+                  }}
                   key={index}
                   value={index}
                 >
@@ -262,14 +266,23 @@ const Search = ({ user, favTutors, setFavTutors }) => {
                   <p>Rates: {tutor.rates}</p>
                 </div>
 
-                <button onClick={() => addmyTutor(tutor)}>Add fav tutor</button>
+                <button
+                  style={{ backgroundColor: "lime" }}
+                  onClick={() => addmyTutor(tutor)}
+                >
+                  Add fav tutor
+                </button>
               </>
             ))}
 
             <TutorModal
               open={isOpen}
-              onClose={() => setIsOpen(false)}
+              setIsOpen={setIsOpen}
               tutor={tutor[whatToOpen]}
+              setShowCancelButton={setShowCancelButton}
+              showCancelButton={showCancelButton}
+              addPendingButton={addPendingButton}
+              setAddPendingButton={setAddPendingButton}
             />
 
             <br />
