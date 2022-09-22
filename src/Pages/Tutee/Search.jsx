@@ -109,6 +109,8 @@ const Search = ({ user, favTutors, setFavTutors }) => {
 
   const addmyTutor = (tutor) => {
     console.log(favTutors);
+    console.log(favTutors.length);
+    console.log(tutor._id);
     if (favTutors.length === 0) {
       const favUrl = urlcat(
         SERVER,
@@ -120,6 +122,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
       });
     } else {
       favTutors.map((favTutor) => {
+        console.log(favTutor._id);
         if (favTutor._id !== tutor._id) {
           const favUrl = urlcat(
             SERVER,
@@ -129,6 +132,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
             console.log(response.data);
             setFavTutors(response.data.favTutors);
           });
+        } else {
         }
       });
     }
