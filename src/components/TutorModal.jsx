@@ -1,58 +1,23 @@
-import urlcat from "urlcat";
-import axios from "axios";
-import { useState } from "react";
-const SERVER = import.meta.env.VITE_SERVER;
-const url = urlcat(SERVER, "/tutee");
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { TiCancel } from "react-icons/ti";
 
 const TutorModal = ({
   open,
-  tutor,
   setIsOpen,
-  setShowCancelButton,
-  showCancelButton,
+  tutor,
   tuteeDetails,
-  whatToOpen,
-  setTuteeDetails,
+  setShowCancelButton,
   addPendingButton,
   setAddPendingButton,
-  user,
-  setTutor,
   handleAddToPending,
-  addmyTutor,
+  handleRemoveFromPending,
+  handleFavTutor,
+  handleUnfavTutor,
+  favUnfavSuccessful,
+  updatePendingSuccessful,
   showFavButton,
 }) => {
   if (!open) return null;
-  console.log(tutor);
-  const updateTutorURL = urlcat(url, "/updatePendingTutee");
-  const [updateTuteeSuccessful, setUpdateTuteeSuccessful] = useState(true);
-
-  const handleReject = (tutor) => {
-    console.log(tutor);
-    const updatedPendingTutee = tuteeDetails.pendingTutors.filter(
-      (tutor) => tutor === tuteeDetails.pendingTutors[whatToOpen]._id
-    );
-    console.log(updatedPendingTutee);
-
-    console.log(tuteeDetails);
-    const updatedTuteeDetails = tuteeDetails.pendingTutors.splice(0, 1);
-    console.log(updatedTuteeDetails);
-
-    axios
-      .put(updateTutorURL, tuteeDetails)
-      .then(({ data }) => {
-        setTuteeDetails(tuteeDetails);
-        setUpdateTuteeSuccessful(true);
-        setIsOpen(false);
-      })
-      .catch((error) => {
-        if (
-          error.response.data.error === "Unable to accept/reject Tutee." ||
-          error.response.data.error === "Tutee not found."
-        ) {
-          setUpdateTuteeSuccessful(false);
-        }
-      });
-  };
 
   const MODAL_STYLES = {
     position: "fixed",
@@ -74,6 +39,20 @@ const TutorModal = ({
     zIndex: 1000,
   };
 
+  let inFav = false;
+  let inPending = false;
+  console.log(tutor._id);
+  console.log(tuteeDetails);
+  tuteeDetails.favTutors.map((favTutor) => {
+    if (favTutor._id === tutor._id) {
+      inFav = true;
+    }
+  });
+  tuteeDetails.pendingTutors.map((pendingTutor) => {
+    if (pendingTutor._id === tutor._id) {
+      inPending = true;
+    }
+  });
   return (
     <>
       <div style={OVERLAY_STYLES} />
@@ -107,14 +86,18 @@ const TutorModal = ({
         <p className='font-bold mt-2'>Teaching Experience: </p>
         <p>{tutor.teachingExperience}</p>
 
-        {showFavButton && (
+        {!inFav && showFavButton ? (
+          <button
+            style={{ backgroundColor: "lime" }}
+            onClick={() => handleFavTutor(tutor)}
+            class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+            <AiOutlineStar />
+          </button>
+        ) : (
           <button
             class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
-            onClick={() => {
-              setIsOpen(false);
-              addmyTutor(tutor);
-            }}>
-            Save Tutor To Favourites
+            onClick={() => handleUnfavTutor(tutor)}>
+            <AiFillStar />
           </button>
         )}
 
@@ -133,18 +116,26 @@ const TutorModal = ({
           </>
         )}
 
-        {addPendingButton && (
-          <>
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                handleAddToPending(tutor);
-              }}
-              class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-              Send Contact Request To Tutor
-            </button>
-          </>
+        {!inPending && addPendingButton ? (
+          <button
+            onClick={() => {
+              handleAddToPending(tutor);
+            }}
+            class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+            Send Request
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              handleRemoveFromPending(tutor);
+            }}
+            class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
+            <TiCancel />
+            Request
+          </button>
         )}
+        {!favUnfavSuccessful && <p>Unable to fav/unfav tutor.</p>}
+        {!updatePendingSuccessful && <p>Unable to send/cancel request.</p>}
       </div>
     </>
   );

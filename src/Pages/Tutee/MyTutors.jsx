@@ -25,7 +25,6 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
     axios.get(myTutorsURL).then((response) => {
       setMyTutors(response.data.myTutors);
       setPendingTutors(response.data.pendingTutors);
-      setFavTutors(response.data.favTutors);
       console.log(response.data);
       setTuteeDetails(response.data);
     });
