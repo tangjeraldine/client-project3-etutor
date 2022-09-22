@@ -83,61 +83,42 @@ const EditTuteeProfile = ({ user }) => {
     const { values } = useFormikContext(); //a way to excess form values globally
     useEffect(() => {
       setMatchingLevelSub(true);
-      let anyPriLevel = false;
-      let anySecLevel = false;
+      const currentLevel = values.currentLevel.split(" ");
       let anyPriSub = false;
       let anySecSub = false;
-      let anyLowerPri = false;
-      let anyUpperPri = false;
-      // values.currentLevel.map((level) => {
-      if (values.currentLevel.split(" ")[0] === "Primary") {
-        anyPriLevel = true;
-        if (
-          values.currentLevel.split(" ")[1] !== "1" &&
-          values.currentLevel.split(" ")[1] !== "2"
-        ) {
-          anyUpperPri = true; //if tkde lower level
-        } else {
-          anyLowerPri = true;
-        }
-      } else if (values.currentLevel.split(" ")[0] === "Secondary") {
-        anySecLevel = true;
-      }
-
-      // values.subjects.map((subject) => {
-      if (values.subjects === "English") {
-        if (anyPriLevel === true) {
+      values?.subjects?.map((subject) => {
+        if (subject === "English") {
+          if (currentLevel[0] === "Primary") {
+            anyPriSub = true;
+          } else {
+            anySecSub = true;
+          }
+        } else if (priSubjects.indexOf(subject) !== -1) {
           anyPriSub = true;
-        }
-        if (anySecLevel === true) {
+        } else if (secSubjects.indexOf(subject) !== -1) {
           anySecSub = true;
         }
-      } else if (priSubjects.indexOf(values.subjects) !== -1) {
-        anyPriSub = true;
-      } else if (secSubjects.indexOf(values.subjects) !== -1) {
-        anySecSub = true;
-      }
-      if (values.subjects === "Science") {
-        if (
-          anyUpperPri === false ||
-          (values.subjects.indexOf("Mathematics") === -1 &&
-            values.subjects.indexOf("English") === -1 &&
-            anyLowerPri === true)
-        ) {
-          anyPriSub = false;
+        if (subject === "Science") {
+          if (currentLevel[0] === "Primary") {
+            if (currentLevel[1] !== "1" && currentLevel[1] !== "2") {
+              anyPriSub = true;
+            } else {
+              anyPriSub = false;
+            }
+          }
         }
-      }
+      });
 
       if (
-        (anyPriLevel === true && anyPriSub === false) ||
-        (anyPriLevel === false && anyPriSub === true) ||
-        (anySecLevel === true && anySecSub === false) ||
-        (anySecLevel === false && anySecSub === true)
+        (currentLevel[0] === "Primary" && anyPriSub === false) ||
+        (currentLevel[0] === "Primary" && anySecSub === true) ||
+        (currentLevel[0] === "Secondary" && anySecSub === false) ||
+        (currentLevel[0] === "Secondary" && anyPriSub === true)
       ) {
         console.log("please select matching class levels and subjects");
         setMatchingLevelSub(false);
       }
-    }, [values.classLevel, values.subjects]);
+    }, [values.currentLevel, values.subjects]);
   };
 
   const handleEdit = () => {
@@ -175,12 +156,12 @@ const EditTuteeProfile = ({ user }) => {
         {/* using formik */}
         <Formik
           initialValues={{
-            fullName: `${tuteeData?.fullName}`,
-            phone: `${tuteeData?.phone}`,
-            preferredContactMode: `${tuteeData?.preferredContactMode}`,
-            currentLevel: `${tuteeData?.currentLevel}`,
-            region: `${tuteeData?.region}`,
-            subjects: `${tuteeData?.subjects}`,
+            fullName: tuteeData?.fullName,
+            phone: tuteeData?.phone,
+            preferredContactMode: tuteeData?.preferredContactMode,
+            currentLevel: tuteeData?.currentLevel,
+            region: tuteeData?.region,
+            subjects: tuteeData?.subjects,
           }}
           validationSchema={signUpAsTuteeValidation}
           onSubmit={(values) => {
@@ -233,8 +214,8 @@ const EditTuteeProfile = ({ user }) => {
               ) : null}
               <br />
               <br />
-              <p>Current Class Level: {tuteeData?.currentLevel} </p>
-              <p>New Class Level(s): </p>
+
+              <p>Class Level: </p>
               <Field
                 as='select'
                 name='currentLevel'
@@ -271,8 +252,8 @@ const EditTuteeProfile = ({ user }) => {
               ) : null}
               <br />
               <br />
-              <p>Current Subject(s): {tuteeData?.subjects?.join(", ")} </p>
-              <p>New Subject(s): </p>
+
+              <p>Subject(s): </p>
               <div>
                 Primary
                 {priSubjects.map((subject) => {

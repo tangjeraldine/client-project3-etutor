@@ -76,7 +76,7 @@ const LayoutTutor = ({ user }) => {
                 <div class='flex items-center gap-4'>
                   <button
                     onClick={() => {
-                      navigate("/tutor/edituserdetails");
+                      navigate("/tutor/editprofile");
                     }}
                     class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
                     Edit Profile
@@ -84,7 +84,7 @@ const LayoutTutor = ({ user }) => {
 
                   <button
                     onClick={() => {
-                      navigate("/tutor/editprofile");
+                      navigate("/tutor/edituserdetails");
                     }}
                     class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
                     Edit User Details
