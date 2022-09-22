@@ -109,15 +109,15 @@ const TutorModal = ({
           <div>
             {!inFav ? (
               <button
-                class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-rose-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleFavTutor(tutor)}>
-                <AiOutlineStar />
+                <AiOutlineStar /> Favourite
               </button>
             ) : (
               <button
-                class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-gray-800 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleUnfavTutor(tutor)}>
-                <AiFillStar />
+                <AiFillStar /> Un-Favourite
               </button>
             )}
 
@@ -127,16 +127,16 @@ const TutorModal = ({
                 onClick={() => {
                   handleRemoveFromPending(tutor);
                 }}
-                style={{ backgroundColor: "lime" }}>
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-gray-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                 <TiCancel />
-                Request
+                Cancel Request
               </button>
             ) : (
               <button
                 onClick={() => {
                   handleAddToPending(tutor);
                 }}
-                style={{ backgroundColor: "lime" }}>
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-blue-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                 Send Request
               </button>
             )}
@@ -146,15 +146,15 @@ const TutorModal = ({
           <div>
             {!inFav ? (
               <button
-                style={{ backgroundColor: "lime" }}
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-rose-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleFavTutor(tutor)}>
-                <AiOutlineStar />
+                <AiOutlineStar /> Favourite
               </button>
             ) : (
               <button
-                style={{ backgroundColor: "lime" }}
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-gray-800 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleUnfavTutor(tutor)}>
-                <AiFillStar />
+                <AiFillStar /> Un-Favourite
               </button>
             )}
           </div>
@@ -163,22 +163,24 @@ const TutorModal = ({
           <div>
             {!inFav ? (
               <button
-                style={{ backgroundColor: "lime" }}
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-rose-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleFavTutor(tutor)}>
-                <AiOutlineStar />
+                <AiOutlineStar /> Favourite
               </button>
             ) : (
               <button
-                style={{ backgroundColor: "lime" }}
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-gray-800 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleUnfavTutor(tutor)}>
-                <AiFillStar />
+                <AiFillStar /> Un-Favourite
               </button>
             )}
 
             <br />
 
             {inPending === 1 && (
-              <div style={{ backgroundColor: "lime" }}>Your Tutor</div>
+              <div class='block mt-3 px-12 py-2 text-sm font-medium text-black transition bg-yellow-400 border border-black-600 rounded-md shrink-0 '>
+                Your Tutor
+              </div>
             )}
 
             {inPending === 0 && (
@@ -186,7 +188,7 @@ const TutorModal = ({
                 onClick={() => {
                   handleAddToPending(tutor);
                 }}
-                style={{ backgroundColor: "lime" }}>
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-blue-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                 Send Request
               </button>
             )}
@@ -196,9 +198,9 @@ const TutorModal = ({
                 onClick={() => {
                   handleRemoveFromPending(tutor);
                 }}
-                style={{ backgroundColor: "lime" }}>
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-gray-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                 <TiCancel />
-                Request
+                Cancel Request
               </button>
             )}
           </div>
@@ -207,22 +209,24 @@ const TutorModal = ({
           <div>
             {!inFav ? (
               <button
-                style={{ backgroundColor: "lime" }}
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-rose-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleFavTutor(tutor)}>
-                <AiOutlineStar />
+                <AiOutlineStar /> Favourite
               </button>
             ) : (
               <button
-                style={{ backgroundColor: "lime" }}
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-gray-800 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                 onClick={() => handleUnfavTutor(tutor)}>
-                <AiFillStar />
+                <AiFillStar /> Un-Favourite
               </button>
             )}
 
             <br />
 
             {inPending === 1 && (
-              <div style={{ backgroundColor: "lime" }}>Your Tutor</div>
+              <div class='block mt-3 px-12 py-2 text-sm font-medium text-black transition bg-yellow-400 border border-black-600 rounded-md shrink-0 '>
+                Your Tutor!
+              </div>
             )}
 
             {inPending === 0 && (
@@ -230,7 +234,7 @@ const TutorModal = ({
                 onClick={() => {
                   handleAddToPending(tutor);
                 }}
-                style={{ backgroundColor: "lime" }}>
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-blue-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                 Send Request
               </button>
             )}
@@ -240,9 +244,9 @@ const TutorModal = ({
                 onClick={() => {
                   handleRemoveFromPending(tutor);
                 }}
-                style={{ backgroundColor: "lime" }}>
+                class='block mt-3 px-12 py-2 text-sm font-medium text-white transition bg-gray-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                 <TiCancel />
-                Request
+                Cancel Request
               </button>
             )}
           </div>

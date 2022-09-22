@@ -46,9 +46,22 @@ const MyTutees = ({ user }) => {
         .catch((error) => {
           console.log(error);
         });
-
-      
     }
+    const xxx = [];
+    tuteeDetails?.pendingTutors?.map((tutor) => {
+      if (tutor.pendingTutors.includes(tutorDetails._id)) {
+        xxx.push(tutor);
+      }
+    });
+    setPendingTutee(xxx);
+    // const yyy = [];
+    // tuteeDetails?.myTutors?.map((tutor) => {
+    //   if (tutor.myTutors.includes(tutorDetails._id)) {
+    //     yyy.push(tutor);
+    //   }
+    // });
+    // setMyTutee(yyy);
+    // console.log(yyy);
   }, [tutorDetails, renderTutees]);
 
   const handleModal = (index) => {
@@ -74,9 +87,9 @@ const MyTutees = ({ user }) => {
           <div class='mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2'>
             <div>
               <h1 class='text-2xl text-red-700 text-center m-2 sm:text-3xl'>
-                Accepted Tutees
+                My Tutees
               </h1>
-              {tuteeDetails.length === 0 ? (
+              {tuteeDetails?.length === 0 ? (
                 <div>You have no tutees</div>
               ) : (
                 tuteeDetails?.map((tutee, index) => {
@@ -120,7 +133,7 @@ const MyTutees = ({ user }) => {
               <h1 class='text-2xl text-red-700 text-center m-2 sm:text-3xl'>
                 Pending Tutees
               </h1>
-              {tuteeDetails.length === 0 ? (
+              {pendingTutee?.length === 0 ? (
                 <div>You have no pending tutees</div>
               ) : (
                 tuteeDetails?.map((tutee, index) => {
