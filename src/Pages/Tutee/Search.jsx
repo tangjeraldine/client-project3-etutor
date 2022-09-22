@@ -126,7 +126,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
         SERVER,
         `tutee/updateFavList/?username=${currentUserId}`
       );
-      axios.put(favUrl, tutor).then((response) => {
+      axios.put(favUrl, tutor).then((response) => {//tutor data sent as body
         console.log(response.data);
         setFavTutors(response.data.favTutors);
       });
