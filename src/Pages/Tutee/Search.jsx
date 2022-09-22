@@ -104,6 +104,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
 
   const handleAddToPending = (tutor) => {
     console.log(tutor);
+
     const addToPendingTutorURL = urlcat(
       url,
       `tutee/addToPendingTutee/${user._id}`
@@ -126,7 +127,8 @@ const Search = ({ user, favTutors, setFavTutors }) => {
         SERVER,
         `tutee/updateFavList/?username=${currentUserId}`
       );
-      axios.put(favUrl, tutor).then((response) => {//tutor data sent as body
+      axios.put(favUrl, tutor).then((response) => {
+        //tutor data sent as body
         console.log(response.data);
         setFavTutors(response.data.favTutors);
       });
