@@ -15,14 +15,36 @@ const Search = ({ user, favTutors, setFavTutors }) => {
   const [whatToOpen, setWhatToOpen] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const url = urlcat(SERVER);
-  const [sortState, setSortState] = useState("");
-  const sortOptions = ["rating", "region", "subjects", "classType", "rates"];
+  const [sortState, setSortState] = useState("Sort");
+  const [filterValues, setFilterValues] = useState({
+    subjects: [],
+    region: [],
+    classLevel: "select level",
+    classType: [],
+  });
+  const sortOptions = ["rating", "region", "rates"];
   const tutorurl = urlcat(url, `/tutor/alltutor`);
   const currentUserId = user._id;
   const handleModal = (index) => {
     setIsOpen(true);
     setWhatToOpen(index);
   };
+  
+  useEffect(()=> {
+    const handleFilter = () => {
+      const filterURL = urlcat(
+        tutorurl,
+        `/search/${sortState}/?subjects=${filterValues.subjects}&classLevel=${filterValues.classLevel}&classType=${filterValues.classType}&region=${filterValues.region}&page=0`
+      );
+      console.log(filterValues);
+      console.log(filterURL);
+      axios.get(filterURL).then((data) => {
+        setTutor(data.data.filteredTutor);
+        setTotalPages(data.data.totalPages);
+      });
+    };
+    handleFilter()
+  }, [filterValues, sortState])
 
   useEffect(() => {
     axios.get(tutorurl).then((data) => {
@@ -79,18 +101,6 @@ const Search = ({ user, favTutors, setFavTutors }) => {
     classType: [],
   };
 
-  const handleFilter = (values) => {
-    const filterURL = urlcat(
-      tutorurl,
-      `/search/?subjects=${values.subjects}&classLevel=${values.classLevel}&classType=${values.classType}&region=${values.region}`
-    );
-    console.log(values);
-    console.log(filterURL);
-    axios.get(filterURL).then((data) => {
-      setTutor(data.data.filteredTutor);
-      setTotalPages(data.data.totalPages);
-    });
-  };
 
   const handleAddToPending = (tutor) => {
     console.log(tutor);
@@ -147,7 +157,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
         initialValues={startingValue}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          handleFilter(values);
+          setFilterValues(values);
         }}
       >
         {({ handleChange, handleBlur, values, errors, touched }) => (
@@ -228,7 +238,6 @@ const Search = ({ user, favTutors, setFavTutors }) => {
           initialValues={{
             sort: "Sort",
           }}
-          onChange={() => console.log("change")}
         >
           {({ handleChange, handleBlur, values, errors, touched }) => (
             <div>
@@ -240,7 +249,6 @@ const Search = ({ user, favTutors, setFavTutors }) => {
                   value={values.sort}
                   onChange={(e) => {
                     handleChange(e);
-
                     setSortState(e.target.value);
                   }}
                   onBlur={handleBlur}
