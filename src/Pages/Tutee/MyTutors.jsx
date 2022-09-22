@@ -15,6 +15,8 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
   const [showCancelButton, setShowCancelButton] = useState(false);
   const [addPendingButton, setAddPendingButton] = useState(false);
   const [showButton, setShowButton] = useState(false);
+  const [showFavButton, setShowFavButton] = useState(false);
+
   const url = urlcat(SERVER, "/tutee");
   const currentUserId = user._id;
 
@@ -197,6 +199,7 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
                   setTuteeDetails={setTuteeDetails}
                   addPendingButton={addPendingButton}
                   setAddPendingButton={setAddPendingButton}
+                  showFavButton={showFavButton}
                 />
               </div>
             </div>

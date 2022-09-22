@@ -19,6 +19,7 @@ const TutorModal = ({
   setTutor,
   handleAddToPending,
   addmyTutor,
+  showFavButton,
 }) => {
   if (!open) return null;
   console.log(tutor);
@@ -97,15 +98,17 @@ const TutorModal = ({
         <p>Education Background: {tutor.educationBackground}</p>
         <p> Teaching Experience: {tutor.teachingExperience}</p>
 
-        <button
-          style={{ backgroundColor: "lime" }}
-          onClick={() => {
-            setIsOpen(false);
-            addmyTutor(tutor);
-          }}
-        >
-          Add fav tutor
-        </button>
+        {showFavButton && (
+          <button
+            style={{ backgroundColor: "lime" }}
+            onClick={() => {
+              setIsOpen(false);
+              addmyTutor(tutor);
+            }}
+          >
+            Add fav tutor
+          </button>
+        )}
 
         <br />
 

@@ -14,6 +14,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+  const [showFavButton, setShowFavButton] = useState(false);
   const url = urlcat(SERVER);
   const [sortState, setSortState] = useState("Sort");
   const [filterValues, setFilterValues] = useState({
@@ -29,8 +30,8 @@ const Search = ({ user, favTutors, setFavTutors }) => {
     setIsOpen(true);
     setWhatToOpen(index);
   };
-  
-  useEffect(()=> {
+
+  useEffect(() => {
     const handleFilter = () => {
       const filterURL = urlcat(
         tutorurl,
@@ -43,8 +44,8 @@ const Search = ({ user, favTutors, setFavTutors }) => {
         setTotalPages(data.data.totalPages);
       });
     };
-    handleFilter()
-  }, [filterValues, sortState])
+    handleFilter();
+  }, [filterValues, sortState]);
 
   useEffect(() => {
     axios.get(tutorurl).then((data) => {
@@ -100,7 +101,6 @@ const Search = ({ user, favTutors, setFavTutors }) => {
     classLevel: "select level",
     classType: [],
   };
-
 
   const handleAddToPending = (tutor) => {
     console.log(tutor);
@@ -276,6 +276,7 @@ const Search = ({ user, favTutors, setFavTutors }) => {
               <>
                 <div
                   onClick={() => {
+                    setShowFavButton(true);
                     setAddPendingButton(true);
                     handleModal(index);
                   }}
@@ -322,6 +323,8 @@ const Search = ({ user, favTutors, setFavTutors }) => {
               setTutor={setTutor}
               handleAddToPending={handleAddToPending}
               addmyTutor={addmyTutor}
+              setShowFavButton={setShowFavButton}
+              showFavButton={showFavButton}
             />
             <br />
             <br />
