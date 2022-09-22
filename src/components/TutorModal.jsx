@@ -1,17 +1,12 @@
-import { useState } from "react";
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
-
-const SERVER = import.meta.env.VITE_SERVER;
+import { TiCancel } from "react-icons/ti";
 
 const TutorModal = ({
   open,
-  tutor,
   setIsOpen,
-  setShowCancelButton,
-  // showCancelButton,
+  tutor,
   tuteeDetails,
-  whatToOpen,
-  // setTuteeDetails,
+  setShowCancelButton,
   addPendingButton,
   setAddPendingButton,
   handleAddToPending,
@@ -23,37 +18,6 @@ const TutorModal = ({
   showFavButton,
 }) => {
   if (!open) return null;
-
-  // const updateTutorURL = urlcat(url, "/updatePendingTutee");
-  // const [updateTuteeSuccessful, setUpdateTuteeSuccessful] = useState(true);
-
-  // const handleReject = (tutor) => {
-  //   console.log(tutor);
-  //   const updatedPendingTutee = tuteeDetails.pendingTutors.filter(
-  //     (tutor) => tutor === tuteeDetails.pendingTutors[whatToOpen]._id
-  //   );
-  //   console.log(updatedPendingTutee);
-
-  //   console.log(tuteeDetails);
-  //   const updatedTuteeDetails = tuteeDetails.pendingTutors.splice(0, 1);
-  //   console.log(updatedTuteeDetails);
-
-  //   axios
-  //     .put(updateTutorURL, tuteeDetails)
-  //     .then(({ data }) => {
-  //       setTuteeDetails(tuteeDetails);
-  //       setUpdateTuteeSuccessful(true);
-  //       setIsOpen(false);
-  //     })
-  //     .catch((error) => {
-  //       if (
-  //         error.response.data.error === "Unable to accept/reject Tutee." ||
-  //         error.response.data.error === "Tutee not found."
-  //       ) {
-  //         setUpdateTuteeSuccessful(false);
-  //       }
-  //     });
-  // };
 
   const MODAL_STYLES = {
     position: "fixed",
@@ -133,7 +97,6 @@ const TutorModal = ({
         {!inPending && addPendingButton ? (
           <button
             onClick={() => {
-              // setIsOpen(false);
               handleAddToPending(tutor);
             }}
             style={{ backgroundColor: "lime" }}
@@ -143,59 +106,15 @@ const TutorModal = ({
         ) : (
           <button
             onClick={() => {
-              // setIsOpen(false);
               handleRemoveFromPending(tutor);
             }}
             style={{ backgroundColor: "lime" }}
           >
-            Cancel Request
+            <TiCancel />Request
           </button>
         )}
         {!favUnfavSuccessful && <p>Unable to fav/unfav tutor.</p>}
         {!updatePendingSuccessful && <p>Unable to send/cancel request.</p>}
-
-        {/* reject is for tutor's page? */}
-        {/* {showCancelButton && (
-          <>
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                handleReject();
-              }}
-              style={{ backgroundColor: "red" }}
-            >
-              cancel
-            </button>
-          </>
-        )} */}
-
-        {/* {showFavButton && (
-          <button
-            style={{ backgroundColor: "lime" }}
-            onClick={() => {
-              setIsOpen(false);
-              addmyTutor(tutor);
-            }}
-          >
-            Add fav tutor
-          </button>
-        )} */}
-
-        <br />
-
-        {/* {addPendingButton && (
-          <>
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                handleAddToPending(tutor);
-              }}
-              style={{ backgroundColor: "lime" }}
-            >
-              add to pending
-            </button>
-          </>
-        )} */}
       </div>
     </>
   );

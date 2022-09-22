@@ -5,6 +5,10 @@ import urlcat from "urlcat";
 import * as Yup from "yup";
 import TutorModal from "../../components/TutorModal";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { BiReset, BiSearchAlt } from "react-icons/bi";
+import { TiCancel } from "react-icons/ti";
+
 
 const SERVER = import.meta.env.VITE_SERVER;
 const Search = ({ user }) => {
@@ -18,25 +22,26 @@ const Search = ({ user }) => {
   const [whatToOpen, setWhatToOpen] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [showFavButton, setShowFavButton] = useState(false);
-  // const url = urlcat(SERVER);
   const [sortState, setSortState] = useState("Sort");
-  const [filterValues, setFilterValues] = useState({
-    subjects: [],
-    region: [],
-    classLevel: "select level",
-    classType: [],
-  });
 
   const [favUnfavSuccessful, setFavUnfavSuccessful] = useState(true);
   const [updatePendingSuccessful, setUpdatePendingSuccessful] = useState(true);
 
   const sortOptions = ["rating", "region", "rates"];
-  const tutorurl = urlcat(SERVER, `/tutor/alltutor`);
 
   const handleModal = (index) => {
     setIsOpen(true);
     setWhatToOpen(index);
   };
+
+  const startingValue = {
+    subjects: [],
+    region: [],
+    classLevel: "select level",
+    classType: [],
+  };
+
+  const [filterValues, setFilterValues] = useState(startingValue);
 
   const classTypes = ["Remote", "In-Person"];
   const allClass = [
@@ -72,13 +77,6 @@ const Search = ({ user }) => {
     classType: Yup.array(),
   });
 
-  const startingValue = {
-    subjects: [],
-    region: [],
-    classLevel: "select level",
-    classType: [],
-  };
-
   useEffect(() => {
     //fetch current tutee's data
     const urlTuteeDetails = urlcat(SERVER, `/tutee/tuteedetails/${user._id}`);
@@ -96,31 +94,18 @@ const Search = ({ user }) => {
 
   useEffect(() => {
     const handleFilter = () => {
-      const filterURL = urlcat(
-        tutorurl,
-        `/search/${sortState}/?subjects=${filterValues.subjects}&classLevel=${filterValues.classLevel}&classType=${filterValues.classType}&region=${filterValues.region}&page=0`
+      const url = urlcat(
+        SERVER,
+        `/tutor/alltutor/search/${sortState}/?subjects=${filterValues.subjects}&classLevel=${filterValues.classLevel}&classType=${filterValues.classType}&region=${filterValues.region}&page=${page}`
       );
-      axios.get(filterURL).then((data) => {
+      axios.get(url).then((data) => {
         setTutor(data.data.filteredTutor);
         setTotalPages(data.data.totalPages);
       });
     };
     handleFilter();
-  }, [filterValues, sortState]);
+  }, [filterValues, sortState, page]);
 
-  useEffect(() => {
-    axios.get(tutorurl).then((data) => {
-      setTutor(data.data.allTutor);
-      setTotalPages(data.data.totalPages);
-    });
-  }, [page]);
-
-  const handleReset = () => {
-    axios.get(tutorurl).then((data) => {
-      setTutor(data.data.allTutor);
-      setTotalPages(data.data.totalPages);
-    });
-  };
 
   // find current tutee, update current tutee profile favTutors array
   const handleFavTutor = (tutor) => {
@@ -270,12 +255,24 @@ const Search = ({ user }) => {
                 <div>{errors.classType}</div>
               ) : null}
               <br />
-              <button type="submit" style={{ backgroundColor: "lime" }}>
-                search
+              <button
+                type="submit"
+                onClick={() => {
+                  setPage(0);
+                }}
+                style={{ backgroundColor: "lime" }}
+              >
+                <BiSearchAlt />
               </button>
             </Form>
-            <button onClick={handleReset} style={{ backgroundColor: "lime" }}>
-              reset
+            <button
+              onClick={() => {
+                setPage(0);
+                setFilterValues(startingValue);
+              }}
+              style={{ backgroundColor: "lime" }}
+            >
+              <BiReset />
             </button>
           </div>
         )}
@@ -374,7 +371,6 @@ const Search = ({ user }) => {
                   {!inPending ? (
                     <button
                       onClick={() => {
-                        // setIsOpen(false);
                         handleAddToPending(tutor);
                       }}
                       style={{ backgroundColor: "lime" }}
@@ -384,12 +380,11 @@ const Search = ({ user }) => {
                   ) : (
                     <button
                       onClick={() => {
-                        // setIsOpen(false);
                         handleRemoveFromPending(tutor);
                       }}
                       style={{ backgroundColor: "lime" }}
                     >
-                      Cancel Request
+                      <TiCancel />Request
                     </button>
                   )}
                 </>
@@ -397,42 +392,38 @@ const Search = ({ user }) => {
             })}
             {!favUnfavSuccessful && <p>Unable to fav/unfav tutor.</p>}
             {!updatePendingSuccessful && <p>Unable to send/cancel request.</p>}
-
             <TutorModal
               open={isOpen}
               setIsOpen={setIsOpen}
               tutor={tutor[whatToOpen]}
+              tuteeDetails={tuteeDetails}
               setShowCancelButton={setShowCancelButton}
-              showCancelButton={showCancelButton}
               addPendingButton={addPendingButton}
               setAddPendingButton={setAddPendingButton}
-              user={user}
-              setTutor={setTutor}
-              tuteeDetails={tuteeDetails}
               handleAddToPending={handleAddToPending}
               handleRemoveFromPending={handleRemoveFromPending}
               handleFavTutor={handleFavTutor}
               handleUnfavTutor={handleUnfavTutor}
               favUnfavSuccessful={favUnfavSuccessful}
               updatePendingSuccessful={updatePendingSuccessful}
-              setShowFavButton={setShowFavButton}
               showFavButton={showFavButton}
             />
             <br />
             <br />
-            <button
+            {!(page ===0) && <button
               disabled={page === 0}
               onClick={() => setPage(Math.max(0, page - 1))}
               style={{ backgroundColor: "lime" }}
             >
-              Previous
-            </button>
-            <button
+              <MdNavigateBefore /> prev
+            </button>}
+            {" "}
+            {!(page === totalPages -1) && <button
               onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
               style={{ backgroundColor: "lime" }}
             >
-              Next
-            </button>
+              <MdNavigateNext /> next
+            </button>}
           </div>
         )}
       </div>
