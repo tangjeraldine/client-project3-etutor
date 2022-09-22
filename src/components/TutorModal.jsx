@@ -1,4 +1,4 @@
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { TiCancel } from "react-icons/ti";
 
 const TutorModal = ({
@@ -6,16 +6,13 @@ const TutorModal = ({
   setIsOpen,
   tutor,
   tuteeDetails,
-  setShowCancelButton,
-  addPendingButton,
-  setAddPendingButton,
   handleAddToPending,
   handleRemoveFromPending,
   handleFavTutor,
   handleUnfavTutor,
   favUnfavSuccessful,
   updatePendingSuccessful,
-  showFavButton,
+  modalType,
 }) => {
   if (!open) return null;
 
@@ -41,18 +38,42 @@ const TutorModal = ({
 
   let inFav = false;
   let inPending = false;
-  console.log(tutor._id)
-  console.log(tuteeDetails)
-  tuteeDetails.favTutors.map((favTutor) => {
-    if (favTutor._id === tutor._id) {
-      inFav = true;
-    }
-  });
-  tuteeDetails.pendingTutors.map((pendingTutor) => {
-    if (pendingTutor._id === tutor._id) {
-      inPending = true;
-    }
-  });
+  if (modalType === " myTutors") {
+    tuteeDetails?.favTutors?.map((favTutor) => {
+      if (favTutor._id === tutor._id) {
+        inFav = true;
+      }
+    });
+  } else if (modalType === "pendingTutors") {
+    tuteeDetails?.favTutors?.map((favTutor) => {
+      if (favTutor._id === tutor._id) {
+        inFav = true;
+      }
+    });
+    tuteeDetails?.pendingTutors?.map((pendingTutor) => {
+      if (pendingTutor._id === tutor._id) {
+        inPending = true;
+      }
+    });
+  } else {
+    inPending = 0;
+    tuteeDetails.pendingTutors.map((pendingTutor) => {
+      if (pendingTutor._id === tutor._id) {
+        inPending = 2;
+      }
+    });
+    tuteeDetails.myTutors.map((myTutor) => {
+      if (myTutor._id === tutor._id) {
+        inPending = 1;
+      }
+    });
+    tuteeDetails?.favTutors?.map((favTutor) => {
+      if (favTutor._id === tutor._id) {
+        inFav = true;
+      }
+    });
+  }
+
   return (
     <>
       <div style={OVERLAY_STYLES} />
@@ -60,8 +81,6 @@ const TutorModal = ({
         <button
           style={{ backgroundColor: "lime" }}
           onClick={() => {
-            setAddPendingButton(false);
-            setShowCancelButton(false);
             setIsOpen(false);
           }}
         >
@@ -77,42 +96,163 @@ const TutorModal = ({
         <p>Education Background: {tutor.educationBackground}</p>
         <p> Teaching Experience: {tutor.teachingExperience}</p>
 
-        {!inFav && showFavButton ? (
-          <button
-            style={{ backgroundColor: "lime" }}
-            onClick={() => handleFavTutor(tutor)}
-          >
-            <AiOutlineStar />
-          </button>
-        ) : (
-          <button
-            style={{ backgroundColor: "lime" }}
-            onClick={() => handleUnfavTutor(tutor)}
-          >
-            <AiFillStar />
-          </button>
+        {modalType === "pendingTutors" && (
+          <div>
+            {!inFav ? (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleFavTutor(tutor)}
+              >
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleUnfavTutor(tutor)}
+              >
+                <AiFillStar />
+              </button>
+            )}
+
+            <br />
+            {inPending ? (
+              <button
+                onClick={() => {
+                  handleRemoveFromPending(tutor)
+                }}
+                style={{ backgroundColor: "lime" }}
+              >
+                <TiCancel />
+                Request
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  handleAddToPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}
+              >
+                Send Request
+              </button>
+            )}
+          </div>
+        )}
+        {modalType === "myTutors" && (
+          <div>
+            {!inFav ? (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleFavTutor(tutor)}
+              >
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleUnfavTutor(tutor)}
+              >
+                <AiFillStar />
+              </button>
+            )}
+          </div>
+        )}
+        {modalType === "favTutors" && (
+          <div>
+            {!inFav ? (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleFavTutor(tutor)}
+              >
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleUnfavTutor(tutor)}
+              >
+                <AiFillStar />
+              </button>
+            )}
+
+            <br />
+
+            {inPending === 1 && (
+              <div style={{ backgroundColor: "lime" }}>Your Tutor</div>
+            )}
+
+            {inPending === 0 && (
+              <button
+                onClick={() => {
+                  handleAddToPending(tutor)
+                }}
+                style={{ backgroundColor: "lime" }}
+              >
+                Send Request
+              </button>
+            )}
+
+            {inPending === 2 && (
+              <button
+                onClick={() => {
+                  handleRemoveFromPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}
+              >
+                <TiCancel />
+                Request
+              </button>
+            )}
+          </div>
+        )}
+        {modalType === "search" && (
+          <div>
+            {!inFav ? (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleFavTutor(tutor)}
+              >
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleUnfavTutor(tutor)}
+              >
+                <AiFillStar />
+              </button>
+            )}
+
+            <br />
+
+            {inPending === 1 && (
+              <div style={{ backgroundColor: "lime" }}>Your Tutor</div>
+            )}
+
+            {inPending === 0 && (
+              <button
+                onClick={() => {
+                  handleAddToPending(tutor)
+                }}
+                style={{ backgroundColor: "lime" }}
+              >
+                Send Request
+              </button>
+            )}
+
+            {inPending === 2 && (
+              <button
+                onClick={() => {
+                  handleRemoveFromPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}
+              >
+                <TiCancel />
+                Request
+              </button>
+            )}
+          </div>
         )}
 
-        <br />
-        {!inPending && addPendingButton ? (
-          <button
-            onClick={() => {
-              handleAddToPending(tutor);
-            }}
-            style={{ backgroundColor: "lime" }}
-          >
-            Send Request
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              handleRemoveFromPending(tutor);
-            }}
-            style={{ backgroundColor: "lime" }}
-          >
-            <TiCancel />Request
-          </button>
-        )}
         {!favUnfavSuccessful && <p>Unable to fav/unfav tutor.</p>}
         {!updatePendingSuccessful && <p>Unable to send/cancel request.</p>}
       </div>

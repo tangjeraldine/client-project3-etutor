@@ -14,6 +14,7 @@ const MyTutees = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
   const [showButton, setShowButton] = useState(false);
+  const [renderTutees, setRenderTutees] = useState(true);
 
   useEffect(() => {
     //get tutor details to see their subjects, class levels, and class types of specific tutor
@@ -21,7 +22,6 @@ const MyTutees = ({ user }) => {
     axios
       .get(urlTutorDetails)
       .then(({ data }) => {
-        console.log(data);
         setTutorDetails(data);
       })
       .catch((error) => {
@@ -32,21 +32,24 @@ const MyTutees = ({ user }) => {
   }, []);
 
   useEffect(() => {
-    //access tutees database and find all tutees of this tutor
-    const urlTuteeDetails = urlcat(
-      SERVER,
-      `/tutee/myTutees/${tutorDetails?._id}`
-    );
-    axios
-      .get(urlTuteeDetails)
-      .then(({ data }) => {
-        console.log(data);
-        setTuteeDetails(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [tutorDetails]);
+    //access tutees database and find all tutees and pending tutees of this tutor
+    if (tutorDetails._id !== undefined) {
+      const urlTuteeDetails = urlcat(
+        SERVER,
+        `/tutee/myTutees/${tutorDetails?._id}`
+      );
+      axios
+        .get(urlTuteeDetails)
+        .then(({ data }) => {
+          setTuteeDetails(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      
+    }
+  }, [tutorDetails, renderTutees]);
 
   const handleModal = (index) => {
     setIsOpen(true);
@@ -70,7 +73,7 @@ const MyTutees = ({ user }) => {
 
           <div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div>
-              <h1 style={{ fontSize: "30px" }}>Accepted Tutees</h1>
+              <h1 style={{ fontSize: "30px" }}>My Tutees</h1>
               {tuteeDetails.length === 0 ? (
                 <div>You have no tutees</div>
               ) : (
@@ -152,7 +155,7 @@ const MyTutees = ({ user }) => {
                           <h3 class="mt-4 text-xl font-bold text-black">
                             {tutee.fullName}
                           </h3>
-                          <p>(Click to view, accept, or reject.)</p>
+                          {/* <p>(Click to view, accept, or reject.)</p> */}
                         </a>
                       </div>
                     );
@@ -163,15 +166,17 @@ const MyTutees = ({ user }) => {
                 <PendingTuteeModal
                   open={isOpen}
                   onClose={() => setIsOpen(false)}
-                  eachTuteeDetails={tuteeDetails[whatToOpen]}
+                  tuteeDetails={tuteeDetails[whatToOpen]}
                   user={user}
                   setTuteeDetails={setTuteeDetails}
-                  tuteeDetails={tuteeDetails}
-                  whatToOpen={whatToOpen}
+                  // tuteeDetails={tuteeDetails}
+                  // whatToOpen={whatToOpen}
                   tutorDetails={tutorDetails}
                   setIsOpen={setIsOpen}
                   setShowButton={setShowButton}
                   showButton={showButton}
+                  setRenderTutees={setRenderTutees}
+                  renderTutees={renderTutees}
                 />
               </div>
             </div>
