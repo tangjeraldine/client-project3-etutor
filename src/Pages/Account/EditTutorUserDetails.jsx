@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import signUpValidation from "../../Validations/signUpValidation";
+import editUserDetValidation from "../../Validations/editUserDetValidation";
 import { Field, Formik, Form, useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import urlcat from "urlcat";
+import { BsEyeSlashFill, BsEyeFill } from "react-icons/bs";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
 const EditUserDetails = ({ user }) => {
   const [userData, setUserData] = useState({});
   const [wantToEdit, setWantToEdit] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -39,9 +41,12 @@ const EditUserDetails = ({ user }) => {
       .put(url, values)
       .then(({ data }) => {
         console.log(data);
+        navigate("/tutor/edituserdetails");
       })
       .catch((error) => {
-        if (error.response.data.error === "User details were not updated.") {
+        if (
+          error.response.data.error === "User details could not be updated."
+        ) {
           console.log("User details were not updated.");
           // error page
         }
@@ -52,6 +57,10 @@ const EditUserDetails = ({ user }) => {
     setWantToEdit(true);
   };
 
+  const handleToggle = () => {
+    setOpen(!open);
+  };
+
   if (!wantToEdit) {
     return (
       <div>
@@ -60,7 +69,7 @@ const EditUserDetails = ({ user }) => {
         <p>Username: </p>
         <p>{userData?.username}</p>
         <p>Password: </p>
-        <p>****** </p>
+        <p>********* </p>
         <p>UserType: </p>
         <p>{userData?.userType} (Cannot be changed) </p>
         <p>Email: </p>
@@ -79,11 +88,11 @@ const EditUserDetails = ({ user }) => {
         {/* using formik */}
         <Formik
           initialValues={{
-            username: `${userData?.username}`,
+            username: userData?.username,
             password: "",
-            email: `${userData?.email}`,
+            email: userData?.email,
           }}
-          validationSchema={signUpValidation}
+          validationSchema={editUserDetValidation}
           onSubmit={(values) => {
             console.log(values);
             handleUpdateUserDetails(values);
@@ -97,7 +106,7 @@ const EditUserDetails = ({ user }) => {
             initialValues,
           }) => (
             <Form>
-              <p>Username: </p>
+              <label>Username: </label>
               <Field
                 name='username'
                 onChange={handleChange}
@@ -108,18 +117,29 @@ const EditUserDetails = ({ user }) => {
                 <div>{errors.username}</div>
               ) : null}
               <br />
-              <p>Password: </p>
-              <Field
-                name='password'
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-              />
-              {errors.password && touched.password ? (
-                <div>{errors.password}</div>
-              ) : null}
+              <div className=' mx-auto relative'>
+                <label>New Password: </label>
+                <Field
+                  name='password'
+                  type={open === false ? "password" : "text"}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.password}
+                />
+                {errors.password && touched.password ? (
+                  <div>{errors.password}</div>
+                ) : null}
+                <div className='text-2xl absolute top-3 right-1'>
+                  {open === false ? (
+                    <BsEyeSlashFill onClick={handleToggle} />
+                  ) : (
+                    <BsEyeFill onClick={handleToggle} />
+                  )}
+                </div>
+              </div>
+
               <br />
-              <p>Email: </p>
+              <label>Email: </label>
               <Field
                 name='email'
                 onChange={handleChange}
@@ -136,7 +156,7 @@ const EditUserDetails = ({ user }) => {
                     Object.keys(touched).length !== 0
                   )
                 }
-                style={{ backgroundColor: "lime" }}>
+                class='block mt-2 px-10 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
                 Complete Editing
               </button>
             </Form>

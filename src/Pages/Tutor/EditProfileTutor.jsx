@@ -180,15 +180,15 @@ const EditTutorProfile = ({ user }) => {
         {/* using formik */}
         <Formik
           initialValues={{
-            fullName: `${tutorData?.fullName}`,
-            phone: `${tutorData?.phone}`,
-            region: `${tutorData?.region}`,
-            rates: `${tutorData?.rates}`,
-            classType: [],
-            classLevel: [],
-            subjects: [],
-            educationBackground: `${tutorData?.educationBackground}`,
-            teachingExperience: `${tutorData?.teachingExperience}`,
+            fullName: tutorData?.fullName,
+            phone: tutorData?.phone,
+            region: tutorData?.region,
+            rates: tutorData?.rates,
+            classType: tutorData?.classType,
+            classLevel: tutorData?.classLevel,
+            subjects: tutorData?.subjects,
+            educationBackground: tutorData?.educationBackground,
+            teachingExperience: tutorData?.teachingExperience,
           }}
           validationSchema={signUpAsTutorValidation}
           onSubmit={(values) => {
@@ -251,8 +251,7 @@ const EditTutorProfile = ({ user }) => {
               />
               {errors.rates && touched.rates ? <div>{errors.rates}</div> : null}
               <br />
-              <p>Current Class Type(s): {tutorData?.classType?.join(", ")} </p>
-              <p>New Class Type(s): </p>
+              <p>Class Type(s): </p>
               <Field type='checkbox' name='classType' value='In-Person' />
               In-Person
               <Field type='checkbox' name='classType' value='Remote' />
@@ -263,10 +262,7 @@ const EditTutorProfile = ({ user }) => {
               ) : null}
               <br />
               <br />
-              <p>
-                Current Class Level(s): {tutorData?.classLevel?.join(", ")}{" "}
-              </p>
-              <p>New Class Level(s): </p>
+              <p>Class Level(s): </p>
               <div>
                 Primary
                 {priClassLevel.map((level) => {
@@ -297,8 +293,7 @@ const EditTutorProfile = ({ user }) => {
                 <div>{errors.classLevel}</div>
               ) : null}
               <br />
-              <p>Current Subject(s): {tutorData?.subjects?.join(", ")} </p>
-              <p>New Subject(s): </p>
+              <p>Subject(s): </p>
               <div>
                 Primary
                 {priSubjects.map((subject) => {

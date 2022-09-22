@@ -87,7 +87,7 @@ const LayoutTutee = ({ user }) => {
                 <div class='flex items-center gap-4'>
                   <button
                     onClick={() => {
-                      navigate("/tutee/edituserdetails");
+                      navigate("/tutee/editprofile");
                     }}
                     class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
                     Edit Profile
@@ -95,7 +95,7 @@ const LayoutTutee = ({ user }) => {
 
                   <button
                     onClick={() => {
-                      navigate("/tutee/editprofile");
+                      navigate("/tutee/edituserdetails");
                     }}
                     class='block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700'>
                     Edit User Details
