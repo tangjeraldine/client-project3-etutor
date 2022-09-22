@@ -74,7 +74,7 @@ const MyTutees = ({ user }) => {
               {tuteeDetails.length === 0 ? (
                 <div>You have no tutees</div>
               ) : (
-                tuteeDetails?.map((tutee) => {
+                tuteeDetails?.map((tutee, index) => {
                   if (tutee.myTutors.includes(tutorDetails._id)) {
                     return (
                       <div>

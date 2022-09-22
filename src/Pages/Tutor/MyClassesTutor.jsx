@@ -202,6 +202,7 @@ const MyClassesTutor = ({ user }) => {
           {classes.map((eachClass, index) => {
             const tutees = [];
             eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
+            const filledSlots = eachClass.bookedBy.length;
             const timeDay = format(
               parseISO(eachClass.timeDay),
               "EEE, dd/MM/yyyy, hh:mm aaaa"
@@ -225,12 +226,12 @@ const MyClassesTutor = ({ user }) => {
                       <button
                         class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                         onClick={() => handleModal(index)}>
-                        details
+                        Details
                       </button>
                       <button
                         class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
                         onClick={() => handleRemoveClass(eachClass._id)}>
-                        remove class
+                        Remove This Class
                       </button>
                     </div>
                   </div>
@@ -239,7 +240,7 @@ const MyClassesTutor = ({ user }) => {
                     <p class='text-sm text-gray-500'>
                       Class Level: {eachClass.classLevel} <br />
                       Tutees: {tutees.join(", ") || "none"} <br />
-                      Total Group Size: {eachClass.groupSize}
+                      Group Size: {filledSlots}/{eachClass.groupSize}
                     </p>
                   </div>
 
@@ -420,56 +421,6 @@ const MyClassesTutor = ({ user }) => {
           <div className='w-1/2'></div>
         )}
       </div>
-      {/* list of classes of this tutor */}
-      <div>
-        {classes.map((eachClass, index) => {
-          const tutees = [];
-          eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
-          const filledSlots = eachClass.bookedBy.length;
-          const timeDay = format(
-            parseISO(eachClass.timeDay),
-            "EEE, dd/MM/yyyy, hh:mm aaaa"
-          );
-          return (
-            <div key={index}>
-              <p>Class Title: {eachClass.classTitle}</p>
-              <p>Date, Time: {timeDay}</p>
-              <p>Class Type: {eachClass.classType}</p>
-              <p>Subject: {eachClass.subject}</p>
-              <p>Class Level: {eachClass.classLevel}</p>
-              <p>Tutees: {tutees.join(", ") || "none"}</p>
-              <p>
-                Group Size: {filledSlots}/{eachClass.groupSize}
-              </p>
-              <button
-                style={{ backgroundColor: "lime" }}
-                onClick={() => handleRemoveClass(eachClass._id)}>
-                remove class
-              </button>
-
-              <button
-                style={{ backgroundColor: "lime" }}
-                onClick={() => handleModal(index)}>
-                details
-              </button>
-            </div>
-          );
-        })}
-        {!deleteClassSuccessful && <p>Unable to delete class.</p>}
-        {!loadClassesSuccessful && <p>Unable to load classes.</p>}
-      </div>
-
-      <ClassModal
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        eachClass={classes[whatToOpen]}
-        tutorDetails={tutorDetails}
-        setClasses={setClasses}
-        setRenderClasses={setRenderClasses}
-        renderClasses={renderClasses}
-        CheckClassLevelAndSubject={CheckClassLevelAndSubject}
-        matchingLevelSub={matchingLevelSub}
-      />
     </>
   );
 };

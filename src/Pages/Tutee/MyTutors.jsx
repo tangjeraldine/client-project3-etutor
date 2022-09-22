@@ -14,6 +14,7 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
   const [tuteeDetails, setTuteeDetails] = useState({});
   const [showCancelButton, setShowCancelButton] = useState(false);
   const [addPendingButton, setAddPendingButton] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const url = urlcat(SERVER, "/tutee");
   const currentUserId = user._id;
 
@@ -146,7 +147,6 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
                         <h3 class='mt-4 text-xl font-bold text-black'>
                           {tutor.fullName}
                         </h3>
-                        <p>(Click to view, accept, or reject.)</p>
                       </a>
                     </div>
                     <TutorModal
