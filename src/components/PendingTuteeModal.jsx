@@ -2,52 +2,51 @@ import urlcat from "urlcat";
 import axios from "axios";
 import { useState } from "react";
 const SERVER = import.meta.env.VITE_SERVER;
-const url = urlcat(SERVER, "/tutee");
+// const url = urlcat(SERVER, "/tutee");
 
 const PendingTuteeModal = ({
+  // user,
   open,
-  eachTuteeDetails,
-  onClose,
-  user,
-  setTuteeDetails,
   tuteeDetails,
-  whatToOpen,
+  setTuteeDetails,
+  // tuteeDetails,
+  // whatToOpen,
   tutorDetails,
   setIsOpen,
   setShowButton,
   showButton,
+  setRenderTutees,
+  renderTutees
 }) => {
   if (!open) return null;
 
   const [updateTuteeSuccessful, setUpdateTuteeSuccessful] = useState(true);
 
-  const updateTutorURL = urlcat(url, "/updatePendingTutee");
+  const url = urlcat(SERVER, `/tutee/updatetutee/acceptrejecttutee/${tuteeDetails.username}`);
+
   const handleAccept = () => {
-    const updatedPendingTutors = eachTuteeDetails.pendingTutors.filter(
+    const updatedPendingTutors = tuteeDetails.pendingTutors.filter(
       (tutor) => tutor !== tutorDetails._id
     );
-    console.log(updatedPendingTutors);
 
-    const updatedTuteeDetails = [...tuteeDetails];
-    updatedTuteeDetails[whatToOpen].pendingTutors = updatedPendingTutors;
-    updatedTuteeDetails[whatToOpen].myTutors = [
-      ...updatedTuteeDetails[whatToOpen].myTutors,
+    const updatedTuteeDetails = tuteeDetails
+    updatedTuteeDetails.pendingTutors = updatedPendingTutors;
+    updatedTuteeDetails.myTutors = [
+      ...updatedTuteeDetails.myTutors,
       tutorDetails._id,
     ];
-    console.log(updatedTuteeDetails);
 
     axios
-      .put(updateTutorURL, updatedTuteeDetails[whatToOpen])
+      .put(url, updatedTuteeDetails)
       .then(({ data }) => {
-        console.log(data);
-        console.log(updatedTuteeDetails);
-        setTuteeDetails(updatedTuteeDetails);
+        // setTuteeDetails(updatedTuteeDetails);
+        setRenderTutees(!renderTutees)
         setUpdateTuteeSuccessful(true);
         setIsOpen(false);
       })
       .catch((error) => {
         if (
-          error.response.data.error === "Unable to accept/reject Tutee." ||
+          error.response.data.error === "Unable to update Tutee." ||
           error.response.data.error === "Tutee not found."
         ) {
           setUpdateTuteeSuccessful(false);
@@ -57,19 +56,17 @@ const PendingTuteeModal = ({
   };
 
   const handleReject = () => {
-    const updatedPendingTutors = eachTuteeDetails.pendingTutors.filter(
+    const updatedPendingTutors = tuteeDetails.pendingTutors.filter(
       (tutor) => tutor !== tutorDetails._id
     );
-    console.log(updatedPendingTutors);
-    const updatedTuteeDetails = [...tuteeDetails];
-    updatedTuteeDetails[whatToOpen].pendingTutors = updatedPendingTutors;
+
+    const updatedTuteeDetails = tuteeDetails;
+    updatedTuteeDetails.pendingTutors = updatedPendingTutors;
 
     axios
-      .put(updateTutorURL, updatedTuteeDetails[whatToOpen])
+      .put(url, updatedTuteeDetails)
       .then(({ data }) => {
-        console.log(data);
-        console.log(updatedTuteeDetails);
-        setTuteeDetails(updatedTuteeDetails);
+        setRenderTutees(!renderTutees)
         setUpdateTuteeSuccessful(true);
         setIsOpen(false);
       })
@@ -118,15 +115,15 @@ const PendingTuteeModal = ({
           Tutee Details
         </div>
         <p className='font-bold'>Name: </p>
-        <p>{eachTuteeDetails.fullName}</p>
+        <p>{tuteeDetails.fullName}</p>
         <p className='font-bold'>Class Level: </p>
-        <p>{eachTuteeDetails.currentLevel}</p>
+        <p>{tuteeDetails.currentLevel}</p>
         <p className='font-bold'>Phone: </p>
-        <p>{eachTuteeDetails.phone}</p>
+        <p>{tuteeDetails.phone}</p>
         <p className='font-bold'>Region: </p>
-        <p>{eachTuteeDetails.region}</p>
+        <p>{tuteeDetails.region}</p>
         <p className='font-bold'>Subjects: </p>
-        <p>{eachTuteeDetails.subjects.join(", ")}</p>
+        <p>{tuteeDetails.subjects.join(", ")}</p>
         {showButton && (
           <>
             <button

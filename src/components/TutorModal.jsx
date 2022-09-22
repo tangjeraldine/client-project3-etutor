@@ -6,17 +6,13 @@ const TutorModal = ({
   setIsOpen,
   tutor,
   tuteeDetails,
-  showCancelButton,
-  setShowCancelButton,
-  addPendingButton,
-  setAddPendingButton,
   handleAddToPending,
   handleRemoveFromPending,
   handleFavTutor,
   handleUnfavTutor,
   favUnfavSuccessful,
   updatePendingSuccessful,
-  showFavButton,
+  modalType,
 }) => {
   if (!open) return null;
 
@@ -42,18 +38,42 @@ const TutorModal = ({
 
   let inFav = false;
   let inPending = false;
-  console.log(tutor._id);
-  console.log(tuteeDetails);
-  tuteeDetails.favTutors.map((favTutor) => {
-    if (favTutor._id === tutor._id) {
-      inFav = true;
-    }
-  });
-  tuteeDetails.pendingTutors.map((pendingTutor) => {
-    if (pendingTutor._id === tutor._id) {
-      inPending = true;
-    }
-  });
+  if (modalType === " myTutors") {
+    tuteeDetails?.favTutors?.map((favTutor) => {
+      if (favTutor._id === tutor._id) {
+        inFav = true;
+      }
+    });
+  } else if (modalType === "pendingTutors") {
+    tuteeDetails?.favTutors?.map((favTutor) => {
+      if (favTutor._id === tutor._id) {
+        inFav = true;
+      }
+    });
+    tuteeDetails?.pendingTutors?.map((pendingTutor) => {
+      if (pendingTutor._id === tutor._id) {
+        inPending = true;
+      }
+    });
+  } else {
+    inPending = 0;
+    tuteeDetails.pendingTutors.map((pendingTutor) => {
+      if (pendingTutor._id === tutor._id) {
+        inPending = 2;
+      }
+    });
+    tuteeDetails.myTutors.map((myTutor) => {
+      if (myTutor._id === tutor._id) {
+        inPending = 1;
+      }
+    });
+    tuteeDetails?.favTutors?.map((favTutor) => {
+      if (favTutor._id === tutor._id) {
+        inFav = true;
+      }
+    });
+  }
+
   return (
     <>
       <div style={OVERLAY_STYLES} />
@@ -61,8 +81,6 @@ const TutorModal = ({
         <button
           class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
           onClick={() => {
-            setAddPendingButton(false);
-            setShowCancelButton(false);
             setIsOpen(false);
           }}>
           Close This Window
@@ -87,54 +105,149 @@ const TutorModal = ({
         <p className='font-bold mt-2'>Teaching Experience: </p>
         <p>{tutor.teachingExperience}</p>
 
-        {!inFav && showFavButton ? (
-          <button
-            style={{ backgroundColor: "lime" }}
-            onClick={() => handleFavTutor(tutor)}
-            class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-            <AiOutlineStar />
-          </button>
-        ) : (
-          <button
-            class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
-            onClick={() => handleUnfavTutor(tutor)}>
-            <AiFillStar />
-          </button>
+        {modalType === "pendingTutors" && (
+          <div>
+            {!inFav ? (
+              <button
+                class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                onClick={() => handleFavTutor(tutor)}>
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
+                onClick={() => handleUnfavTutor(tutor)}>
+                <AiFillStar />
+              </button>
+            )}
+
+            <br />
+            {inPending ? (
+              <button
+                onClick={() => {
+                  handleRemoveFromPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}>
+                <TiCancel />
+                Request
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  handleAddToPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}>
+                Send Request
+              </button>
+            )}
+          </div>
+        )}
+        {modalType === "myTutors" && (
+          <div>
+            {!inFav ? (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleFavTutor(tutor)}>
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleUnfavTutor(tutor)}>
+                <AiFillStar />
+              </button>
+            )}
+          </div>
+        )}
+        {modalType === "favTutors" && (
+          <div>
+            {!inFav ? (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleFavTutor(tutor)}>
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleUnfavTutor(tutor)}>
+                <AiFillStar />
+              </button>
+            )}
+
+            <br />
+
+            {inPending === 1 && (
+              <div style={{ backgroundColor: "lime" }}>Your Tutor</div>
+            )}
+
+            {inPending === 0 && (
+              <button
+                onClick={() => {
+                  handleAddToPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}>
+                Send Request
+              </button>
+            )}
+
+            {inPending === 2 && (
+              <button
+                onClick={() => {
+                  handleRemoveFromPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}>
+                <TiCancel />
+                Request
+              </button>
+            )}
+          </div>
+        )}
+        {modalType === "search" && (
+          <div>
+            {!inFav ? (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleFavTutor(tutor)}>
+                <AiOutlineStar />
+              </button>
+            ) : (
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleUnfavTutor(tutor)}>
+                <AiFillStar />
+              </button>
+            )}
+
+            <br />
+
+            {inPending === 1 && (
+              <div style={{ backgroundColor: "lime" }}>Your Tutor</div>
+            )}
+
+            {inPending === 0 && (
+              <button
+                onClick={() => {
+                  handleAddToPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}>
+                Send Request
+              </button>
+            )}
+
+            {inPending === 2 && (
+              <button
+                onClick={() => {
+                  handleRemoveFromPending(tutor);
+                }}
+                style={{ backgroundColor: "lime" }}>
+                <TiCancel />
+                Request
+              </button>
+            )}
+          </div>
         )}
 
-        <br />
-
-        {showCancelButton && (
-          <>
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                handleReject();
-              }}
-              class='block mt-2 px-6 py-4 text-sm font-medium font-bold text-white transition bg-red-500 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-              Cancel Request To Tutor!
-            </button>
-          </>
-        )}
-
-        {!inPending && addPendingButton ? (
-          <button
-            onClick={() => {
-              handleAddToPending(tutor);
-            }}
-            class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-            Send Request
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              handleRemoveFromPending(tutor);
-            }}
-            class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-red-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-            <TiCancel />
-            Request
-          </button>
-        )}
         {!favUnfavSuccessful && <p>Unable to fav/unfav tutor.</p>}
         {!updatePendingSuccessful && <p>Unable to send/cancel request.</p>}
       </div>

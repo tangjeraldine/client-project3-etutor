@@ -14,14 +14,12 @@ const Search = ({ user }) => {
   const [tutor, setTutor] = useState([]);
   const [tuteeDetails, setTuteeDetails] = useState({});
   const [renderTuteeDetails, setRenderTuteeDetails] = useState(true);
-  const [showCancelButton, setShowCancelButton] = useState(false);
-  const [addPendingButton, setAddPendingButton] = useState(false);
   const [page, setPage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
   const [totalPages, setTotalPages] = useState(0);
-  const [showFavButton, setShowFavButton] = useState(false);
   const [sortState, setSortState] = useState("Sort");
+  const [modalType, setModalType] = useState("");
 
   const [favUnfavSuccessful, setFavUnfavSuccessful] = useState(true);
   const [updatePendingSuccessful, setUpdatePendingSuccessful] = useState(true);
@@ -29,6 +27,7 @@ const Search = ({ user }) => {
   const sortOptions = ["rating", "region", "rates"];
 
   const handleModal = (index) => {
+    setModalType("search");
     setIsOpen(true);
     setWhatToOpen(index);
   };
@@ -78,9 +77,9 @@ const Search = ({ user }) => {
 
   useEffect(() => {
     //fetch current tutee's data
-    const urlTuteeDetails = urlcat(SERVER, `/tutee/tuteedetails/${user._id}`);
+    const url = urlcat(SERVER, `/tutee/tuteedetails/${user._id}`);
     axios
-      .get(urlTuteeDetails)
+      .get(url)
       .then(({ data }) => {
         setTuteeDetails(data);
       })
@@ -106,8 +105,7 @@ const Search = ({ user }) => {
   }, [filterValues, sortState, page]);
 
   // find current tutee, update current tutee profile favTutors array
-  const handleFavTutor = (tutor) => {
-    const url = urlcat(SERVER, `tutee/updatetutee/fav/${user._id}`);
+  const axiosFavUnFav = (tutor, url) => {
     axios
       .put(url, tutor)
       .then(({ data }) => {
@@ -118,67 +116,55 @@ const Search = ({ user }) => {
         if (error.response.data.error === "Tutee not found.") {
           console.log("Tutee not found.");
         } else {
-          console.log("Unable to fav tutor.");
+          console.log("Unable to fav/unfav tutor.");
         }
         setFavUnfavSuccessful(false);
       });
+  };
+
+  const handleFavTutor = (tutor) => {
+    const url = urlcat(SERVER, `tutee/updatetutee/fav/${user._id}`);
+    axiosFavUnFav(tutor, url);
   };
 
   const handleUnfavTutor = (tutor) => {
     const url = urlcat(SERVER, `tutee/updatetutee/unfav/${user._id}`);
+    axiosFavUnFav(tutor, url);
+  };
 
+  const axiosUpdatePending = (tutor, url) => {
     axios
       .put(url, tutor)
       .then(({ data }) => {
         setRenderTuteeDetails(!renderTuteeDetails);
-        setFavUnfavSuccessful(true);
+        setUpdatePendingSuccessful(true);
       })
       .catch((error) => {
         if (error.response.data.error === "Tutee not found.") {
           console.log("Tutee not found.");
         } else {
-          console.log("Unable to unfav tutor.");
+          console.log("Unable to update pending list.");
         }
-        setFavUnfavSuccessful(false);
+        setUpdatePendingSuccessful(false);
       });
   };
 
   const handleAddToPending = (tutor) => {
-    const url = urlcat(SERVER, `tutee/updatetutee/addpending/${user._id}`);
-
-    axios
-      .put(url, tutor)
-      .then(({ data }) => {
-        setRenderTuteeDetails(!renderTuteeDetails);
-        setUpdatePendingSuccessful(true);
-      })
-      .catch((error) => {
-        if (error.response.data.error === "Tutee not found.") {
-          console.log("Tutee not found.");
-        } else {
-          console.log("Unable to add to pending list.");
-        }
-        setUpdatePendingSuccessful(false);
-      });
+    let inMyTutor = false;
+    tuteeDetails.myTutors.map((myTutor) => {
+      if (myTutor._id === tutor._id) {
+        inMyTutor = true;
+      }
+    });
+    if (inMyTutor === false) {
+      const url = urlcat(SERVER, `tutee/updatetutee/addpending/${user._id}`);
+      axiosUpdatePending(tutor, url);
+    }
   };
 
   const handleRemoveFromPending = (tutor) => {
     const url = urlcat(SERVER, `tutee/updatetutee/deletepending/${user._id}`);
-
-    axios
-      .put(url, tutor)
-      .then(({ data }) => {
-        setRenderTuteeDetails(!renderTuteeDetails);
-        setUpdatePendingSuccessful(true);
-      })
-      .catch((error) => {
-        if (error.response.data.error === "Tutee not found.") {
-          console.log("Tutee not found.");
-        } else {
-          console.log("Unable to remove from pending list.");
-        }
-        setUpdatePendingSuccessful(false);
-      });
+    axiosUpdatePending(tutor, url);
   };
 
   return (
@@ -382,7 +368,7 @@ const Search = ({ user }) => {
           <div>
             {tutor.map((tutor, index) => {
               let inFav = false;
-              let inPending = false;
+              let inPending = 0;
               tuteeDetails?.favTutors?.map((favTutor) => {
                 if (favTutor._id === tutor._id) {
                   inFav = true;
@@ -390,88 +376,70 @@ const Search = ({ user }) => {
               });
               tuteeDetails?.pendingTutors?.map((pendingTutor) => {
                 if (pendingTutor._id === tutor._id) {
-                  inPending = true;
+                  inPending = 2;
+                }
+              });
+              tuteeDetails?.myTutors?.map((myTutor) => {
+                if (myTutor._id === tutor._id) {
+                  inPending = 1;
                 }
               });
               return (
                 <>
-                  <div key={index} value={index}>
-                    <a
-                      class='relative block p-8 border border-gray-100 shadow-xl rounded-xl m-10 w-4/5'
-                      onClick={() => {
-                        setShowFavButton(true);
-                        setAddPendingButton(true);
-                        handleModal(index);
-                      }}>
-                      <span class='absolute right-4 top-4 rounded-full px-3 py-1.5 bg-green-100 text-green-600 font-medium text-xs'>
-                        {tutor.classType.join(", ")}
-                      </span>
-
-                      <div class='text-gray-700 sm:pr-8'>
-                        <svg
-                          class='w-8 h-8 sm:w-10 sm:h-10'
-                          fill='none'
-                          stroke='currentColor'
-                          viewBox='0 0 24 24'
-                          xmlns='http://www.w3.org/2000/svg'>
-                          <path
-                            stroke-linecap='round'
-                            stroke-linejoin='round'
-                            stroke-width='2'
-                            d='M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z'></path>
-                        </svg>
-
-                        <h5 class='mt-4 text-xl font-bold text-red-700'>
-                          Tutor: {tutor.fullName}
-                        </h5>
-
-                        <p class='hidden mt-2 text-sm sm:block'>
-                          Subjects: {tutor.subjects.join(", ")} <br />
-                          Levels: {tutor.classLevel.join(", ")}
-                          <br />
-                          Rate/lesson: ${tutor.rates} <br />
-                          Location: {tutor.region} <br />
-                          Class setting: {tutor.classType.join(", ")} <br />
-                          Ratings: {tutor.rating}
-                        </p>
-                      </div>
-
-                      {!inFav ? (
-                        <button
-                          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-rose-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
-                          onClick={() => handleFavTutor(tutor)}>
-                          <AiOutlineStar /> Save to Favourites
-                        </button>
-                      ) : (
-                        <button
-                          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-gray-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '
-                          onClick={() => handleUnfavTutor(tutor)}>
-                          <AiFillStar /> Remove from Favourites
-                        </button>
-                      )}
-
-                      <br />
-                      {!inPending ? (
-                        <button
-                          onClick={() => {
-                            handleAddToPending(tutor);
-                          }}
-                          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-blue-600 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-                          <AiOutlineMail />
-                          Send Request
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            handleRemoveFromPending(tutor);
-                          }}
-                          class='block mt-2 px-4 py-2 text-sm font-medium text-white transition bg-gray-700 border border-black-600 rounded-md shrink-0 hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 '>
-                          <TiCancel />
-                          Cancel Request
-                        </button>
-                      )}
-                    </a>
+                  <div
+                    onClick={() => {
+                      handleModal(index);
+                    }}
+                    key={index}
+                    value={index}>
+                    <p>Tutor Name: {tutor.fullName}</p>
+                    <p>Class setting: {tutor.classType.join(", ")}</p>
+                    <p>Location: {tutor.region}</p>
+                    <p> Subjects: {tutor.subjects.join(", ")}</p>
+                    <p>Levels: {tutor.classLevel.join(", ")}</p>
+                    <p>Ratings: {tutor.rating}</p>
+                    <p>Rates: {tutor.rates}</p>
                   </div>
+
+                  {!inFav ? (
+                    <button
+                      style={{ backgroundColor: "lime" }}
+                      onClick={() => handleFavTutor(tutor)}>
+                      <AiOutlineStar />
+                    </button>
+                  ) : (
+                    <button
+                      style={{ backgroundColor: "lime" }}
+                      onClick={() => handleUnfavTutor(tutor)}>
+                      <AiFillStar />
+                    </button>
+                  )}
+
+                  <br />
+                  {inPending === 1 && (
+                    <div style={{ backgroundColor: "lime" }}>Your Tutor</div>
+                  )}
+
+                  {inPending === 0 && (
+                    <button
+                      onClick={() => {
+                        handleAddToPending(tutor);
+                      }}
+                      style={{ backgroundColor: "lime" }}>
+                      Send Request
+                    </button>
+                  )}
+
+                  {inPending === 2 && (
+                    <button
+                      onClick={() => {
+                        handleRemoveFromPending(tutor);
+                      }}
+                      style={{ backgroundColor: "lime" }}>
+                      <TiCancel />
+                      Request
+                    </button>
+                  )}
                 </>
               );
             })}
@@ -482,17 +450,13 @@ const Search = ({ user }) => {
               setIsOpen={setIsOpen}
               tutor={tutor[whatToOpen]}
               tuteeDetails={tuteeDetails}
-              setShowCancelButton={setShowCancelButton}
-              showCancelButton={showCancelButton}
-              addPendingButton={addPendingButton}
-              setAddPendingButton={setAddPendingButton}
               handleAddToPending={handleAddToPending}
               handleRemoveFromPending={handleRemoveFromPending}
               handleFavTutor={handleFavTutor}
               handleUnfavTutor={handleUnfavTutor}
               favUnfavSuccessful={favUnfavSuccessful}
               updatePendingSuccessful={updatePendingSuccessful}
-              showFavButton={showFavButton}
+              modalType={modalType}
             />
             <br />
             <br />
@@ -508,7 +472,7 @@ const Search = ({ user }) => {
               <button
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 style={{ backgroundColor: "lime" }}>
-                <MdNavigateNext /> Next
+                <MdNavigateNext /> next
               </button>
             )}
           </div>

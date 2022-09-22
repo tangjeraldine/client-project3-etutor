@@ -66,24 +66,29 @@ const MyClassesTutee = ({ user }) => {
           }
         });
 
-      const tutorIdArray = [];
-      tuteeDetails.myTutors.map((tutor) => tutorIdArray.push(tutor._id));
+      let tutorIdArray=[]
+      if (tuteeDetails.myTutors.length !== 0) {
+        tuteeDetails.myTutors.map((tutor) => tutorIdArray.push(tutor._id));
+        tutorIdArray =`?tutoridarray=${tutorIdArray.join(" ")}`
+      } else {
+        tutorIdArray = ''
+      }
+
       const tuteeSubjectArray = [];
       tuteeDetails.subjects.map((subject) => tuteeSubjectArray.push(subject));
       const urlGetAvailableClasses = urlcat(
         SERVER,
-        `/class/get-available-classes/${tuteeDetails._id}/${tutorIdArray.join(
-          " "
-        )}/${tuteeSubjectArray.join(" ")}/${tuteeDetails.currentLevel}`
+        `/class/get-available-classes/${tuteeDetails._id}/${tuteeSubjectArray.join(" ")}/${tuteeDetails.currentLevel}${tutorIdArray}`
       );
       axios
         .get(urlGetAvailableClasses) //only get avail classes that match tutee's level and subject..
         .then(({ data }) => {
-          if (data.length === 0) {
+          if (data.message === "Classes not found.") {
+            setAnyAvailableClasses(false)
+          } else if (data.length === 0) {
             setAnyAvailableClasses(false);
             setAvailableClasses(data);
           } else {
-            console.log(data);
             setAvailableClasses(data);
             setAnyAvailableClasses(true);
           }
