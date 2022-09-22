@@ -23,8 +23,6 @@ import EditTuteeUserDetails from "./Pages/Account/EditTuteeUserDetails";
 function App() {
   const [user, setUser] = useState({});
 
-  const [favTutors, setFavTutors] = useState([]);
-
   return (
     <BrowserRouter>
       <Routes>
@@ -58,8 +56,6 @@ function App() {
             element={
               <MyTutors
                 user={user}
-                favTutors={favTutors}
-                setFavTutors={setFavTutors}
               />
             }
           />
@@ -68,8 +64,6 @@ function App() {
             element={
               <Search
                 user={user}
-                favTutors={favTutors}
-                setFavTutors={setFavTutors}
               />
             }
           />

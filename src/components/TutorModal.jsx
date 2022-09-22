@@ -1,58 +1,59 @@
-import urlcat from "urlcat";
-import axios from "axios";
 import { useState } from "react";
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+
 const SERVER = import.meta.env.VITE_SERVER;
-const url = urlcat(SERVER, "/tutee");
 
 const TutorModal = ({
   open,
   tutor,
   setIsOpen,
   setShowCancelButton,
-  showCancelButton,
+  // showCancelButton,
   tuteeDetails,
   whatToOpen,
-  setTuteeDetails,
+  // setTuteeDetails,
   addPendingButton,
   setAddPendingButton,
-  user,
-  setTutor,
   handleAddToPending,
-  addmyTutor,
+  handleRemoveFromPending,
+  handleFavTutor,
+  handleUnfavTutor,
+  favUnfavSuccessful,
+  updatePendingSuccessful,
   showFavButton,
 }) => {
   if (!open) return null;
-  console.log(tutor);
-  const updateTutorURL = urlcat(url, "/updatePendingTutee");
-  const [updateTuteeSuccessful, setUpdateTuteeSuccessful] = useState(true);
 
-  const handleReject = (tutor) => {
-    console.log(tutor);
-    const updatedPendingTutee = tuteeDetails.pendingTutors.filter(
-      (tutor) => tutor === tuteeDetails.pendingTutors[whatToOpen]._id
-    );
-    console.log(updatedPendingTutee);
+  // const updateTutorURL = urlcat(url, "/updatePendingTutee");
+  // const [updateTuteeSuccessful, setUpdateTuteeSuccessful] = useState(true);
 
-    console.log(tuteeDetails);
-    const updatedTuteeDetails = tuteeDetails.pendingTutors.splice(0, 1);
-    console.log(updatedTuteeDetails);
+  // const handleReject = (tutor) => {
+  //   console.log(tutor);
+  //   const updatedPendingTutee = tuteeDetails.pendingTutors.filter(
+  //     (tutor) => tutor === tuteeDetails.pendingTutors[whatToOpen]._id
+  //   );
+  //   console.log(updatedPendingTutee);
 
-    axios
-      .put(updateTutorURL, tuteeDetails)
-      .then(({ data }) => {
-        setTuteeDetails(tuteeDetails);
-        setUpdateTuteeSuccessful(true);
-        setIsOpen(false);
-      })
-      .catch((error) => {
-        if (
-          error.response.data.error === "Unable to accept/reject Tutee." ||
-          error.response.data.error === "Tutee not found."
-        ) {
-          setUpdateTuteeSuccessful(false);
-        }
-      });
-  };
+  //   console.log(tuteeDetails);
+  //   const updatedTuteeDetails = tuteeDetails.pendingTutors.splice(0, 1);
+  //   console.log(updatedTuteeDetails);
+
+  //   axios
+  //     .put(updateTutorURL, tuteeDetails)
+  //     .then(({ data }) => {
+  //       setTuteeDetails(tuteeDetails);
+  //       setUpdateTuteeSuccessful(true);
+  //       setIsOpen(false);
+  //     })
+  //     .catch((error) => {
+  //       if (
+  //         error.response.data.error === "Unable to accept/reject Tutee." ||
+  //         error.response.data.error === "Tutee not found."
+  //       ) {
+  //         setUpdateTuteeSuccessful(false);
+  //       }
+  //     });
+  // };
 
   const MODAL_STYLES = {
     position: "fixed",
@@ -74,6 +75,20 @@ const TutorModal = ({
     zIndex: 1000,
   };
 
+  let inFav = false;
+  let inPending = false;
+  console.log(tutor._id)
+  console.log(tuteeDetails)
+  tuteeDetails.favTutors.map((favTutor) => {
+    if (favTutor._id === tutor._id) {
+      inFav = true;
+    }
+  });
+  tuteeDetails.pendingTutors.map((pendingTutor) => {
+    if (pendingTutor._id === tutor._id) {
+      inPending = true;
+    }
+  });
   return (
     <>
       <div style={OVERLAY_STYLES} />
@@ -98,21 +113,49 @@ const TutorModal = ({
         <p>Education Background: {tutor.educationBackground}</p>
         <p> Teaching Experience: {tutor.teachingExperience}</p>
 
-        {showFavButton && (
+        {!inFav && showFavButton ? (
           <button
             style={{ backgroundColor: "lime" }}
-            onClick={() => {
-              setIsOpen(false);
-              addmyTutor(tutor);
-            }}
+            onClick={() => handleFavTutor(tutor)}
           >
-            Add fav tutor
+            <AiOutlineStar />
+          </button>
+        ) : (
+          <button
+            style={{ backgroundColor: "lime" }}
+            onClick={() => handleUnfavTutor(tutor)}
+          >
+            <AiFillStar />
           </button>
         )}
 
         <br />
+        {!inPending && addPendingButton ? (
+          <button
+            onClick={() => {
+              // setIsOpen(false);
+              handleAddToPending(tutor);
+            }}
+            style={{ backgroundColor: "lime" }}
+          >
+            Send Request
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              // setIsOpen(false);
+              handleRemoveFromPending(tutor);
+            }}
+            style={{ backgroundColor: "lime" }}
+          >
+            Cancel Request
+          </button>
+        )}
+        {!favUnfavSuccessful && <p>Unable to fav/unfav tutor.</p>}
+        {!updatePendingSuccessful && <p>Unable to send/cancel request.</p>}
 
-        {showCancelButton && (
+        {/* reject is for tutor's page? */}
+        {/* {showCancelButton && (
           <>
             <button
               onClick={() => {
@@ -124,9 +167,23 @@ const TutorModal = ({
               cancel
             </button>
           </>
-        )}
+        )} */}
 
-        {addPendingButton && (
+        {/* {showFavButton && (
+          <button
+            style={{ backgroundColor: "lime" }}
+            onClick={() => {
+              setIsOpen(false);
+              addmyTutor(tutor);
+            }}
+          >
+            Add fav tutor
+          </button>
+        )} */}
+
+        <br />
+
+        {/* {addPendingButton && (
           <>
             <button
               onClick={() => {
@@ -138,7 +195,7 @@ const TutorModal = ({
               add to pending
             </button>
           </>
-        )}
+        )} */}
       </div>
     </>
   );
