@@ -15,6 +15,8 @@ const TutorModal = ({
   setTuteeDetails,
   addPendingButton,
   setAddPendingButton,
+  user,
+  setTutor,
 }) => {
   if (!open) return null;
   const updateTutorURL = urlcat(url, "/updatePendingTutee");
@@ -48,7 +50,12 @@ const TutorModal = ({
   };
 
   const handleAddToPending = () => {
-    console.log("accept");
+    const addToPendingTutorURL = urlcat(url, `/addToPendingTutee/${user._id}`);
+
+    axios.put(addToPendingTutorURL, tutor).then((response) => {
+      console.log(response);
+    });
+    // add tutor to tutee's pendingTutor
   };
 
   const MODAL_STYLES = {
@@ -106,7 +113,10 @@ const TutorModal = ({
         {addPendingButton && (
           <>
             <button
-              onClick={handleAddToPending}
+              onClick={() => {
+                setIsOpen(false);
+                handleAddToPending;
+              }}
               style={{ backgroundColor: "lime" }}
             >
               add to pending

@@ -283,6 +283,8 @@ const Search = ({ user, favTutors, setFavTutors }) => {
               showCancelButton={showCancelButton}
               addPendingButton={addPendingButton}
               setAddPendingButton={setAddPendingButton}
+              user={user}
+              setTutor={setTutor}
             />
 
             <br />

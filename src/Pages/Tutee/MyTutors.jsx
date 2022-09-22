@@ -14,6 +14,7 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
   const [tuteeDetails, setTuteeDetails] = useState({});
   const [showCancelButton, setShowCancelButton] = useState(false);
   const [addPendingButton, setAddPendingButton] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const url = urlcat(SERVER, "/tutee");
   const currentUserId = user._id;
 
@@ -36,6 +37,7 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
     axios.put(favUrl, { tutorID }).then((response) => {
       console.log(response);
       setFavTutors(response.data.favTutors);
+      setTuteeDetails(response.data);
     });
   };
 
@@ -77,7 +79,7 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
             <>
               <div
                 onClick={() => {
-                  setShowButton(true);
+                  setShowCancelButton(true);
                   handleModal("pendingTutors", index);
                 }}
                 key={index}
@@ -101,7 +103,10 @@ const MyTutors = ({ user, favTutors, setFavTutors }) => {
                 <p onClick={() => handleModal("favTutors", index)}>
                   {tutor.fullName}
                 </p>
-                <button onClick={() => deletefavTutor(tutor._id)}>
+                <button
+                  style={{ backgroundColor: "red" }}
+                  onClick={() => deletefavTutor(tutor._id)}
+                >
                   Delete
                 </button>
               </div>
