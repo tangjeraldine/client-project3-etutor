@@ -16,13 +16,13 @@ const ClassModal = ({
   renderClasses,
   CheckClassLevelAndSubject,
   matchingLevelSub,
-  setMatchingLevelSub,
 }) => {
   if (!open) return null;
 
   const [editClassSuccessful, setEditClassSuccessful] = useState(true);
   const [showEditableClass, setShowEditableClass] = useState(false);
   const [tuteeDetails, setTuteeDetails] = useState([]);
+  const [matchingTutees, setMatchingTutees] = useState(true);
 
   const MODAL_STYLES = {
     position: "fixed",
@@ -67,6 +67,28 @@ const ClassModal = ({
         console.log(error);
       });
   }, []);
+
+  const CheckMatchingTutees = () => {
+    const { values } = useFormikContext(); //a way to excess form values globally
+    useEffect(() => {
+      setMatchingTutees(true);
+      //just the id..so for each tutee id...
+      values.bookedBy.map((tutee) => {
+        const bookedTuteeDetails = tuteeDetails.filter(
+          (details) => details._id === tutee
+        );
+        const tuteeLevel = bookedTuteeDetails[0].currentLevel;
+        const tuteeSubject = bookedTuteeDetails[0].subjects;
+
+        if (
+          values.classLevel !== tuteeLevel ||
+          !tuteeSubject.includes(values.subject)
+        ) {
+          setMatchingTutees(false);
+        }
+      });
+    }, [values.classLevel, values.subject, values.bookedBy]);
+  };
 
   const handleEditClass = (values) => {
     const urlEditClass = urlcat(
@@ -262,6 +284,9 @@ const ClassModal = ({
                   {errors.bookedBy && touched.bookedBy ? (
                     <div>{errors.bookedBy}</div>
                   ) : null}
+                  {!matchingTutees && (
+                    <p>Please select tutees with valid subject and level.</p>
+                  )}
 
                   <p className='font-bold'>Total Group Size</p>
                   <Field
@@ -285,6 +310,7 @@ const ClassModal = ({
                   </button>
                   {!editClassSuccessful && <p>Class unable to be edited.</p>}
                   <CheckClassLevelAndSubject />
+                  <CheckMatchingTutees />
                 </Form>
               )}
             </Formik>

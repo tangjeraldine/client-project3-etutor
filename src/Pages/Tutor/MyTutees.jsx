@@ -13,13 +13,7 @@ const MyTutees = ({ user }) => {
   const [tuteeDetails, setTuteeDetails] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [whatToOpen, setWhatToOpen] = useState("");
-
-  // use the tutor's user_id to find tutees
-
-  // pending tutors
-  // pressing accept, -> delete tutee from pendingtutors and add tutee to myTutors
-  // pressing reject -> delete tutee from pending tutors only
-  // when tutors
+  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     //get tutor details to see their subjects, class levels, and class types of specific tutor
@@ -85,7 +79,11 @@ const MyTutees = ({ user }) => {
                     return (
                       <div>
                         <a
-                          class='block p-8 border border-gray-800 shadow-xl transition rounded-xl hover:shadow-red-700/10 hover:border-red-500/10'
+                          class='block p-8 border border-gray-800 shadow-xl transition rounded-xl hover:shadow-red-700/10 hover:border-red-500/10 cursor-pointer'
+                          onClick={() => {
+                            setShowButton(false);
+                            handleModal(index);
+                          }}
                           key={tutee._id}>
                           <svg
                             xmlns='http://www.w3.org/2000/svg'
@@ -121,7 +119,12 @@ const MyTutees = ({ user }) => {
                 tuteeDetails?.map((tutee, index) => {
                   if (tutee.pendingTutors.includes(tutorDetails._id)) {
                     return (
-                      <div key={index} onClick={() => handleModal(index)}>
+                      <div
+                        key={index}
+                        onClick={() => {
+                          setShowButton(true);
+                          handleModal(index);
+                        }}>
                         <a
                           class='block p-8 border border-gray-800 shadow-xl transition rounded-xl hover:shadow-red-700/10 hover:border-red-500/10 cursor-pointer'
                           key={tutee._id}>
@@ -162,6 +165,8 @@ const MyTutees = ({ user }) => {
                   whatToOpen={whatToOpen}
                   tutorDetails={tutorDetails}
                   setIsOpen={setIsOpen}
+                  setShowButton={setShowButton}
+                  showButton={showButton}
                 />
               </div>
             </div>

@@ -131,10 +131,7 @@ const MyClassesTutor = ({ user }) => {
   };
 
   const handleRemoveClass = (id) => {
-    const urlRemoveClass = urlcat(
-      SERVER,
-      `/class/remove-class/${id}/${tutorDetails._id}`
-    );
+    const urlRemoveClass = urlcat(SERVER, `/class/remove-class/${id}`);
     axios
       .delete(urlRemoveClass)
       .then(({ data }) => {
@@ -423,6 +420,56 @@ const MyClassesTutor = ({ user }) => {
           <div className='w-1/2'></div>
         )}
       </div>
+      {/* list of classes of this tutor */}
+      <div>
+        {classes.map((eachClass, index) => {
+          const tutees = [];
+          eachClass.bookedBy.map((tutee) => tutees.push(tutee.fullName));
+          const filledSlots = eachClass.bookedBy.length;
+          const timeDay = format(
+            parseISO(eachClass.timeDay),
+            "EEE, dd/MM/yyyy, hh:mm aaaa"
+          );
+          return (
+            <div key={index}>
+              <p>Class Title: {eachClass.classTitle}</p>
+              <p>Date, Time: {timeDay}</p>
+              <p>Class Type: {eachClass.classType}</p>
+              <p>Subject: {eachClass.subject}</p>
+              <p>Class Level: {eachClass.classLevel}</p>
+              <p>Tutees: {tutees.join(", ") || "none"}</p>
+              <p>
+                Group Size: {filledSlots}/{eachClass.groupSize}
+              </p>
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleRemoveClass(eachClass._id)}>
+                remove class
+              </button>
+
+              <button
+                style={{ backgroundColor: "lime" }}
+                onClick={() => handleModal(index)}>
+                details
+              </button>
+            </div>
+          );
+        })}
+        {!deleteClassSuccessful && <p>Unable to delete class.</p>}
+        {!loadClassesSuccessful && <p>Unable to load classes.</p>}
+      </div>
+
+      <ClassModal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        eachClass={classes[whatToOpen]}
+        tutorDetails={tutorDetails}
+        setClasses={setClasses}
+        setRenderClasses={setRenderClasses}
+        renderClasses={renderClasses}
+        CheckClassLevelAndSubject={CheckClassLevelAndSubject}
+        matchingLevelSub={matchingLevelSub}
+      />
     </>
   );
 };
