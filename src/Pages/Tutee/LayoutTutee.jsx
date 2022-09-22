@@ -135,6 +135,7 @@ const LayoutTutee = ({ user }) => {
         </div>
       </header>
       <Outlet />
+
       <Footer />
     </>
   );

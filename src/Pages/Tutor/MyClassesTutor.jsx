@@ -182,7 +182,7 @@ const MyClassesTutor = ({ user }) => {
               create a new class.
             </p>
 
-            <div class='flex flex-wrap justify-center mt-4 gap-4 z-3'>
+            <div class='flex flex-wrap justify-center mt-3 gap-4 z-3'>
               <button
                 class='block w-full px-12 py-3 text-sm font-medium text-white bg-red-700 rounded shadow sm:w-auto bg-red-700 hover:bg-white hover:text-red-700 focus:outline-none focus:ring'
                 onClick={handleMakeClass}>
@@ -195,8 +195,8 @@ const MyClassesTutor = ({ user }) => {
       <br />
       <div className='flex grid-cols-2 w-screen'>
         {/* list of classes of this tutor */}
-        <div className='w-1/2'>
-          <h1 class='text-2xl font-bold text-left text-red-700 sm:text-3xl mt-4'>
+        <div className='w-1/2 m-5'>
+          <h1 class='text-2xl font-bold text-left text-red-700 sm:text-3xl'>
             Upcoming Classes
           </h1>
           {classes.map((eachClass, index) => {
@@ -278,8 +278,9 @@ const MyClassesTutor = ({ user }) => {
           matchingLevelSub={matchingLevelSub}
           setMatchingLevelSub={setMatchingLevelSub}
         />
+
         {createClass ? (
-          <div class='px-1 py-4 mx-auto w-1/2 sm:px-6 lg:px-8 bg-amber-100 rounded'>
+          <div class='px-1 py-4 mx-auto w-1/2 m-5 sm:px-6 lg:px-8 bg-amber-100 rounded'>
             <div class='max-w-lg mx-auto'>
               <h1 class='text-2xl font-bold text-left text-red-700 sm:text-3xl'>
                 Add A New Class
@@ -301,7 +302,7 @@ const MyClassesTutor = ({ user }) => {
                   resetForm();
                 }}>
                 {({ handleChange, handleBlur, values, errors, touched }) => (
-                  <Form className='w-1/2'>
+                  <Form className='w-1/2 sticky top-0'>
                     <p className='mt-6'>Class Title</p>
                     <Field
                       name='classTitle'
