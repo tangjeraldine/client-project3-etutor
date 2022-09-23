@@ -27,9 +27,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<SignIn setUser={setUser} user={user} />} />
-        <Route path='/signup' element={<SignUpUser />} />
-        <Route path='/signup/tutor' element={<SignUpTutor />} />
-        <Route path='/signup/tutee' element={<SignUpTutee />} />
+        <Route path='/signup' element={<SignUpUser setUser={setUser} user={user}/>} />
+        <Route path='/signup/tutor' element={<SignUpTutor user={user}/>} />
+        <Route path='/signup/tutee' element={<SignUpTutee user={user}/>} />
         <Route path='/aboutus' element={<AboutUs />} />
 
         <Route path='/tutor' element={<LayoutTutor user={user} />}>

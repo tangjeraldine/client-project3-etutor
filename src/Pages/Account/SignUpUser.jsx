@@ -9,7 +9,7 @@ import Footer from "../General Pages/Footer";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const SignUpUser = () => {
+const SignUpUser = ({user, setUser}) => {
   const [isUserProfileSetUp, setIsUserProfileSetUp] = useState(true);
   const [isEmailUnique, setIsEmailUnique] = useState(true);
   const [isUsernameUnique, setIsUsernameUnique] = useState(true);
@@ -25,8 +25,10 @@ const SignUpUser = () => {
       .post(url, values)
       .then(({ data }) => {
         if (data.userType === "Tutor") {
+          setUser(data)
           navigate("/signup/tutor");
         } else if (data.userType === "Tutee") {
+          setUser(data)
           navigate("/signup/tutee");
         }
       })

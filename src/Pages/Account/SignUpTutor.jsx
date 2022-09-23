@@ -8,7 +8,7 @@ import Footer from "../General Pages/Footer";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const SignUpTutor = () => {
+const SignUpTutor = ({user}) => {
   const [isTutorProfileSetUp, setIsTutorProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
 
@@ -104,6 +104,7 @@ const SignUpTutor = () => {
   };
 
   const handleSignUpAsTutor = (values) => {
+    values.username = user._id
     setIsTutorProfileSetUp(true);
     const url = urlcat(SERVER, "/tutor/profile-signup");
     axios

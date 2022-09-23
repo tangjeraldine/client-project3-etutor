@@ -8,7 +8,7 @@ import Footer from "../General Pages/Footer";
 
 const SERVER = import.meta.env.VITE_SERVER;
 
-const SignUpTutee = () => {
+const SignUpTutee = ({user}) => {
   const [isTuteeProfileSetUp, setIsTuteeProfileSetUp] = useState(true);
   const [matchingLevelSub, setMatchingLevelSub] = useState(true);
   const navigate = useNavigate();
@@ -86,11 +86,14 @@ const SignUpTutee = () => {
 
   const handleSignUpAsTutee = (values) => {
     setIsTuteeProfileSetUp(true);
+    values.username = user._id
+    console.log(user)
+    console.log(values)
     const url = urlcat(SERVER, "/tutee/profile-signup"); //need to check that server url is the same
     axios
       .post(url, values)
       .then(({ data }) => {
-        navigate("/tutee");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);

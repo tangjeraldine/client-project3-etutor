@@ -55,6 +55,7 @@ const SignIn = ({ setUser, user }) => {
 
   const checkForTuteeProfile = (USER) => {
     const url = urlcat(SERVER, `/tutee/editprofile/${USER._id}`);
+    console.log(USER._id)
     axios
       .get(url)
       .then(({ data }) => {
