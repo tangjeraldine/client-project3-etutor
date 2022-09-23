@@ -110,7 +110,7 @@ const SignUpTutor = ({user}) => {
     axios
       .post(url, values)
       .then(({ data }) => {
-        navigate("/tutor");
+        navigate("/");
       })
       .catch((error) => {
         if (
